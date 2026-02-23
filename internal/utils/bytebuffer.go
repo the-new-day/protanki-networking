@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"slices"
 )
 
 type ByteBuffer struct {
@@ -159,4 +160,8 @@ func (b *ByteBuffer) Read(buf []byte) (int, error) {
 
 func (b *ByteBuffer) Len() int {
 	return len(b.data)
+}
+
+func (b *ByteBuffer) Bytes() []byte {
+	return slices.Clone(b.data)
 }

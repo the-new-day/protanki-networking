@@ -1,31 +1,26 @@
 package utils
 
 import (
-	"bytes"
 	"io"
 	"math"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewByteBuffer(t *testing.T) {
 	buf := NewByteBuffer()
-	if buf.Len() != 0 {
-		t.Errorf("New buffer should be empty, got length %d", buf.Len())
-	}
+	assert.Equal(t, 0, buf.Len(), "New buffer should be empty")
 }
 
 func TestNewByteBufferFromBytes(t *testing.T) {
 	data := []byte{0x01, 0x02, 0x03}
 	buf := NewByteBufferFromBytes(data)
 
-	if buf.Len() != 3 {
-		t.Errorf("Expected length 3, got %d", buf.Len())
-	}
+	assert.Equal(t, 3, buf.Len(), "Buffer length should match input data")
 
 	data[0] = 0xFF
-	if buf.data[0] != 0x01 {
-		t.Errorf("Buffer should be independent copy")
-	}
+	assert.Equal(t, byte(0x01), buf.data[0], "Buffer should be independent copy")
 }
 
 func TestWriteReadInt(t *testing.T) {
@@ -36,12 +31,10 @@ func TestWriteReadInt(t *testing.T) {
 	for _, expected := range values {
 		buf.WriteInt(expected)
 		actual, err := buf.ReadInt()
-		if err != nil {
-			t.Errorf("Unexpected error: %v", err)
-		}
-		if actual != expected {
-			t.Errorf("ReadInt() = %d, want %d", actual, expected)
-		}
+
+		assert.NoError(t, err)
+		assert.Equal(t, expected, actual)
+		assert.Equal(t, 0, buf.Len(), "Buffer should be empty after read")
 	}
 }
 
@@ -53,12 +46,10 @@ func TestWriteReadByte(t *testing.T) {
 	for _, expected := range values {
 		buf.WriteByte(expected)
 		actual, err := buf.ReadByte()
-		if err != nil {
-			t.Errorf("Unexpected error: %v", err)
-		}
-		if actual != expected {
-			t.Errorf("ReadByte() = %d, want %d", actual, expected)
-		}
+
+		assert.NoError(t, err)
+		assert.Equal(t, expected, actual)
+		assert.Equal(t, 0, buf.Len())
 	}
 }
 
@@ -70,12 +61,10 @@ func TestWriteReadBool(t *testing.T) {
 	for _, expected := range values {
 		buf.WriteBool(expected)
 		actual, err := buf.ReadBool()
-		if err != nil {
-			t.Errorf("Unexpected error: %v", err)
-		}
-		if actual != expected {
-			t.Errorf("ReadBool() = %v, want %v", actual, expected)
-		}
+
+		assert.NoError(t, err)
+		assert.Equal(t, expected, actual)
+		assert.Equal(t, 0, buf.Len())
 	}
 }
 
@@ -87,12 +76,10 @@ func TestWriteReadLong(t *testing.T) {
 	for _, expected := range values {
 		buf.WriteLong(expected)
 		actual, err := buf.ReadLong()
-		if err != nil {
-			t.Errorf("Unexpected error: %v", err)
-		}
-		if actual != expected {
-			t.Errorf("ReadLong() = %d, want %d", actual, expected)
-		}
+
+		assert.NoError(t, err)
+		assert.Equal(t, expected, actual)
+		assert.Equal(t, 0, buf.Len())
 	}
 }
 
@@ -104,12 +91,10 @@ func TestWriteReadShort(t *testing.T) {
 	for _, expected := range values {
 		buf.WriteShort(expected)
 		actual, err := buf.ReadShort()
-		if err != nil {
-			t.Errorf("Unexpected error: %v", err)
-		}
-		if actual != expected {
-			t.Errorf("ReadShort() = %d, want %d", actual, expected)
-		}
+
+		assert.NoError(t, err)
+		assert.Equal(t, expected, actual)
+		assert.Equal(t, 0, buf.Len())
 	}
 }
 
@@ -117,16 +102,15 @@ func TestWriteReadFloat(t *testing.T) {
 	buf := NewByteBuffer()
 
 	values := []float32{0.0, 3.14, -3.14, 1.5e-10, math.MaxFloat32, math.SmallestNonzeroFloat32}
+	epsilon := 0.0001
 
 	for _, expected := range values {
 		buf.WriteFloat(expected)
 		actual, err := buf.ReadFloat()
-		if err != nil {
-			t.Errorf("Unexpected error: %v", err)
-		}
-		if math.Abs(float64(actual-expected)) > 0.0001 {
-			t.Errorf("ReadFloat() = %f, want %f", actual, expected)
-		}
+
+		assert.NoError(t, err)
+		assert.InDelta(t, expected, actual, epsilon, "Float values should match within delta")
+		assert.Equal(t, 0, buf.Len())
 	}
 }
 
@@ -144,12 +128,10 @@ func TestWriteReadString(t *testing.T) {
 	for _, expected := range values {
 		buf.WriteString(expected)
 		actual, err := buf.ReadString(len(expected))
-		if err != nil {
-			t.Errorf("Unexpected error: %v", err)
-		}
-		if actual != expected {
-			t.Errorf("ReadString() = %q, want %q", actual, expected)
-		}
+
+		assert.NoError(t, err)
+		assert.Equal(t, expected, actual)
+		assert.Equal(t, 0, buf.Len())
 	}
 }
 
@@ -164,49 +146,48 @@ func TestMixedReadWrite(t *testing.T) {
 	buf.WriteByte(0xFF)
 
 	// Reading in the same order
-	i, _ := buf.ReadInt()
-	if i != 42 {
-		t.Errorf("ReadInt() = %d, want 42", i)
-	}
+	i, err := buf.ReadInt()
+	assert.NoError(t, err)
+	assert.Equal(t, int32(42), i)
 
-	b, _ := buf.ReadBool()
-	if b != true {
-		t.Errorf("ReadBool() = %v, want true", b)
-	}
+	b, err := buf.ReadBool()
+	assert.NoError(t, err)
+	assert.Equal(t, true, b)
 
-	s, _ := buf.ReadString(5)
-	if s != "Hello" {
-		t.Errorf("ReadString() = %q, want Hello", s)
-	}
+	s, err := buf.ReadString(5)
+	assert.NoError(t, err)
+	assert.Equal(t, "Hello", s)
 
-	f, _ := buf.ReadFloat()
-	if math.Abs(float64(f-3.14)) > 0.0001 {
-		t.Errorf("ReadFloat() = %f, want 3.14", f)
-	}
+	f, err := buf.ReadFloat()
+	assert.NoError(t, err)
+	assert.InDelta(t, 3.14, f, 0.0001)
 
-	by, _ := buf.ReadByte()
-	if by != 0xFF {
-		t.Errorf("ReadByte() = %d, want 255", by)
-	}
+	by, err := buf.ReadByte()
+	assert.NoError(t, err)
+	assert.Equal(t, byte(0xFF), by)
+
+	assert.Equal(t, 0, buf.Len(), "Buffer should be empty after reading all")
 }
 
 func TestReadErrors(t *testing.T) {
 	buf := NewByteBuffer()
 
+	// Read from empty buffer
 	_, err := buf.ReadInt()
-	if err == nil {
-		t.Error("ReadInt() on empty buffer should return error")
-	}
+	assert.Error(t, err, "ReadInt() on empty buffer should return error")
 
+	// Write one byte, try to read int (needs 4)
 	buf.WriteByte(0x01)
 	_, err = buf.ReadInt()
-	if err == nil {
-		t.Error("ReadInt() with insufficient data should return error")
-	}
+	assert.Error(t, err, "ReadInt() with insufficient data should return error")
 
-	if _, ok := err.(*NotEnoughBytesToRead); !ok {
-		t.Errorf("Expected NotEnoughBytesToRead error, got %T", err)
-	}
+	// Check error type
+	var notEnoughErr *NotEnoughBytesToRead
+	assert.ErrorAs(t, err, &notEnoughErr, "Error should be of type NotEnoughBytesToRead")
+
+	// Check error fields
+	assert.Equal(t, 4, notEnoughErr.need)
+	assert.Equal(t, 1, notEnoughErr.have)
 }
 
 func TestWrite(t *testing.T) {
@@ -215,19 +196,10 @@ func TestWrite(t *testing.T) {
 	data := []byte{0x01, 0x02, 0x03}
 	n, err := buf.Write(data)
 
-	if err != nil {
-		t.Errorf("Write() returned error: %v", err)
-	}
-	if n != 3 {
-		t.Errorf("Write() wrote %d bytes, want 3", n)
-	}
-	if buf.Len() != 3 {
-		t.Errorf("Buffer length = %d, want 3", buf.Len())
-	}
-
-	if !bytes.Equal(buf.data, data) {
-		t.Errorf("Buffer data = %v, want %v", buf.data, data)
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, 3, n)
+	assert.Equal(t, 3, buf.Len())
+	assert.Equal(t, data, buf.data)
 }
 
 func TestRead_ioReader(t *testing.T) {
@@ -235,88 +207,62 @@ func TestRead_ioReader(t *testing.T) {
 	buf := NewByteBufferFromBytes(data)
 
 	p := make([]byte, 2)
+
+	// First read
 	n, err := buf.Read(p)
+	assert.NoError(t, err)
+	assert.Equal(t, 2, n)
+	assert.Equal(t, []byte{0x01, 0x02}, p)
 
-	if err != nil {
-		t.Errorf("Read() returned error: %v", err)
-	}
-	if n != 2 {
-		t.Errorf("Read() read %d bytes, want 2", n)
-	}
-	if !bytes.Equal(p, []byte{0x01, 0x02}) {
-		t.Errorf("Read data = %v, want [1 2]", p)
-	}
-
+	// Second read
 	n, err = buf.Read(p)
-	if err != nil {
-		t.Errorf("Read() returned error: %v", err)
-	}
-	if n != 2 {
-		t.Errorf("Read() read %d bytes, want 2", n)
-	}
-	if !bytes.Equal(p, []byte{0x03, 0x04}) {
-		t.Errorf("Read data = %v, want [3 4]", p)
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, 2, n)
+	assert.Equal(t, []byte{0x03, 0x04}, p)
 
+	// Third read - buffer empty
 	n, err = buf.Read(p)
-	if err != io.EOF {
-		t.Errorf("Read() on empty buffer should return EOF, got %v", err)
-	}
-	if n != 0 {
-		t.Errorf("Read() on empty buffer should return 0 bytes, got %d", n)
-	}
+	assert.Equal(t, io.EOF, err)
+	assert.Equal(t, 0, n)
 }
 
 func TestReadBytes(t *testing.T) {
 	data := []byte{0x01, 0x02, 0x03, 0x04}
 	buf := NewByteBufferFromBytes(data)
 
+	// Successful read
 	readBytes, err := buf.ReadBytes(2)
-	if err != nil {
-		t.Errorf("ReadBytes(2) returned error: %v", err)
-	}
-	if !bytes.Equal(readBytes, []byte{0x01, 0x02}) {
-		t.Errorf("ReadBytes(2) = %v, want [1 2]", readBytes)
-	}
-	if buf.Len() != 2 {
-		t.Errorf("Buffer length after read = %d, want 2", buf.Len())
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, []byte{0x01, 0x02}, readBytes)
+	assert.Equal(t, 2, buf.Len())
 
+	// Error - not enough data
 	_, err = buf.ReadBytes(3)
-	if err == nil {
-		t.Error("ReadBytes(3) should return error when not enough data")
-	}
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "need 3 bytes, have 2")
 }
 
 func TestLen(t *testing.T) {
 	buf := NewByteBuffer()
-
-	if buf.Len() != 0 {
-		t.Errorf("Empty buffer length = %d, want 0", buf.Len())
-	}
+	assert.Equal(t, 0, buf.Len())
 
 	buf.WriteString("test")
-	if buf.Len() != 4 {
-		t.Errorf("Buffer length after write = %d, want 4", buf.Len())
-	}
+	assert.Equal(t, 4, buf.Len())
 
 	buf.ReadBytes(2)
-	if buf.Len() != 2 {
-		t.Errorf("Buffer length after read = %d, want 2", buf.Len())
-	}
+	assert.Equal(t, 2, buf.Len())
+
+	buf.ReadBytes(2)
+	assert.Equal(t, 0, buf.Len())
 }
 
 func TestByteWriterInterface(t *testing.T) {
 	buf := NewByteBuffer()
 
 	err := buf.WriteByte(0x42)
-	if err != nil {
-		t.Errorf("WriteByte returned error: %v", err)
-	}
-
-	if buf.Len() != 1 || buf.data[0] != 0x42 {
-		t.Errorf("WriteByte didn't write correctly")
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, 1, buf.Len())
+	assert.Equal(t, byte(0x42), buf.data[0])
 }
 
 func TestWriteBoolEdgeCases(t *testing.T) {
@@ -325,14 +271,94 @@ func TestWriteBoolEdgeCases(t *testing.T) {
 	buf.WriteBool(true)
 	buf.WriteBool(false)
 
-	if buf.Len() != 2 {
-		t.Errorf("Expected 2 bytes, got %d", buf.Len())
+	assert.Equal(t, 2, buf.Len())
+
+	val1, err := buf.ReadBool()
+	assert.NoError(t, err)
+	assert.Equal(t, true, val1)
+
+	val2, err := buf.ReadBool()
+	assert.NoError(t, err)
+	assert.Equal(t, false, val2)
+
+	assert.Equal(t, 0, buf.Len())
+}
+
+func TestBigEndian(t *testing.T) {
+	buf := NewByteBuffer()
+
+	// 0x12345678 in big-endian should be [0x12, 0x34, 0x56, 0x78]
+	buf.WriteInt(0x12345678)
+
+	expected := []byte{0x12, 0x34, 0x56, 0x78}
+	assert.Equal(t, expected, buf.data)
+
+	// Read back and verify
+	val, err := buf.ReadInt()
+	assert.NoError(t, err)
+	assert.Equal(t, int32(0x12345678), val)
+}
+
+func TestFloatSpecialValues(t *testing.T) {
+	buf := NewByteBuffer()
+
+	// Test NaN
+	buf.WriteFloat(float32(math.NaN()))
+	f, err := buf.ReadFloat()
+	assert.NoError(t, err)
+	assert.True(t, math.IsNaN(float64(f)))
+
+	// Test +Inf
+	buf.WriteFloat(float32(math.Inf(1)))
+	f, err = buf.ReadFloat()
+	assert.NoError(t, err)
+	assert.True(t, math.IsInf(float64(f), 1))
+
+	// Test -Inf
+	buf.WriteFloat(float32(math.Inf(-1)))
+	f, err = buf.ReadFloat()
+	assert.NoError(t, err)
+	assert.True(t, math.IsInf(float64(f), -1))
+}
+
+func TestMultipleWritesReads(t *testing.T) {
+	buf := NewByteBuffer()
+
+	// Write multiple values
+	for i := range 10 {
+		buf.WriteInt(int32(i))
+		buf.WriteBool(i%2 == 0)
 	}
 
-	val1, _ := buf.ReadBool()
-	val2, _ := buf.ReadBool()
+	// Read them back
+	for i := range 10 {
+		val, err := buf.ReadInt()
+		assert.NoError(t, err)
+		assert.Equal(t, int32(i), val)
 
-	if val1 != true || val2 != false {
-		t.Errorf("WriteBool wrote wrong values: got %v, %v", val1, val2)
+		b, err := buf.ReadBool()
+		assert.NoError(t, err)
+		assert.Equal(t, i%2 == 0, b)
 	}
+
+	assert.Equal(t, 0, buf.Len())
+}
+
+func TestReadWriteAfterClear(t *testing.T) {
+	buf := NewByteBuffer()
+
+	// Write and read some data
+	buf.WriteInt(42)
+	buf.ReadInt()
+
+	// Buffer should be empty
+	assert.Equal(t, 0, buf.Len())
+
+	// Can write again
+	buf.WriteInt(100)
+	assert.Equal(t, 4, buf.Len())
+
+	val, err := buf.ReadInt()
+	assert.NoError(t, err)
+	assert.Equal(t, int32(100), val)
 }
