@@ -1,20 +1,20 @@
 package codec
 
 import (
+	"bytes"
 	"fmt"
-	"io"
 )
 
 // Interface for all codecs, whether primitive or complex.
 type Codec interface {
-	Decode(reader io.Reader) (any, error)
-	Encode(rawValue any, writer io.Writer) (int, error)
+	Decode(buf *bytes.Buffer) (any, error)
+	Encode(rawValue any, buf *bytes.Buffer) (int, error)
 }
 
 // Codec for concrete type.
 type TypedCodec[T any] interface {
-	Decode(reader io.Reader) (T, error)
-	Encode(value T, writer io.Writer) (int, error)
+	Decode(buf *bytes.Buffer) (T, error)
+	Encode(value T, buf *bytes.Buffer) (int, error)
 }
 
 // Proxy for typed codecs: Encode() checks that passed value is of type T.
@@ -22,17 +22,22 @@ type CodecWrapper[T any] struct {
 	typedCodec TypedCodec[T]
 }
 
-func (bc *CodecWrapper[T]) Decode(reader io.Reader) (any, error) {
-	return bc.typedCodec.Decode(reader)
+// Decodes value from reader using underlying TypedCodec.
+// This method simply transfers the call to TypedCodec.
+func (bc *CodecWrapper[T]) Decode(buf *bytes.Buffer) (any, error) {
+	return bc.typedCodec.Decode(buf)
 }
 
-func (bc *CodecWrapper[T]) Encode(rawValue any, writer io.Writer) (int, error) {
+// Encodes value using underlying TypedCodec.
+// Checks if rawValue is of type T, if it's not, panics.
+// Returns number of bytes written and an error.
+func (bc *CodecWrapper[T]) Encode(rawValue any, buf *bytes.Buffer) (int, error) {
 	value, ok := rawValue.(T)
 	if !ok {
 		var zero T
 		panic(fmt.Errorf("CodecWrapper: expected type %T, got %T", zero, rawValue))
 	}
-	return bc.typedCodec.Encode(value, writer)
+	return bc.typedCodec.Encode(value, buf)
 }
 
 // Creates an instance of CodecWrapper[T] for specified TypedCodec[T].

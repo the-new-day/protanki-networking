@@ -345,17 +345,17 @@ func TestErrorCases(t *testing.T) {
 	})
 
 	t.Run("insufficient data", func(t *testing.T) {
-		partial := bytes.NewReader([]byte{0x01, 0x02})
+		partial := bytes.NewBuffer([]byte{0x01, 0x02})
 
 		_, err := (&IntCodec{}).Decode(partial)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "unexpected EOF")
 
-		partial.Reset([]byte{0x01})
+		partial.Reset()
 		_, err = (&ShortCodec{}).Decode(partial)
 		assert.Error(t, err)
 
-		partial.Reset([]byte{0x01, 0x02, 0x03})
+		partial.Reset()
 		_, err = (&LongCodec{}).Decode(partial)
 		assert.Error(t, err)
 	})

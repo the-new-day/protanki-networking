@@ -1,18 +1,17 @@
 package primitive
 
-import "io"
+import "bytes"
 
 type ByteCodec struct{}
 
-func (c *ByteCodec) Decode(reader io.Reader) (byte, error) {
-	var buf [1]byte
-	_, err := reader.Read(buf[:])
+func (c *ByteCodec) Decode(buf *bytes.Buffer) (byte, error) {
+	return buf.ReadByte()
+}
+
+func (c *ByteCodec) Encode(value byte, buf *bytes.Buffer) (int, error) {
+	err := buf.WriteByte(value)
 	if err != nil {
 		return 0, err
 	}
-	return buf[0], nil
-}
-
-func (c *ByteCodec) Encode(value byte, writer io.Writer) (int, error) {
-	return writer.Write([]byte{value})
+	return 1, nil
 }
