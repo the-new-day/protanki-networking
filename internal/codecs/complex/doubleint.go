@@ -1,0 +1,16 @@
+package complex
+
+import (
+	"github.com/the-new-day/probogo/internal/codecs/multiple"
+	"github.com/the-new-day/probogo/internal/codecs/primitive"
+)
+
+type DoubleIntCodec struct {
+	multiple.MultiCodec[int32]
+}
+
+func NewDoubleIntCodec(attr1 string, attr2 string) *DoubleIntCodec {
+	return &DoubleIntCodec{
+		MultiCodec: *multiple.NewMultiCodec([]string{attr1, attr2}, &primitive.IntCodec{}, true),
+	}
+}

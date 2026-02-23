@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/the-new-day/probogo/internal/codec"
+	"github.com/the-new-day/probogo/internal/codecs"
 )
 
 func TestBoolCodec(t *testing.T) {
@@ -41,7 +41,7 @@ func TestBoolCodec(t *testing.T) {
 
 func TestBoolCodec_AsCodec(t *testing.T) {
 	typed := &BoolCodec{}
-	wrapped := codec.Wrap(typed)
+	wrapped := codecs.Wrap(typed)
 	buf := &bytes.Buffer{}
 
 	// Test as Codec interface
@@ -56,7 +56,7 @@ func TestBoolCodec_AsCodec(t *testing.T) {
 
 func TestBoolCodec_WrongTypePanic(t *testing.T) {
 	typed := &BoolCodec{}
-	wrapped := codec.Wrap(typed)
+	wrapped := codecs.Wrap(typed)
 	buf := &bytes.Buffer{}
 
 	assert.Panics(t, func() {
@@ -94,7 +94,7 @@ func TestByteCodec(t *testing.T) {
 			assert.Equal(t, 0, buf.Len())
 
 			// Test wrapped
-			wrapped := codec.Wrap(typed)
+			wrapped := codecs.Wrap(typed)
 			buf2 := &bytes.Buffer{}
 			n, err = wrapped.Encode(tt.value, buf2)
 			assert.NoError(t, err)
@@ -403,26 +403,26 @@ func TestMultipleValues(t *testing.T) {
 
 func TestInterfaceCompliance(t *testing.T) {
 	// Verify all codecs implement TypedCodec
-	var _ codec.TypedCodec[bool] = &BoolCodec{}
-	var _ codec.TypedCodec[byte] = &ByteCodec{}
-	var _ codec.TypedCodec[float32] = &FloatCodec{}
-	var _ codec.TypedCodec[int32] = &IntCodec{}
-	var _ codec.TypedCodec[int16] = &ShortCodec{}
-	var _ codec.TypedCodec[int64] = &LongCodec{}
+	var _ codecs.TypedCodec[bool] = &BoolCodec{}
+	var _ codecs.TypedCodec[byte] = &ByteCodec{}
+	var _ codecs.TypedCodec[float32] = &FloatCodec{}
+	var _ codecs.TypedCodec[int32] = &IntCodec{}
+	var _ codecs.TypedCodec[int16] = &ShortCodec{}
+	var _ codecs.TypedCodec[int64] = &LongCodec{}
 
 	// Verify wrappers implement Codec
-	var _ codec.Codec = codec.Wrap(&BoolCodec{})
-	var _ codec.Codec = codec.Wrap(&ByteCodec{})
-	var _ codec.Codec = codec.Wrap(&FloatCodec{})
-	var _ codec.Codec = codec.Wrap(&IntCodec{})
-	var _ codec.Codec = codec.Wrap(&ShortCodec{})
-	var _ codec.Codec = codec.Wrap(&LongCodec{})
+	var _ codecs.Codec = codecs.Wrap(&BoolCodec{})
+	var _ codecs.Codec = codecs.Wrap(&ByteCodec{})
+	var _ codecs.Codec = codecs.Wrap(&FloatCodec{})
+	var _ codecs.Codec = codecs.Wrap(&IntCodec{})
+	var _ codecs.Codec = codecs.Wrap(&ShortCodec{})
+	var _ codecs.Codec = codecs.Wrap(&LongCodec{})
 }
 
 func TestCodecWrapper_Array(t *testing.T) {
-	codecs := []codec.Codec{
-		codec.Wrap(&BoolCodec{}),
-		codec.Wrap(&IntCodec{}),
+	codecs := []codecs.Codec{
+		codecs.Wrap(&BoolCodec{}),
+		codecs.Wrap(&IntCodec{}),
 	}
 
 	assert.Len(t, codecs, 2)

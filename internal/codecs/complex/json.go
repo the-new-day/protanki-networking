@@ -10,6 +10,10 @@ type JsonCodec struct {
 	StringCodec
 }
 
+func NewJsonCodec() *JsonCodec {
+	return &JsonCodec{}
+}
+
 func (c *JsonCodec) Decode(buf *bytes.Buffer) (map[string]any, error) {
 	jsonStr, err := c.StringCodec.Decode(buf)
 	if err != nil {

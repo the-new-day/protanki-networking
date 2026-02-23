@@ -1,11 +1,11 @@
-package factory
+package multiple
 
 import (
 	"bytes"
 	"fmt"
 
-	"github.com/the-new-day/probogo/internal/codec"
-	"github.com/the-new-day/probogo/internal/codec/primitive"
+	"github.com/the-new-day/probogo/internal/codecs"
+	"github.com/the-new-day/probogo/internal/codecs/primitive"
 )
 
 // MultiCodec encodes/decodes multiple fields of the same type T.
@@ -15,11 +15,11 @@ import (
 //   - N values encoded with elementCodec (TypedCodec[T]) in attributes order
 type MultiCodec[T any] struct {
 	attributes   []string
-	elementCodec codec.TypedCodec[T]
+	elementCodec codecs.TypedCodec[T]
 	boolshortern bool
 }
 
-func NewMultiCodec[T any](attrs []string, elemCodec codec.TypedCodec[T], boolshortern bool) *MultiCodec[T] {
+func NewMultiCodec[T any](attrs []string, elemCodec codecs.TypedCodec[T], boolshortern bool) *MultiCodec[T] {
 	return &MultiCodec[T]{
 		attributes:   attrs,
 		elementCodec: elemCodec,

@@ -4,13 +4,17 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/the-new-day/probogo/internal/codec/primitive"
+	"github.com/the-new-day/probogo/internal/codecs/primitive"
 	"github.com/the-new-day/probogo/internal/utils"
 )
 
 type StringCodec struct {
 	primitive.BoolCodec
 	primitive.IntCodec
+}
+
+func NewStringCodec() *StringCodec {
+	return &StringCodec{}
 }
 
 // 1 Byte - Is string empty? (If empty, everything else is ignored)

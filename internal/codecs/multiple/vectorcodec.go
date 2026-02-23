@@ -1,11 +1,11 @@
-package factory
+package multiple
 
 import (
 	"bytes"
 	"fmt"
 
-	"github.com/the-new-day/probogo/internal/codec"
-	"github.com/the-new-day/probogo/internal/codec/primitive"
+	"github.com/the-new-day/probogo/internal/codecs"
+	"github.com/the-new-day/probogo/internal/codecs/primitive"
 )
 
 // VectorCodec encodes/decodes a slice of elements of type T.
@@ -15,11 +15,11 @@ import (
 //   - 4 bytes length (int32)
 //   - N elements encoded with elementCodec (TypedCodec[T])
 type VectorCodec[T any] struct {
-	elementCodec codec.TypedCodec[T]
+	elementCodec codecs.TypedCodec[T]
 	boolshortern bool
 }
 
-func NewVectorCodec[T any](elemCodec codec.TypedCodec[T], boolshortern bool) *VectorCodec[T] {
+func NewVectorCodec[T any](elemCodec codecs.TypedCodec[T], boolshortern bool) *VectorCodec[T] {
 	return &VectorCodec[T]{
 		elementCodec: elemCodec,
 		boolshortern: boolshortern,
