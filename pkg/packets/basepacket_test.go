@@ -78,12 +78,11 @@ func TestNewBasePacket(t *testing.T) {
 	codecs := []codec.Codec{codec.Wrap(&primitive.IntCodec{}), codec.Wrap(&primitive.BoolCodec{})}
 	attrs := []string{"field1", "field2"}
 
-	packet := NewBasePacket(123, codecs, attrs, true)
+	packet := NewBasePacket(123, codecs, attrs)
 
 	assert.Equal(t, int32(123), packet.id)
 	assert.Equal(t, codecs, packet.codecs)
 	assert.Equal(t, attrs, packet.attributes)
-	assert.Equal(t, true, packet.shouldLog)
 	assert.Empty(t, packet.objects)
 	assert.Empty(t, packet.object)
 }
@@ -95,7 +94,7 @@ func TestNewBasePacket_PanicOnMismatch(t *testing.T) {
 	assert.PanicsWithValue(t,
 		"NewBasePacket: codecs and attributes length must be equal; codecs has 1 elements, attributes has 2 elements",
 		func() {
-			NewBasePacket(1, codecs, attrs, true)
+			NewBasePacket(1, codecs, attrs)
 		})
 }
 
@@ -105,7 +104,7 @@ func TestBasePacket_Unwrap_Success(t *testing.T) {
 	mockCodec2 := &simpleCodec{decodeValue: true}
 	codecs := []codec.Codec{mockCodec1, mockCodec2}
 	attrs := []string{"number", "flag"}
-	packet := NewBasePacket(1, codecs, attrs, true)
+	packet := NewBasePacket(1, codecs, attrs)
 
 	// Data that will be "decoded" (one byte per codec)
 	data := bytes.NewBuffer([]byte{0x01, 0x02})
@@ -127,7 +126,7 @@ func TestBasePacket_Unwrap_Error(t *testing.T) {
 	// Setup
 	mockCodec := &simpleCodec{decodeErr: assert.AnError}
 	codecs := []codec.Codec{mockCodec}
-	packet := NewBasePacket(1, codecs, []string{"field"}, true)
+	packet := NewBasePacket(1, codecs, []string{"field"})
 
 	data := bytes.NewBuffer([]byte{0x01})
 
@@ -146,7 +145,7 @@ func TestBasePacket_Wrap_Success(t *testing.T) {
 	mockCodec1 := &simpleCodec{}
 	mockCodec2 := &simpleCodec{}
 	codecs := []codec.Codec{mockCodec1, mockCodec2}
-	packet := NewBasePacket(123, codecs, []string{"f1", "f2"}, true)
+	packet := NewBasePacket(123, codecs, []string{"f1", "f2"})
 	packet.objects = []any{int32(42), true}
 
 	mockProt := &mockProtection{}
@@ -188,7 +187,7 @@ func TestBasePacket_Wrap_WithXorProtection(t *testing.T) {
 	encryptProt.Activate([]byte{0x12, 0x34})
 
 	intCodec := &primitive.IntCodec{}
-	packet := NewBasePacket(42, []codec.Codec{codec.Wrap(intCodec)}, []string{"value"}, true)
+	packet := NewBasePacket(42, []codec.Codec{codec.Wrap(intCodec)}, []string{"value"})
 	packet.objects = []any{int32(1000)}
 
 	result, err := packet.Wrap(encryptProt)
@@ -198,7 +197,7 @@ func TestBasePacket_Wrap_WithXorProtection(t *testing.T) {
 	encryptedPayload := result.Bytes()[8:]
 	decrypted := decryptProt.Decrypt(encryptedPayload)
 
-	newPacket := NewBasePacket(42, []codec.Codec{codec.Wrap(intCodec)}, []string{"value"}, true)
+	newPacket := NewBasePacket(42, []codec.Codec{codec.Wrap(intCodec)}, []string{"value"})
 	unwrapped, err := newPacket.Unwrap(bytes.NewBuffer(decrypted))
 	assert.NoError(t, err)
 
@@ -208,7 +207,7 @@ func TestBasePacket_Wrap_WithXorProtection(t *testing.T) {
 func TestBasePacket_Wrap_ErrorOnEncode(t *testing.T) {
 	// Setup codec that fails on Encode
 	mockCodec := &simpleCodec{encodeErr: assert.AnError}
-	packet := NewBasePacket(1, []codec.Codec{mockCodec}, []string{"field"}, true)
+	packet := NewBasePacket(1, []codec.Codec{mockCodec}, []string{"field"})
 	packet.objects = []any{int32(42)}
 
 	mockProt := &mockProtection{}
@@ -225,7 +224,7 @@ func TestBasePacket_Wrap_ErrorOnEncode(t *testing.T) {
 
 func TestBasePacket_Wrap_PanicOnNilProtection(t *testing.T) {
 	mockCodec := &simpleCodec{}
-	packet := NewBasePacket(1, []codec.Codec{mockCodec}, []string{"field"}, true)
+	packet := NewBasePacket(1, []codec.Codec{mockCodec}, []string{"field"})
 	assert.Panics(t, func() {
 		packet.Wrap(nil)
 	})
@@ -237,7 +236,7 @@ func TestBasePacket_Implement(t *testing.T) {
 		codec.Wrap(complex.NewStringCodec()),
 		codec.Wrap(&primitive.BoolCodec{}),
 	}
-	packet := NewBasePacket(1, codecs, []string{"a", "b", "c"}, true)
+	packet := NewBasePacket(1, codecs, []string{"a", "b", "c"})
 	packet.objects = []any{1, "hello", true}
 
 	result := packet.implement()
@@ -252,7 +251,7 @@ func TestBasePacket_Implement(t *testing.T) {
 }
 
 func TestBasePacket_Implement_Empty(t *testing.T) {
-	packet := NewBasePacket(1, nil, []string{}, true)
+	packet := NewBasePacket(1, nil, []string{})
 	packet.objects = []any{}
 
 	result := packet.implement()
@@ -270,7 +269,7 @@ func TestBasePacket_Unwrap_Wrap_Integration(t *testing.T) {
 	codecs := []codec.Codec{codec.Wrap(intCodec), codec.Wrap(boolCodec), stringCodec}
 	attrs := []string{"age", "active", "name"}
 
-	packet := NewBasePacket(555, codecs, attrs, true)
+	packet := NewBasePacket(555, codecs, attrs)
 	originalData := map[string]any{
 		"age":    int32(25),
 		"active": true,
@@ -286,7 +285,7 @@ func TestBasePacket_Unwrap_Wrap_Integration(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Create new packet for unwrapping
-	newPacket := NewBasePacket(555, codecs, attrs, true)
+	newPacket := NewBasePacket(555, codecs, attrs)
 
 	// Unwrap (skip header)
 	payload := wrapped.Bytes()[8:] // after header

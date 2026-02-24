@@ -14,9 +14,7 @@ const HeaderLength = 8
 
 // Represents packets that are sent and received by the server.
 type Packet interface {
-	ID() int64
-	Codecs() []codec.Codec
-	Attributes() []string
+	ID() int32
 	ShouldLog() bool
 	Unwrap(packetData *bytes.Buffer) (map[string]any, error)
 	Wrap(protection *protection.Protection, s2cProxy bool) (*bytes.Buffer, error)
@@ -26,18 +24,17 @@ type Packet interface {
 // Provides all necessary functionality and should be embedded to concrete packet implementations.
 //
 // Concrete packet implementations should only
-// provide id, description, codecs, attributes and shouldLog in their constructors.
+// provide id, codecs, attributes in their constructors.
 type BasePacket struct {
 	id         int32
 	codecs     []codec.Codec
 	attributes []string
-	shouldLog  bool
 
 	objects []any
 	object  map[string]any
 }
 
-func NewBasePacket(id int32, codecs []codec.Codec, attributes []string, shouldLog bool) *BasePacket {
+func NewBasePacket(id int32, codecs []codec.Codec, attributes []string) *BasePacket {
 	if len(codecs) != len(attributes) {
 		panic(fmt.Sprintf(
 			"NewBasePacket: codecs and attributes length must be equal; codecs has %d elements, attributes has %d elements",
@@ -53,7 +50,6 @@ func NewBasePacket(id int32, codecs []codec.Codec, attributes []string, shouldLo
 		id:         id,
 		codecs:     cdcs,
 		attributes: attrs,
-		shouldLog:  shouldLog,
 		objects:    make([]any, 0),
 		object:     make(map[string]any),
 	}
@@ -118,4 +114,8 @@ func (bp *BasePacket) implement() map[string]any {
 		bp.object[bp.attributes[i]] = obj
 	}
 	return bp.object
+}
+
+func (bp *BasePacket) ID() int32 {
+	return bp.id
 }
