@@ -26,6 +26,9 @@ func NewCustomCodec(boolshortern bool) *CustomCodec {
 }
 
 func (c *CustomCodec) AddField(name string, codec codec.Codec) {
+	if codec == nil {
+		panic(fmt.Sprintf("CustomCodec.AddField: nil codec is passed for %q", name))
+	}
 	c.attributes = append(c.attributes, name)
 	c.codecs = append(c.codecs, codec)
 }
@@ -37,8 +40,7 @@ func (c *CustomCodec) AddField(name string, codec codec.Codec) {
 //
 // Instead of cc.AddField("name", codec.Wrap(&primitive.IntCodec{})).
 func AddField[T any](cc *CustomCodec, name string, typedCodec codec.TypedCodec[T]) {
-	cc.attributes = append(cc.attributes, name)
-	cc.codecs = append(cc.codecs, codec.Wrap(typedCodec))
+	cc.AddField(name, codec.Wrap(typedCodec))
 }
 
 // Decodes a map from the buffer according to the defined fields.

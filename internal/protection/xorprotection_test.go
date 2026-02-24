@@ -10,10 +10,10 @@ func TestClientServerInteraction(t *testing.T) {
 	keys := []byte{0x12, 0x34, 0x56, 0x78}
 	originalData := []byte("Hello World!")
 
-	client := NewProtection(false)
+	client := NewXorProtection(false)
 	client.Activate(keys)
 
-	server := NewProtection(true)
+	server := NewXorProtection(true)
 	server.Activate(keys)
 
 	encrypted := client.Encrypt(originalData)
@@ -26,7 +26,7 @@ func TestClientServerInteraction(t *testing.T) {
 }
 
 func TestInactiveState(t *testing.T) {
-	p := NewProtection(false)
+	p := NewXorProtection(false)
 	data := []byte{1, 2, 3, 4, 5}
 
 	encrypted := p.Encrypt(data)
@@ -40,7 +40,7 @@ func TestStatefulness(t *testing.T) {
 	keys := []byte{0xAA}
 	data := []byte{0x00, 0x00, 0x00, 0x00}
 
-	p := NewProtection(false)
+	p := NewXorProtection(false)
 	p.Activate(keys)
 
 	firstPass := p.Encrypt(data)
@@ -56,7 +56,7 @@ func TestNoMutation(t *testing.T) {
 	snapshot := make([]byte, len(originalData))
 	copy(snapshot, originalData)
 
-	p := NewProtection(false)
+	p := NewXorProtection(false)
 	p.Activate(keys)
 
 	_ = p.Encrypt(originalData)

@@ -7,7 +7,12 @@ import (
 
 // Interface for all codecs, whether primitive or complex.
 type Codec interface {
+	// Reads N bytes from the buffer and returns decoded value. N is determined by the concrete codec.
+	// Returns the decoded value and an error if decoding failed.
 	Decode(buf *bytes.Buffer) (any, error)
+
+	// Encodes and writes the value into the buffer.
+	// Returns number of bytes written and an error if encoding/writing failer
 	Encode(rawValue any, buf *bytes.Buffer) (int, error)
 }
 
