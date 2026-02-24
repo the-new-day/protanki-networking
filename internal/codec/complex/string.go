@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/the-new-day/probogo/internal/codecs/primitive"
+	"github.com/the-new-day/probogo/internal/codec/primitive"
 	"github.com/the-new-day/probogo/internal/utils"
 )
 

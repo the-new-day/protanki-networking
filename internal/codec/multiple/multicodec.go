@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/the-new-day/probogo/internal/codecs"
-	"github.com/the-new-day/probogo/internal/codecs/primitive"
+	"github.com/the-new-day/probogo/internal/codec"
+	"github.com/the-new-day/probogo/internal/codec/primitive"
 )
 
 // MultiCodec encodes/decodes multiple fields of the same type T.
@@ -15,11 +15,11 @@ import (
 //   - N values encoded with elementCodec (TypedCodec[T]) in attributes order
 type MultiCodec[T any] struct {
 	attributes   []string
-	elementCodec codecs.TypedCodec[T]
+	elementCodec codec.TypedCodec[T]
 	boolshortern bool
 }
 
-func NewMultiCodec[T any](attrs []string, elemCodec codecs.TypedCodec[T], boolshortern bool) *MultiCodec[T] {
+func NewMultiCodec[T any](attrs []string, elemCodec codec.TypedCodec[T], boolshortern bool) *MultiCodec[T] {
 	return &MultiCodec[T]{
 		attributes:   attrs,
 		elementCodec: elemCodec,
@@ -27,8 +27,8 @@ func NewMultiCodec[T any](attrs []string, elemCodec codecs.TypedCodec[T], boolsh
 	}
 }
 
-func (c *MultiCodec[T]) Decode(buf *bytes.Buffer) (map[string]any, error) {
-	result := make(map[string]any)
+func (c *MultiCodec[T]) Decode(buf *bytes.Buffer) (map[string]T, error) {
+	result := make(map[string]T)
 
 	if c.boolshortern {
 		boolCodec := &primitive.BoolCodec{}
@@ -52,7 +52,7 @@ func (c *MultiCodec[T]) Decode(buf *bytes.Buffer) (map[string]any, error) {
 	return result, nil
 }
 
-func (c *MultiCodec[T]) Encode(value map[string]any, buf *bytes.Buffer) (int, error) {
+func (c *MultiCodec[T]) Encode(value map[string]T, buf *bytes.Buffer) (int, error) {
 	totalBytes := 0
 
 	if c.boolshortern {
@@ -70,15 +70,9 @@ func (c *MultiCodec[T]) Encode(value map[string]any, buf *bytes.Buffer) (int, er
 	}
 
 	for _, attr := range c.attributes {
-		rawVal, ok := value[attr]
+		val, ok := value[attr]
 		if !ok {
 			return totalBytes, fmt.Errorf("MultiCodec: missing attribute %q", attr)
-		}
-
-		val, ok := rawVal.(T)
-		if !ok {
-			var zero T
-			return totalBytes, fmt.Errorf("MultiCodec: attribute %q expected %T, got %T", attr, zero, rawVal)
 		}
 
 		n, err := c.elementCodec.Encode(val, buf)

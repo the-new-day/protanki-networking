@@ -1,9 +1,9 @@
 package complex
 
-import "github.com/the-new-day/probogo/internal/codecs/multiple"
+import "github.com/the-new-day/probogo/internal/codec/multiple"
 
 type VectorVector3DCodec struct {
-	multiple.VectorCodec[map[string]any]
+	multiple.VectorCodec[map[string]float32]
 }
 
 func NewVectorVector3DCodec() *VectorVector3DCodec {

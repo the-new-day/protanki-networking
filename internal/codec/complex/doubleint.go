@@ -1,8 +1,8 @@
 package complex
 
 import (
-	"github.com/the-new-day/probogo/internal/codecs/multiple"
-	"github.com/the-new-day/probogo/internal/codecs/primitive"
+	"github.com/the-new-day/probogo/internal/codec/multiple"
+	"github.com/the-new-day/probogo/internal/codec/primitive"
 )
 
 type DoubleIntCodec struct {

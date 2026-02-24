@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/the-new-day/probogo/internal/codecs/primitive"
+	"github.com/the-new-day/probogo/internal/codec/primitive"
 )
 
 func TestStringCodec(t *testing.T) {
@@ -78,7 +78,7 @@ func TestDoubleIntCodec(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			buf := &bytes.Buffer{}
 
-			data := map[string]any{
+			data := map[string]int32{
 				"first":  tt.first,
 				"second": tt.second,
 			}
@@ -100,7 +100,7 @@ func TestDoubleIntCodec_Empty(t *testing.T) {
 	buf := &bytes.Buffer{}
 
 	// Encode empty (should still write boolshortern flag = false because not empty)
-	data := map[string]any{
+	data := map[string]int32{
 		"first":  int32(0),
 		"second": int32(0),
 	}
@@ -110,7 +110,7 @@ func TestDoubleIntCodec_Empty(t *testing.T) {
 
 	// Empty map should have boolshortern = true
 	buf.Reset()
-	n, err = codec.Encode(map[string]any{}, buf)
+	n, err = codec.Encode(map[string]int32{}, buf)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, n) // only boolshortern flag
 }
@@ -132,7 +132,7 @@ func TestVector3DCodec(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			buf := &bytes.Buffer{}
 
-			data := map[string]any{
+			data := map[string]float32{
 				"x": tt.x,
 				"y": tt.y,
 				"z": tt.z,
@@ -144,9 +144,9 @@ func TestVector3DCodec(t *testing.T) {
 
 			result, err := codec.Decode(buf)
 			assert.NoError(t, err)
-			assert.InDelta(t, tt.x, result["x"].(float32), 0.0001)
-			assert.InDelta(t, tt.y, result["y"].(float32), 0.0001)
-			assert.InDelta(t, tt.z, result["z"].(float32), 0.0001)
+			assert.InDelta(t, tt.x, result["x"], 0.0001)
+			assert.InDelta(t, tt.y, result["y"], 0.0001)
+			assert.InDelta(t, tt.z, result["z"], 0.0001)
 		})
 	}
 }
@@ -156,21 +156,21 @@ func TestVectorVector3DCodec(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		vectors []map[string]any
+		vectors []map[string]float32
 	}{
 		{
 			name:    "empty",
-			vectors: []map[string]any{},
+			vectors: []map[string]float32{},
 		},
 		{
 			name: "single",
-			vectors: []map[string]any{
+			vectors: []map[string]float32{
 				{"x": float32(1.0), "y": float32(2.0), "z": float32(3.0)},
 			},
 		},
 		{
 			name: "multiple",
-			vectors: []map[string]any{
+			vectors: []map[string]float32{
 				{"x": float32(1.0), "y": float32(2.0), "z": float32(3.0)},
 				{"x": float32(4.0), "y": float32(5.0), "z": float32(6.0)},
 				{"x": float32(7.0), "y": float32(8.0), "z": float32(9.0)},
@@ -204,9 +204,9 @@ func TestVectorVector3DCodec(t *testing.T) {
 
 			for i, vec := range result {
 				expected := tt.vectors[i]
-				assert.InDelta(t, expected["x"], vec["x"].(float32), 0.0001)
-				assert.InDelta(t, expected["y"], vec["y"].(float32), 0.0001)
-				assert.InDelta(t, expected["z"], vec["z"].(float32), 0.0001)
+				assert.InDelta(t, expected["x"], vec["x"], 0.0001)
+				assert.InDelta(t, expected["y"], vec["y"], 0.0001)
+				assert.InDelta(t, expected["z"], vec["z"], 0.0001)
 			}
 		})
 	}
@@ -331,8 +331,8 @@ func TestErrorCases(t *testing.T) {
 		buf := &bytes.Buffer{}
 
 		// Missing "second"
-		data := map[string]any{
-			"first": int32(42),
+		data := map[string]int32{
+			"first": 42,
 		}
 
 		_, err := codec.Encode(data, buf)
@@ -346,7 +346,7 @@ func TestVectorVector3DCodec_WithBoolshortern(t *testing.T) {
 	buf := &bytes.Buffer{}
 
 	// Test with empty slice
-	emptySlice := []map[string]any{}
+	emptySlice := []map[string]float32{}
 	n, err := codec.Encode(emptySlice, buf)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, n) // only vector empty flag
@@ -357,7 +357,7 @@ func TestVectorVector3DCodec_WithBoolshortern(t *testing.T) {
 
 	// Test with slice containing empty vectors
 	buf.Reset()
-	vectorsWithEmpty := []map[string]any{
+	vectorsWithEmpty := []map[string]float32{
 		{}, // empty vector (boolshortern = true)
 		{"x": float32(1.0), "y": float32(2.0), "z": float32(3.0)},
 	}

@@ -4,28 +4,41 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/the-new-day/probogo/internal/codecs"
-	"github.com/the-new-day/probogo/internal/codecs/primitive"
+	"github.com/the-new-day/probogo/internal/codec"
+	"github.com/the-new-day/probogo/internal/codec/primitive"
 )
 
 // Base codec for complex objects with multiple fields.
+//
+// If boolshortern enabled: first byte of encoded data is the empty flag (1 = empty, 0 = not empty).
 type CustomCodec struct {
 	attributes   []string
-	codecs       []codecs.Codec
+	codecs       []codec.Codec
 	boolshortern bool
 }
 
 func NewCustomCodec(boolshortern bool) *CustomCodec {
 	return &CustomCodec{
 		attributes:   make([]string, 0),
-		codecs:       make([]codecs.Codec, 0),
+		codecs:       make([]codec.Codec, 0),
 		boolshortern: boolshortern,
 	}
 }
 
-func (c *CustomCodec) AddField(name string, codec codecs.Codec) {
+func (c *CustomCodec) AddField(name string, codec codec.Codec) {
 	c.attributes = append(c.attributes, name)
 	c.codecs = append(c.codecs, codec)
+}
+
+// Helper function for adding field to a CustomCodec.
+// It's similar to CustomCodec.AddField, but for typed codecs.
+//
+// This can be used to add field like this: AddField(cc, "name", &primitive.IntCodec{})
+//
+// Instead of cc.AddField("name", codec.Wrap(&primitive.IntCodec{})).
+func AddField[T any](cc *CustomCodec, name string, typedCodec codec.TypedCodec[T]) {
+	cc.attributes = append(cc.attributes, name)
+	cc.codecs = append(cc.codecs, codec.Wrap(typedCodec))
 }
 
 // Decodes a map from the buffer according to the defined fields.
