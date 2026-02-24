@@ -1,0 +1,29 @@
+package battleinfo
+
+import (
+	"github.com/the-new-day/probogo/internal/codec"
+	"github.com/the-new-day/probogo/internal/codec/primitive"
+	"github.com/the-new-day/probogo/pkg/packets"
+)
+
+// Update the score of a team within battle.
+type UpdateTeamBattleScorePacket struct {
+	packets.BasePacket
+}
+
+func NewUpdateTeamBattleScorePacket() *UpdateTeamBattleScorePacket {
+	codecs := []codec.Codec{
+		codec.Wrap(&primitive.IntCodec{}),
+		codec.Wrap(&primitive.IntCodec{}),
+	}
+	attributes := []string{
+		"team",
+		"score",
+	}
+
+	var id int32 = 561771020
+
+	return &UpdateTeamBattleScorePacket{
+		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
+	}
+}
