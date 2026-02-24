@@ -13,9 +13,9 @@ func NewUserStatusCodec() *UserStatusCodec {
 	customCodec := NewCustomCodec(false)
 
 	AddField(customCodec, "modLevel", &primitive.IntCodec{})
-	AddField(customCodec, "ip", &complex.StringCodec{})
+	AddField(customCodec, "ip", complex.NewStringCodec())
 	AddField(customCodec, "rank", &primitive.IntCodec{})
-	AddField(customCodec, "username", &complex.StringCodec{})
+	AddField(customCodec, "username", complex.NewStringCodec())
 
 	return &UserStatusCodec{CustomCodec: *customCodec}
 }

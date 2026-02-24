@@ -11,9 +11,9 @@ type FlagInfoCodec struct {
 func NewFlagInfoCodec() *FlagInfoCodec {
 	customCodec := NewCustomCodec(false)
 
-	AddField(customCodec, "pole_pos", &complex.Vector3DCodec{})
-	AddField(customCodec, "holder", &complex.StringCodec{})
-	AddField(customCodec, "current_pos", &complex.Vector3DCodec{})
+	AddField(customCodec, "pole_pos", complex.NewVector3DCodec())
+	AddField(customCodec, "holder", complex.NewStringCodec())
+	AddField(customCodec, "current_pos", complex.NewVector3DCodec())
 
 	return &FlagInfoCodec{CustomCodec: *customCodec}
 }

@@ -14,7 +14,7 @@ func NewTankDamageCodec() *TankDamageCodec {
 
 	AddField(customCodec, "damage", &primitive.IntCodec{})
 	AddField(customCodec, "damageType", &primitive.IntCodec{})
-	AddField(customCodec, "target", &complex.StringCodec{})
+	AddField(customCodec, "target", complex.NewStringCodec())
 
 	return &TankDamageCodec{CustomCodec: *customCodec}
 }

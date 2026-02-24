@@ -10,6 +10,6 @@ type VectorStringCodec struct {
 
 func NewVectorStringCodec() *VectorStringCodec {
 	return &VectorStringCodec{
-		VectorCodec: *multiple.NewVectorCodec(&StringCodec{}, true),
+		VectorCodec: *multiple.NewVectorCodec(NewStringCodec(), true),
 	}
 }

@@ -15,7 +15,7 @@ func NewBattleUserRewardsCodec() *BattleUserRewardsCodec {
 	AddField(customCodec, "newbiesAbonementBonusReward", &primitive.IntCodec{})
 	AddField(customCodec, "premiumBonusReward", &primitive.IntCodec{})
 	AddField(customCodec, "reward", &primitive.IntCodec{})
-	AddField(customCodec, "userid", &complex.StringCodec{})
+	AddField(customCodec, "userid", complex.NewStringCodec())
 
 	return &BattleUserRewardsCodec{CustomCodec: *customCodec}
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func TestStringCodec(t *testing.T) {
-	codec := &StringCodec{}
+	codec := NewStringCodec()
 
 	tests := []struct {
 		name  string
@@ -49,7 +49,7 @@ func TestStringCodec(t *testing.T) {
 }
 
 func TestStringCodec_InvalidData(t *testing.T) {
-	codec := &StringCodec{}
+	codec := NewStringCodec()
 	buf := &bytes.Buffer{}
 
 	// Write only empty flag (0 = not empty) but no length
@@ -306,7 +306,7 @@ func TestVectorShortCodec(t *testing.T) {
 
 func TestErrorCases(t *testing.T) {
 	t.Run("StringCodec - invalid empty flag", func(t *testing.T) {
-		codec := &StringCodec{}
+		codec := NewStringCodec()
 		buf := &bytes.Buffer{}
 
 		// No data at all
@@ -373,7 +373,7 @@ func TestVectorVector3DCodec_WithBoolshortern(t *testing.T) {
 }
 
 func TestJsonCodec(t *testing.T) {
-	codec := &JsonCodec{}
+	codec := NewJsonCodec()
 
 	tests := []struct {
 		name  string
@@ -524,7 +524,7 @@ func compareJSONValues(t *testing.T, expected, actual any) bool {
 }
 
 func TestJsonCodec_EmptyString(t *testing.T) {
-	codec := &JsonCodec{}
+	codec := NewJsonCodec()
 	buf := &bytes.Buffer{}
 
 	// Encode empty map
@@ -539,11 +539,11 @@ func TestJsonCodec_EmptyString(t *testing.T) {
 }
 
 func TestJsonCodec_InvalidJson(t *testing.T) {
-	codec := &JsonCodec{}
+	codec := NewJsonCodec()
 	buf := &bytes.Buffer{}
 
 	// Write invalid JSON string
-	stringCodec := &StringCodec{}
+	stringCodec := NewStringCodec()
 	stringCodec.Encode("{invalid json", buf)
 
 	_, err := codec.Decode(buf)

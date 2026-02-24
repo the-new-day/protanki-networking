@@ -15,7 +15,7 @@ func NewBattleUserStatsCodec() *BattleUserStatsCodec {
 	AddField(customCodec, "deaths", &primitive.ShortCodec{})
 	AddField(customCodec, "kills", &primitive.ShortCodec{})
 	AddField(customCodec, "score", &primitive.IntCodec{})
-	AddField(customCodec, "username", &complex.StringCodec{})
+	AddField(customCodec, "username", complex.NewStringCodec())
 
 	return &BattleUserStatsCodec{CustomCodec: *customCodec}
 }

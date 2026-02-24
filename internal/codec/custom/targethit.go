@@ -15,7 +15,7 @@ func NewTargetHitCodec() *TargetHitCodec {
 	AddField(customCodec, "direction", complex.NewVector3DCodec())
 	AddField(customCodec, "localHitPoint", complex.NewVector3DCodec())
 	AddField(customCodec, "numberOfHits", &primitive.ByteCodec{})
-	AddField(customCodec, "target", &complex.StringCodec{})
+	AddField(customCodec, "target", complex.NewStringCodec())
 
 	return &TargetHitCodec{CustomCodec: *customCodec}
 }

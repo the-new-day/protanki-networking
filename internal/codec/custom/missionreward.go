@@ -13,7 +13,7 @@ func NewMissionRewardCodec() *MissionRewardCodec {
 	customCodec := NewCustomCodec(false)
 
 	AddField(customCodec, "amount", &primitive.IntCodec{})
-	AddField(customCodec, "name", &complex.StringCodec{})
+	AddField(customCodec, "name", complex.NewStringCodec())
 
 	return &MissionRewardCodec{CustomCodec: *customCodec}
 }

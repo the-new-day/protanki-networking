@@ -12,8 +12,8 @@ type BattleInfoCodec struct {
 func NewBattleInfoCodec() *BattleInfoCodec {
 	customCodec := NewCustomCodec(false)
 
-	AddField(customCodec, "battleID", &complex.StringCodec{})
-	AddField(customCodec, "mapName", &complex.StringCodec{})
+	AddField(customCodec, "battleID", complex.NewStringCodec())
+	AddField(customCodec, "mapName", complex.NewStringCodec())
 	AddField(customCodec, "mode", &primitive.IntCodec{})
 	AddField(customCodec, "private", &primitive.BoolCodec{})
 	AddField(customCodec, "proBattle", &primitive.BoolCodec{})

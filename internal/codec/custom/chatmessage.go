@@ -12,10 +12,10 @@ type ChatMessageCodec struct {
 func NewChatMessageCodec() *ChatMessageCodec {
 	customCodec := NewCustomCodec(false)
 
-	AddField(customCodec, "authorStatus", &UserStatusCodec{})
+	AddField(customCodec, "authorStatus", NewUserStatusCodec())
 	AddField(customCodec, "systemMessage", &primitive.BoolCodec{})
-	AddField(customCodec, "targetStatus", &UserStatusCodec{})
-	AddField(customCodec, "message", &complex.StringCodec{})
+	AddField(customCodec, "targetStatus", NewUserStatusCodec())
+	AddField(customCodec, "message", complex.NewStringCodec())
 	AddField(customCodec, "warning", &primitive.BoolCodec{})
 
 	return &ChatMessageCodec{CustomCodec: *customCodec}

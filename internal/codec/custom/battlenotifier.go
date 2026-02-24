@@ -11,8 +11,8 @@ type BattleNotifierCodec struct {
 func NewBattleNotifierCodec() *BattleNotifierCodec {
 	customCodec := NewCustomCodec(false)
 
-	AddField(customCodec, "battleInfo", &BattleInfoCodec{})
-	AddField(customCodec, "username", &complex.StringCodec{})
+	AddField(customCodec, "battleInfo", NewBattleInfoCodec())
+	AddField(customCodec, "username", complex.NewStringCodec())
 
 	return &BattleNotifierCodec{CustomCodec: *customCodec}
 }

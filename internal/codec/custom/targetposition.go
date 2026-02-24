@@ -15,7 +15,7 @@ func NewTargetPositionCodec() *TargetPositionCodec {
 	AddField(customCodec, "localHitPoint", complex.NewVector3DCodec())
 	AddField(customCodec, "orientation", complex.NewVector3DCodec())
 	AddField(customCodec, "position", complex.NewVector3DCodec())
-	AddField(customCodec, "target", &complex.StringCodec{})
+	AddField(customCodec, "target", complex.NewStringCodec())
 	AddField(customCodec, "turretAngle", &primitive.FloatCodec{})
 
 	return &TargetPositionCodec{CustomCodec: *customCodec}
