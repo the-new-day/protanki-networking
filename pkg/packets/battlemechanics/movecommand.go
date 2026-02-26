@@ -1,10 +1,10 @@
 package battlemechanics
 
 import (
-	"github.com/the-new-day/probogo/internal/codec"
-	"github.com/the-new-day/probogo/internal/codec/complex"
-	"github.com/the-new-day/probogo/internal/codec/custom"
-	"github.com/the-new-day/probogo/internal/codec/primitive"
+	"github.com/the-new-day/probogo/pkg/codec"
+	"github.com/the-new-day/probogo/pkg/codec/complex"
+	"github.com/the-new-day/probogo/pkg/codec/custom"
+	"github.com/the-new-day/probogo/pkg/codec/primitive"
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 

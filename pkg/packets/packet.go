@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/the-new-day/probogo/internal/codec"
-	"github.com/the-new-day/probogo/internal/codec/primitive"
-	"github.com/the-new-day/probogo/internal/protection"
+	"github.com/the-new-day/probogo/pkg/codec"
+	"github.com/the-new-day/probogo/pkg/codec/primitive"
+	"github.com/the-new-day/probogo/pkg/modules/protection"
 )
 
 // Packet header length in bytes.

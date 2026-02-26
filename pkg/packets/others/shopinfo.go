@@ -1,8 +1,8 @@
 package others
 
 import (
-	"github.com/the-new-day/probogo/internal/codec"
-	"github.com/the-new-day/probogo/internal/codec/primitive"
+	"github.com/the-new-day/probogo/pkg/codec"
+	"github.com/the-new-day/probogo/pkg/codec/primitive"
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 

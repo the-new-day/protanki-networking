@@ -1,8 +1,8 @@
 package status
 
 import (
-	"github.com/the-new-day/probogo/internal/codec"
-	"github.com/the-new-day/probogo/internal/codec/custom"
+	"github.com/the-new-day/probogo/pkg/codec"
+	"github.com/the-new-day/probogo/pkg/codec/custom"
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
