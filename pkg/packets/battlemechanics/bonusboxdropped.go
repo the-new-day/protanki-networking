@@ -1,4 +1,4 @@
-package chat
+package battlemechanics
 
 import (
 	"github.com/the-new-day/probogo/internal/codec"
@@ -7,22 +7,27 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// A team message has been received from team battle chat.
-type ReceiveTeamGameChatPacket struct {
+// A bonus box has dropped
+type BonusBoxDroppedPacket struct {
 	packets.BasePacket
 }
 
-func NewReceiveTeamGameChatPacket() *ReceiveTeamGameChatPacket {
+func NewBonusBoxDroppedPacket() *BonusBoxDroppedPacket {
 	codecs := []codec.Codec{
 		codec.Wrap(complex.NewStringCodec()),
-		codec.Wrap(complex.NewStringCodec()),
+		codec.Wrap(complex.NewVector3DCodec()),
 		codec.Wrap(&primitive.IntCodec{}),
 	}
-	attributes := []string{"username", "message", "team"}
 
-	var id int32 = -449356094
+	attributes := []string{
+		"bonusId",
+		"position",
+		"fallTimeThreshold",
+	}
 
-	return &ReceiveTeamGameChatPacket{
+	var id int32 = 1831462385
+
+	return &BonusBoxDroppedPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }

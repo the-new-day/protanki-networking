@@ -6,7 +6,7 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// Update the score of a team within battle.
+// Update the score of a team within battle
 type UpdateTeamBattleScorePacket struct {
 	packets.BasePacket
 }
@@ -16,6 +16,7 @@ func NewUpdateTeamBattleScorePacket() *UpdateTeamBattleScorePacket {
 		codec.Wrap(&primitive.IntCodec{}),
 		codec.Wrap(&primitive.IntCodec{}),
 	}
+
 	attributes := []string{
 		"team",
 		"score",

@@ -6,7 +6,7 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// A message has been sent to the lobby chat.
+// Sends a chat message to the lobby
 type SendLobbyChatPacket struct {
 	packets.BasePacket
 }
@@ -16,7 +16,11 @@ func NewSendLobbyChatPacket() *SendLobbyChatPacket {
 		codec.Wrap(complex.NewStringCodec()),
 		codec.Wrap(complex.NewStringCodec()),
 	}
-	attributes := []string{"username", "message"}
+
+	attributes := []string{
+		"username",
+		"message",
+	}
 
 	var id int32 = 705454610
 

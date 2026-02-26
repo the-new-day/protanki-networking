@@ -7,7 +7,7 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// Damage dealt to a tank.
+// Damage dealt to a tank
 type TankDamagePacket struct {
 	packets.BasePacket
 }
@@ -16,6 +16,7 @@ func NewTankDamagePacket() *TankDamagePacket {
 	codecs := []codec.Codec{
 		codec.Wrap(multiple.NewVectorCodec(custom.NewTankDamageCodec(), false)),
 	}
+
 	attributes := []string{
 		"damages",
 	}

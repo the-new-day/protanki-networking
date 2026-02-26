@@ -7,7 +7,7 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// A message received from the game chat.
+// Receives a message from the game chat
 type ReceiveGameChatPacket struct {
 	packets.BasePacket
 }
@@ -18,7 +18,12 @@ func NewReceiveGameChatPacket() *ReceiveGameChatPacket {
 		codec.Wrap(complex.NewStringCodec()),
 		codec.Wrap(&primitive.IntCodec{}),
 	}
-	attributes := []string{"username", "message", "team"}
+
+	attributes := []string{
+		"username",
+		"message",
+		"team",
+	}
 
 	var id int32 = 1259981343
 

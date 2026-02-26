@@ -7,7 +7,7 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// Update the health of a tank.
+// Updates the health of a tank
 type TankHealthPacket struct {
 	packets.BasePacket
 }
@@ -15,8 +15,9 @@ type TankHealthPacket struct {
 func NewTankHealthPacket() *TankHealthPacket {
 	codecs := []codec.Codec{
 		codec.Wrap(complex.NewStringCodec()),
-		codec.Wrap(&primitive.IntCodec{}),
+		codec.Wrap(&primitive.FloatCodec{}),
 	}
+
 	attributes := []string{
 		"username",
 		"health",

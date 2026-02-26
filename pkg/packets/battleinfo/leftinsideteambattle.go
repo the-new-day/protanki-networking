@@ -6,7 +6,7 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// A player has left a team battle, the observer being within the battle.
+// A player has left a team battle, the observer being within the battle
 type LeftInsideTeamBattlePacket struct {
 	packets.BasePacket
 }
@@ -15,6 +15,7 @@ func NewLeftInsideTeamBattlePacket() *LeftInsideTeamBattlePacket {
 	codecs := []codec.Codec{
 		codec.Wrap(complex.NewStringCodec()),
 	}
+
 	attributes := []string{
 		"username",
 	}

@@ -1,34 +1,34 @@
-package battleinfo
+package lobby
 
 import (
 	"github.com/the-new-day/probogo/internal/codec"
 	"github.com/the-new-day/probogo/internal/codec/complex"
 	"github.com/the-new-day/probogo/internal/codec/custom"
-	"github.com/the-new-day/probogo/internal/codec/multiple"
 	"github.com/the-new-day/probogo/internal/codec/primitive"
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// A new player has joined the team battle, the observer being within the battle.
-type LoadNewPlayerTeamBattlePacket struct {
+// Sent when a player joins the currently-selected Team battle.
+type JoinedSelectedTeamBattlePacket struct {
 	packets.BasePacket
 }
 
-func NewLoadNewPlayerTeamBattlePacket() *LoadNewPlayerTeamBattlePacket {
+func NewJoinedSelectedTeamBattlePacket() *JoinedSelectedTeamBattlePacket {
 	codecs := []codec.Codec{
 		codec.Wrap(complex.NewStringCodec()),
-		codec.Wrap(multiple.NewVectorCodec(custom.NewBattleUserCodec(), false)),
+		codec.Wrap(custom.NewBattleInfoUserCodec()),
 		codec.Wrap(&primitive.IntCodec{}),
 	}
+
 	attributes := []string{
-		"username",
-		"userinfos",
+		"battleID",
+		"userInfo",
 		"team",
 	}
 
-	var id int32 = 2040021062
+	var id int32 = 118447426
 
-	return &LoadNewPlayerTeamBattlePacket{
+	return &JoinedSelectedTeamBattlePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }

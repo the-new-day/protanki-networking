@@ -6,7 +6,7 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// Battle time left in seconds.
+// Battle time left in seconds
 type BattleTimeLeftPacket struct {
 	packets.BasePacket
 }
@@ -15,7 +15,10 @@ func NewBattleTimeLeftPacket() *BattleTimeLeftPacket {
 	codecs := []codec.Codec{
 		codec.Wrap(&primitive.IntCodec{}),
 	}
-	attributes := []string{"timeLimitInSec"}
+
+	attributes := []string{
+		"timeLimitInSec",
+	}
 
 	var id int32 = 732434644
 

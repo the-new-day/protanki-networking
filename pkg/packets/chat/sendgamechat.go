@@ -7,7 +7,7 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// A message has been sent to the game chat.
+// Sends a message to the game chat
 type SendGameChatPacket struct {
 	packets.BasePacket
 }
@@ -17,7 +17,11 @@ func NewSendGameChatPacket() *SendGameChatPacket {
 		codec.Wrap(complex.NewStringCodec()),
 		codec.Wrap(&primitive.BoolCodec{}),
 	}
-	attributes := []string{"message", "teamOnly"}
+
+	attributes := []string{
+		"message",
+		"teamOnly",
+	}
 
 	var id int32 = 945463181
 

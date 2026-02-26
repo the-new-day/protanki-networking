@@ -6,20 +6,23 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// All messages by a user in the lobby has been wiped.
-type WipeLobbyChatPacket struct {
+// Wipes all messages by a user in the lobby
+type WipeLobbyMessagesPacket struct {
 	packets.BasePacket
 }
 
-func NewWipeLobbyChatPacket() *WipeLobbyChatPacket {
+func NewWipeLobbyMessagesPacket() *WipeLobbyMessagesPacket {
 	codecs := []codec.Codec{
 		codec.Wrap(complex.NewStringCodec()),
 	}
-	attributes := []string{"username"}
+
+	attributes := []string{
+		"username",
+	}
 
 	var id int32 = 1993050216
 
-	return &WipeLobbyChatPacket{
+	return &WipeLobbyMessagesPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }

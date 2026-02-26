@@ -7,22 +7,23 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// Battle users stats.
-type UserStatsPacket struct {
+// Battle User Stats
+type BattleUserStatsPacket struct {
 	packets.BasePacket
 }
 
-func NewUserStatsPacket() *UserStatsPacket {
+func NewBattleUserStatsPacket() *BattleUserStatsPacket {
 	codecs := []codec.Codec{
 		codec.Wrap(multiple.NewVectorCodec(custom.NewBattleUserStatsCodec(), false)),
 	}
+
 	attributes := []string{
-		"usersStats",
+		"usersStat",
 	}
 
 	var id int32 = 1061006142
 
-	return &UserStatsPacket{
+	return &BattleUserStatsPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }

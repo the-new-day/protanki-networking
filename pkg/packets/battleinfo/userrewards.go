@@ -8,16 +8,17 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// Battle user rewards.
-type UserRewardsPacket struct {
+// Battle User Rewards
+type BattleUserRewardsPacket struct {
 	packets.BasePacket
 }
 
-func NewUserRewardsPacket() *UserRewardsPacket {
+func NewBattleUserRewardsPacket() *BattleUserRewardsPacket {
 	codecs := []codec.Codec{
 		codec.Wrap(multiple.NewVectorCodec(custom.NewBattleUserRewardsCodec(), false)),
 		codec.Wrap(&primitive.IntCodec{}),
 	}
+
 	attributes := []string{
 		"reward",
 		"timeToRestart",
@@ -25,7 +26,7 @@ func NewUserRewardsPacket() *UserRewardsPacket {
 
 	var id int32 = 560336625
 
-	return &UserRewardsPacket{
+	return &BattleUserRewardsPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }

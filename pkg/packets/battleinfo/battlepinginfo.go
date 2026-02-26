@@ -15,7 +15,10 @@ func NewBattlePingInfoPacket() *BattlePingInfoPacket {
 	codecs := []codec.Codec{
 		codec.Wrap(complex.NewDoubleIntCodec("serverSessionTime", "clientPing")),
 	}
-	attributes := []string{"latencyInfo"}
+
+	attributes := []string{
+		"latencyInfo",
+	}
 
 	var id int32 = 34068208
 

@@ -7,7 +7,7 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// Flag has been delivered.
+// Flag has been delivered
 type FlagDeliveredPacket struct {
 	packets.BasePacket
 }
@@ -17,7 +17,11 @@ func NewFlagDeliveredPacket() *FlagDeliveredPacket {
 		codec.Wrap(&primitive.IntCodec{}),
 		codec.Wrap(complex.NewStringCodec()),
 	}
-	attributes := []string{"baseteam", "userteam"}
+
+	attributes := []string{
+		"baseteam",
+		"username",
+	}
 
 	var id int32 = -1870108387
 

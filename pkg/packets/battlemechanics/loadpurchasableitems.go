@@ -1,0 +1,28 @@
+package battlemechanics
+
+import (
+	"github.com/the-new-day/probogo/internal/codec"
+	"github.com/the-new-day/probogo/internal/codec/complex"
+	"github.com/the-new-day/probogo/pkg/packets"
+)
+
+// Load Purchasable Items
+type LoadPurchasableItemsPacket struct {
+	packets.BasePacket
+}
+
+func NewLoadPurchasableItemsPacket() *LoadPurchasableItemsPacket {
+	codecs := []codec.Codec{
+		codec.Wrap(complex.NewStringCodec()),
+	}
+
+	attributes := []string{
+		"json",
+	}
+
+	var id int32 = -300370823
+
+	return &LoadPurchasableItemsPacket{
+		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
+	}
+}

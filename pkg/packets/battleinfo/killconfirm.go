@@ -7,7 +7,7 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// A tank has been killed.
+// A tank has been killed
 type KillConfirmPacket struct {
 	packets.BasePacket
 }
@@ -18,6 +18,7 @@ func NewKillConfirmPacket() *KillConfirmPacket {
 		codec.Wrap(complex.NewStringCodec()),
 		codec.Wrap(&primitive.IntCodec{}),
 	}
+
 	attributes := []string{
 		"target",
 		"killer",

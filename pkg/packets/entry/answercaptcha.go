@@ -1,4 +1,4 @@
-package battleinfo
+package entry
 
 import (
 	"github.com/the-new-day/probogo/internal/codec"
@@ -7,21 +7,25 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// Announcement that a gold box will drop soon.
-type GoldBoxAnnouncementPacket struct {
+// Answer the captcha
+type AnswerCaptchaPacket struct {
 	packets.BasePacket
 }
 
-func NewGoldBoxAnnouncementPacket() *GoldBoxAnnouncementPacket {
+func NewAnswerCaptchaPacket() *AnswerCaptchaPacket {
 	codecs := []codec.Codec{
-		codec.Wrap(complex.NewStringCodec()),
 		codec.Wrap(&primitive.IntCodec{}),
+		codec.Wrap(complex.NewStringCodec()),
 	}
-	attributes := []string{"text", "soundID"}
 
-	var id int32 = -666893269
+	attributes := []string{
+		"type_",
+		"imagedata",
+	}
 
-	return &GoldBoxAnnouncementPacket{
+	var id int32 = 1271163230
+
+	return &AnswerCaptchaPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }

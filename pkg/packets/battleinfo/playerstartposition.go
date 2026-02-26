@@ -6,7 +6,7 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// Player start position.
+// Player Start Position
 type PlayerStartPositionPacket struct {
 	packets.BasePacket
 }
@@ -16,6 +16,7 @@ func NewPlayerStartPositionPacket() *PlayerStartPositionPacket {
 		codec.Wrap(complex.NewVector3DCodec()),
 		codec.Wrap(complex.NewVector3DCodec()),
 	}
+
 	attributes := []string{
 		"position",
 		"orientation",

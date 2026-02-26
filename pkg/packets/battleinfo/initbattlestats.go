@@ -8,7 +8,7 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// Current battle statistics is loaded.
+// Loads current battle statistics
 type InitBattleStatsPacket struct {
 	packets.BasePacket
 }
@@ -27,6 +27,7 @@ func NewInitBattleStatsPacket() *InitBattleStatsPacket {
 		codec.Wrap(complex.NewVectorStringCodec()),
 		codec.Wrap(&primitive.IntCodec{}),
 	}
+
 	attributes := []string{
 		"battleMode",
 		"format",

@@ -7,7 +7,7 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// Lobby chat messages received.
+// Receives chat messages from the lobby
 type ReceiveLobbyChatPacket struct {
 	packets.BasePacket
 }
@@ -16,7 +16,10 @@ func NewReceiveLobbyChatPacket() *ReceiveLobbyChatPacket {
 	codecs := []codec.Codec{
 		codec.Wrap(multiple.NewVectorCodec(custom.NewChatMessageCodec(), false)),
 	}
-	attributes := []string{"messages"}
+
+	attributes := []string{
+		"messages",
+	}
 
 	var id int32 = -1263520410
 

@@ -1,4 +1,4 @@
-package battleinfo
+package turrets
 
 import (
 	"github.com/the-new-day/probogo/internal/codec"
@@ -8,24 +8,27 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// A new player has joined the DM battle, the observer being within the battle.
-type LoadNewPlayerDMBattlePacket struct {
+// Incoming shot fired by a multi-shot turret
+type MultiShotTurretInPacket struct {
 	packets.BasePacket
 }
 
-func NewLoadNewPlayerDMBattlePacket() *LoadNewPlayerDMBattlePacket {
+func NewMultiShotTurretInPacket() *MultiShotTurretInPacket {
 	codecs := []codec.Codec{
 		codec.Wrap(complex.NewStringCodec()),
-		codec.Wrap(multiple.NewVectorCodec(custom.NewBattleUserCodec(), false)),
+		codec.Wrap(complex.NewVector3DCodec()),
+		codec.Wrap(multiple.NewVectorCodec(custom.NewTargetHitCodec(), false)),
 	}
+
 	attributes := []string{
-		"username",
-		"userinfos",
+		"shooter",
+		"direction",
+		"targetHits",
 	}
 
-	var id int32 = 862913394
+	var id int32 = -891286317
 
-	return &LoadNewPlayerDMBattlePacket{
+	return &MultiShotTurretInPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }

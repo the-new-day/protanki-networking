@@ -7,7 +7,7 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// Flag has been taken.
+// Flag has been taken
 type FlagTakenPacket struct {
 	packets.BasePacket
 }
@@ -17,7 +17,11 @@ func NewFlagTakenPacket() *FlagTakenPacket {
 		codec.Wrap(complex.NewStringCodec()),
 		codec.Wrap(&primitive.IntCodec{}),
 	}
-	attributes := []string{"username", "flagteam"}
+
+	attributes := []string{
+		"username",
+		"flagteam",
+	}
 
 	var id int32 = -1282406496
 
