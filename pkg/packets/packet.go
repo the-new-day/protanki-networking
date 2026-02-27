@@ -15,9 +15,12 @@ const HeaderLength = 8
 // Represents packets that are sent and received by the server.
 type Packet interface {
 	ID() int32
-	ShouldLog() bool
+
+	// Decodes the binary data into individual objects.
 	Unwrap(packetData *bytes.Buffer) (map[string]any, error)
-	Wrap(protection *protection.Protection, s2cProxy bool) (*bytes.Buffer, error)
+
+	// Encodes all the objects into binary data for the packet payload.
+	Wrap(protection protection.Protection) (*bytes.Buffer, error)
 }
 
 // Base packet for concrete packets.
@@ -55,7 +58,6 @@ func NewBasePacket(id int32, codecs []codec.Codec, attributes []string) *BasePac
 	}
 }
 
-// Decodes the binary data into individual objects.
 func (bp *BasePacket) Unwrap(packetData *bytes.Buffer) (map[string]any, error) {
 	for _, c := range bp.codecs {
 		decoded, err := c.Decode(packetData)
@@ -68,7 +70,6 @@ func (bp *BasePacket) Unwrap(packetData *bytes.Buffer) (map[string]any, error) {
 	return bp.implement(), nil
 }
 
-// Encodes all the objects into binary data for the packet payload.
 func (bp *BasePacket) Wrap(protection protection.Protection) (*bytes.Buffer, error) {
 	if protection == nil {
 		panic("BasePacket.Wrap: nil protection is passed")

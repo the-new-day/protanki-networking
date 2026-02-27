@@ -26,3 +26,9 @@ func NewBattleFundPacket() *BattleFundPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+func init() {
+	packets.Register(1149211509, func() packets.Packet {
+		return NewBattleFundPacket()
+	})
+}

@@ -215,9 +215,9 @@ func TestConcurrentAccess_NoDeadlocks(t *testing.T) {
 	timer := NewTankiTimerWithProvider(mock)
 	done := make(chan bool)
 
-	for i := 0; i < 10; i++ {
+	for range 10 {
 		go func() {
-			for j := 0; j < 100; j++ {
+			for range 100 {
 				timer.ClientTime()
 				timer.PhysicsTime()
 				mock.Advance(1)
