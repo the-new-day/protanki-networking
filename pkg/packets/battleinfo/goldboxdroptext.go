@@ -29,3 +29,10 @@ func NewGoldBoxDropTextPacket() *GoldBoxDropTextPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-666893269, "GoldBoxDropTextPacket", func() packets.Packet {
+        return NewGoldBoxDropTextPacket()
+    })
+}

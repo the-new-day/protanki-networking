@@ -27,3 +27,10 @@ func NewReceiveLobbyChatPacket() *ReceiveLobbyChatPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1263520410, "ReceiveLobbyChatPacket", func() packets.Packet {
+        return NewReceiveLobbyChatPacket()
+    })
+}

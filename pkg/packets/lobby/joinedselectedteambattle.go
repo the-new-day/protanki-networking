@@ -32,3 +32,10 @@ func NewJoinedSelectedTeamBattlePacket() *JoinedSelectedTeamBattlePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(118447426, "JoinedSelectedTeamBattlePacket", func() packets.Packet {
+        return NewJoinedSelectedTeamBattlePacket()
+    })
+}

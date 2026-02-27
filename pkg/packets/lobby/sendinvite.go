@@ -28,3 +28,10 @@ func NewSendInvitePacket() *SendInvitePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-864265623, "SendInvitePacket", func() packets.Packet {
+        return NewSendInvitePacket()
+    })
+}

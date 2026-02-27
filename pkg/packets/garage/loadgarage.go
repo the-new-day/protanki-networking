@@ -21,3 +21,10 @@ func NewLoadGaragePacket() *LoadGaragePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-479046431, "LoadGaragePacket", func() packets.Packet {
+        return NewLoadGaragePacket()
+    })
+}

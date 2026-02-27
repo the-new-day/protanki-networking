@@ -26,3 +26,10 @@ func NewLoadSupplyEffectPacket() *LoadSupplyEffectPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(417965410, "LoadSupplyEffectPacket", func() packets.Packet {
+        return NewLoadSupplyEffectPacket()
+    })
+}

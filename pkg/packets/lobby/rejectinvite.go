@@ -26,3 +26,10 @@ func NewRejectInvitePacket() *RejectInvitePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1152865919, "RejectInvitePacket", func() packets.Packet {
+        return NewRejectInvitePacket()
+    })
+}

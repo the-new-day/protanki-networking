@@ -28,3 +28,10 @@ func NewJoinedOutsideDmBattlePacket() *JoinedOutsideDmBattlePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-2133657895, "JoinedOutsideDmBattlePacket", func() packets.Packet {
+        return NewJoinedOutsideDmBattlePacket()
+    })
+}

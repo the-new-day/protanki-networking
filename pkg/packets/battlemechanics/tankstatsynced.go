@@ -37,3 +37,10 @@ func NewTankStatSyncedPacket() *TankStatSyncedPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1672577397, "TankStatSyncedPacket", func() packets.Packet {
+        return NewTankStatSyncedPacket()
+    })
+}

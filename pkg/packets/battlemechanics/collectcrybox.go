@@ -26,3 +26,10 @@ func NewCollectCryBoxPacket() *CollectCryBoxPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1047185003, "CollectCryBoxPacket", func() packets.Packet {
+        return NewCollectCryBoxPacket()
+    })
+}

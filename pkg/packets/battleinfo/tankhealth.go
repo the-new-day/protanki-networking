@@ -29,3 +29,10 @@ func NewTankHealthPacket() *TankHealthPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-611961116, "TankHealthPacket", func() packets.Packet {
+        return NewTankHealthPacket()
+    })
+}

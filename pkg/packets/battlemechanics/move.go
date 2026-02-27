@@ -31,3 +31,10 @@ func NewMovePacket() *MovePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(329279865, "MovePacket", func() packets.Packet {
+        return NewMovePacket()
+    })
+}

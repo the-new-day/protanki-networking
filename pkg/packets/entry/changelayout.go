@@ -26,3 +26,10 @@ func NewChangeLayoutPacket() *ChangeLayoutPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1118835050, "ChangeLayoutPacket", func() packets.Packet {
+        return NewChangeLayoutPacket()
+    })
+}

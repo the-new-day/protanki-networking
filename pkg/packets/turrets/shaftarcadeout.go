@@ -39,3 +39,10 @@ func NewShaftArcadeOutPacket() *ShaftArcadeOutPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-2030760866, "ShaftArcadeOutPacket", func() packets.Packet {
+        return NewShaftArcadeOutPacket()
+    })
+}

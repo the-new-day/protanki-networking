@@ -26,3 +26,10 @@ func NewUserSuppliesInfoPacket() *UserSuppliesInfoPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-137249251, "UserSuppliesInfoPacket", func() packets.Packet {
+        return NewUserSuppliesInfoPacket()
+    })
+}

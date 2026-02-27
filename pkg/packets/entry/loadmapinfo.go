@@ -26,3 +26,10 @@ func NewLoadMapInfoPacket() *LoadMapInfoPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-838186985, "LoadMapInfoPacket", func() packets.Packet {
+        return NewLoadMapInfoPacket()
+    })
+}

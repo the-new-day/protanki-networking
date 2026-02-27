@@ -26,3 +26,10 @@ func NewBannedPacket() *BannedPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-600078553, "BannedPacket", func() packets.Packet {
+        return NewBannedPacket()
+    })
+}

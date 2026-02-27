@@ -21,3 +21,10 @@ func NewNameAvailablePacket() *NameAvailablePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-706679202, "NameAvailablePacket", func() packets.Packet {
+        return NewNameAvailablePacket()
+    })
+}

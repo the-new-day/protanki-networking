@@ -26,3 +26,10 @@ func NewLoadOwnedGarageItemsPacket() *LoadOwnedGarageItemsPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-255516505, "LoadOwnedGarageItemsPacket", func() packets.Packet {
+        return NewLoadOwnedGarageItemsPacket()
+    })
+}

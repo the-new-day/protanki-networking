@@ -21,3 +21,10 @@ func NewLoadSettingsPacket() *LoadSettingsPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(850220815, "LoadSettingsPacket", func() packets.Packet {
+        return NewLoadSettingsPacket()
+    })
+}

@@ -26,3 +26,10 @@ func NewFireEndOutPacket() *FireEndOutPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1300958299, "FireEndOutPacket", func() packets.Packet {
+        return NewFireEndOutPacket()
+    })
+}

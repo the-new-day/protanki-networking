@@ -29,3 +29,10 @@ func NewShowMissionsPacket() *ShowMissionsPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(809822533, "ShowMissionsPacket", func() packets.Packet {
+        return NewShowMissionsPacket()
+    })
+}

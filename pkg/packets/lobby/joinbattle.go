@@ -26,3 +26,10 @@ func NewJoinBattlePacket() *JoinBattlePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1284211503, "JoinBattlePacket", func() packets.Packet {
+        return NewJoinBattlePacket()
+    })
+}

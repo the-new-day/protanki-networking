@@ -28,3 +28,10 @@ func NewBuyFromShopPacket() *BuyFromShopPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(880756819, "BuyFromShopPacket", func() packets.Packet {
+        return NewBuyFromShopPacket()
+    })
+}

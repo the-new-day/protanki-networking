@@ -33,3 +33,10 @@ func NewTankMovementInfoPacket() *TankMovementInfoPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1683279062, "TankMovementInfoPacket", func() packets.Packet {
+        return NewTankMovementInfoPacket()
+    })
+}

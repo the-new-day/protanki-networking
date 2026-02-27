@@ -26,3 +26,10 @@ func NewNameUnavailablePacket() *NameUnavailablePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(442888643, "NameUnavailablePacket", func() packets.Packet {
+        return NewNameUnavailablePacket()
+    })
+}

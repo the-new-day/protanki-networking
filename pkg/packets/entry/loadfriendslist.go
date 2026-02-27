@@ -30,3 +30,10 @@ func NewLoadFriendsListPacket() *LoadFriendsListPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1422563374, "LoadFriendsListPacket", func() packets.Packet {
+        return NewLoadFriendsListPacket()
+    })
+}

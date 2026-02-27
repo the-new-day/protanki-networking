@@ -26,3 +26,10 @@ func NewChangeByPacket() *ChangeByPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-593513288, "ChangeByPacket", func() packets.Packet {
+        return NewChangeByPacket()
+    })
+}

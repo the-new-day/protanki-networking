@@ -32,3 +32,10 @@ func NewMoveCommandPacket() *MoveCommandPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1516578027, "MoveCommandPacket", func() packets.Packet {
+        return NewMoveCommandPacket()
+    })
+}

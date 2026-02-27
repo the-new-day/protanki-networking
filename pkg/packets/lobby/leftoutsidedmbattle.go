@@ -28,3 +28,10 @@ func NewLeftOutsideDmBattlePacket() *LeftOutsideDmBattlePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(504016996, "LeftOutsideDmBattlePacket", func() packets.Packet {
+        return NewLeftOutsideDmBattlePacket()
+    })
+}

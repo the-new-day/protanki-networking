@@ -27,3 +27,10 @@ func NewActivateProtectionPacket() *ActivateProtectionPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(2001736388, "ActivateProtectionPacket", func() packets.Packet {
+        return NewActivateProtectionPacket()
+    })
+}

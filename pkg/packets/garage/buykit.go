@@ -29,3 +29,10 @@ func NewBuyKitPacket() *BuyKitPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-523392052, "BuyKitPacket", func() packets.Packet {
+        return NewBuyKitPacket()
+    })
+}

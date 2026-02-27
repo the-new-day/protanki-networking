@@ -26,3 +26,10 @@ func NewNotInBattleStatusPacket() *NotInBattleStatusPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1941694508, "NotInBattleStatusPacket", func() packets.Packet {
+        return NewNotInBattleStatusPacket()
+    })
+}

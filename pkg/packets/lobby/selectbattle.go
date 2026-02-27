@@ -26,3 +26,10 @@ func NewSelectBattlePacket() *SelectBattlePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(2092412133, "SelectBattlePacket", func() packets.Packet {
+        return NewSelectBattlePacket()
+    })
+}

@@ -21,3 +21,10 @@ func NewLoginFailedPacket() *LoginFailedPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(103812952, "LoginFailedPacket", func() packets.Packet {
+        return NewLoginFailedPacket()
+    })
+}

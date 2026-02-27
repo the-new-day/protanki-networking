@@ -26,3 +26,10 @@ func NewFreezeEndOutPacket() *FreezeEndOutPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1654947652, "FreezeEndOutPacket", func() packets.Packet {
+        return NewFreezeEndOutPacket()
+    })
+}

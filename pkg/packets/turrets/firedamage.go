@@ -35,3 +35,10 @@ func NewFireDamagePacket() *FireDamagePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1395251766, "FireDamagePacket", func() packets.Packet {
+        return NewFireDamagePacket()
+    })
+}

@@ -26,3 +26,10 @@ func NewBattlePingSyncPacket() *BattlePingSyncPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(2074243318, "BattlePingSyncPacket", func() packets.Packet {
+        return NewBattlePingSyncPacket()
+    })
+}

@@ -26,3 +26,10 @@ func NewSettingsNotificationPacket() *SettingsNotificationPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1447082276, "SettingsNotificationPacket", func() packets.Packet {
+        return NewSettingsNotificationPacket()
+    })
+}

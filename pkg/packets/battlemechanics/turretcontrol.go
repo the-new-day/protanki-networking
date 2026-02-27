@@ -30,3 +30,10 @@ func NewTurretControlPacket() *TurretControlPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1749108178, "TurretControlPacket", func() packets.Packet {
+        return NewTurretControlPacket()
+    })
+}

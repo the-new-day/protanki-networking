@@ -26,3 +26,10 @@ func NewReceivedInvitePacket() *ReceivedInvitePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(810713262, "ReceivedInvitePacket", func() packets.Packet {
+        return NewReceivedInvitePacket()
+    })
+}

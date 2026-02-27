@@ -28,3 +28,10 @@ func NewSendLobbyChatPacket() *SendLobbyChatPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(705454610, "SendLobbyChatPacket", func() packets.Packet {
+        return NewSendLobbyChatPacket()
+    })
+}

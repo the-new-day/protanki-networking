@@ -21,3 +21,10 @@ func NewLoadLobbyPacket() *LoadLobbyPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1452181070, "LoadLobbyPacket", func() packets.Packet {
+        return NewLoadLobbyPacket()
+    })
+}

@@ -31,3 +31,10 @@ func NewUpdatePlayerDmBattlePreviewPacket() *UpdatePlayerDmBattlePreviewPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1263036614, "UpdatePlayerDmBattlePreviewPacket", func() packets.Packet {
+        return NewUpdatePlayerDmBattlePreviewPacket()
+    })
+}

@@ -35,3 +35,10 @@ func NewEffectAftermathPacket() *EffectAftermathPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1639713644, "EffectAftermathPacket", func() packets.Packet {
+        return NewEffectAftermathPacket()
+    })
+}

@@ -49,3 +49,10 @@ func NewLoadAccountStatsPacket() *LoadAccountStatsPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(907073245, "LoadAccountStatsPacket", func() packets.Packet {
+        return NewLoadAccountStatsPacket()
+    })
+}

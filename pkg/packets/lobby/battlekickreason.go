@@ -26,3 +26,10 @@ func NewBattleKickReasonPacket() *BattleKickReasonPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-322235316, "BattleKickReasonPacket", func() packets.Packet {
+        return NewBattleKickReasonPacket()
+    })
+}

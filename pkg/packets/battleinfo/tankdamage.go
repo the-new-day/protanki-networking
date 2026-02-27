@@ -27,3 +27,10 @@ func NewTankDamagePacket() *TankDamagePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1165230470, "TankDamagePacket", func() packets.Packet {
+        return NewTankDamagePacket()
+    })
+}

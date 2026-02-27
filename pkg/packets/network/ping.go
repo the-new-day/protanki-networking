@@ -21,3 +21,10 @@ func NewPingPacket() *PingPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-555602629, "PingPacket", func() packets.Packet {
+        return NewPingPacket()
+    })
+}

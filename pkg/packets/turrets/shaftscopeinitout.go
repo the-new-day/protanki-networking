@@ -26,3 +26,10 @@ func NewShaftScopeInitOutPacket() *ShaftScopeInitOutPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-367760678, "ShaftScopeInitOutPacket", func() packets.Packet {
+        return NewShaftScopeInitOutPacket()
+    })
+}

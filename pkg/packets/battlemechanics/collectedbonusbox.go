@@ -26,3 +26,10 @@ func NewCollectedBonusBoxPacket() *CollectedBonusBoxPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1291499147, "CollectedBonusBoxPacket", func() packets.Packet {
+        return NewCollectedBonusBoxPacket()
+    })
+}

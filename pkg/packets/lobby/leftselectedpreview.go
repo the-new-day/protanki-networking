@@ -28,3 +28,10 @@ func NewLeftSelectedPreviewPacket() *LeftSelectedPreviewPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1924874982, "LeftSelectedPreviewPacket", func() packets.Packet {
+        return NewLeftSelectedPreviewPacket()
+    })
+}

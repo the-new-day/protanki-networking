@@ -21,3 +21,10 @@ func NewLoadReferralPacket() *LoadReferralPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-169921234, "LoadReferralPacket", func() packets.Packet {
+        return NewLoadReferralPacket()
+    })
+}

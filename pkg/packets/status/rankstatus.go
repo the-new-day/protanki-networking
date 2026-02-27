@@ -29,3 +29,10 @@ func NewRankStatusPacket() *RankStatusPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-962759489, "RankStatusPacket", func() packets.Packet {
+        return NewRankStatusPacket()
+    })
+}

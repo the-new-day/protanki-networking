@@ -31,3 +31,10 @@ func NewJoinedOutsideTeamBattlePacket() *JoinedOutsideTeamBattlePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-169305322, "JoinedOutsideTeamBattlePacket", func() packets.Packet {
+        return NewJoinedOutsideTeamBattlePacket()
+    })
+}

@@ -29,3 +29,10 @@ func NewTurretRotatedPacket() *TurretRotatedPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1927704181, "TurretRotatedPacket", func() packets.Packet {
+        return NewTurretRotatedPacket()
+    })
+}

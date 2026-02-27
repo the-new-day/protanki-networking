@@ -26,3 +26,10 @@ func NewVulcanEndOutPacket() *VulcanEndOutPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1794372798, "VulcanEndOutPacket", func() packets.Packet {
+        return NewVulcanEndOutPacket()
+    })
+}

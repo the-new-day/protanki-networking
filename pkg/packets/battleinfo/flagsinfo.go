@@ -40,3 +40,10 @@ func NewFlagsInfoPacket() *FlagsInfoPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(789790814, "FlagsInfoPacket", func() packets.Packet {
+        return NewFlagsInfoPacket()
+    })
+}

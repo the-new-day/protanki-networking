@@ -26,3 +26,10 @@ func NewBonusBoxExistingLocationsPacket() *BonusBoxExistingLocationsPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(870278784, "BonusBoxExistingLocationsPacket", func() packets.Packet {
+        return NewBonusBoxExistingLocationsPacket()
+    })
+}

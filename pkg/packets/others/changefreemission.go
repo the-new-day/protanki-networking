@@ -26,3 +26,10 @@ func NewChangeFreeMissionPacket() *ChangeFreeMissionPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(326032325, "ChangeFreeMissionPacket", func() packets.Packet {
+        return NewChangeFreeMissionPacket()
+    })
+}

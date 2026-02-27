@@ -26,3 +26,10 @@ func NewInviteCodeStatusPacket() *InviteCodeStatusPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(444933603, "InviteCodeStatusPacket", func() packets.Packet {
+        return NewInviteCodeStatusPacket()
+    })
+}

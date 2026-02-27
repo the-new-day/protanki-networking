@@ -29,3 +29,10 @@ func NewRespawnDelayPacket() *RespawnDelayPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-173682854, "RespawnDelayPacket", func() packets.Packet {
+        return NewRespawnDelayPacket()
+    })
+}

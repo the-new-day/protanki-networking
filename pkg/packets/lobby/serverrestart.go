@@ -26,3 +26,10 @@ func NewServerRestartPacket() *ServerRestartPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1712113407, "ServerRestartPacket", func() packets.Packet {
+        return NewServerRestartPacket()
+    })
+}

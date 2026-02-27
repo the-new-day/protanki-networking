@@ -21,3 +21,10 @@ func NewPromocodeFailedPacket() *PromocodeFailedPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1850050333, "PromocodeFailedPacket", func() packets.Packet {
+        return NewPromocodeFailedPacket()
+    })
+}

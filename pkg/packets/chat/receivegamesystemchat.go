@@ -26,3 +26,10 @@ func NewReceiveGameSystemChatPacket() *ReceiveGameSystemChatPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(606668848, "ReceiveGameSystemChatPacket", func() packets.Packet {
+        return NewReceiveGameSystemChatPacket()
+    })
+}

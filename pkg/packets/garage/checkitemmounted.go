@@ -29,3 +29,10 @@ func NewCheckItemMountedPacket() *CheckItemMountedPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(2062201643, "CheckItemMountedPacket", func() packets.Packet {
+        return NewCheckItemMountedPacket()
+    })
+}

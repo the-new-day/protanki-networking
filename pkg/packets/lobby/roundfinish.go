@@ -26,3 +26,10 @@ func NewRoundFinishPacket() *RoundFinishPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1534651002, "RoundFinishPacket", func() packets.Packet {
+        return NewRoundFinishPacket()
+    })
+}

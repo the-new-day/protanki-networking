@@ -31,3 +31,10 @@ func NewKillConfirmPacket() *KillConfirmPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-42520728, "KillConfirmPacket", func() packets.Packet {
+        return NewKillConfirmPacket()
+    })
+}

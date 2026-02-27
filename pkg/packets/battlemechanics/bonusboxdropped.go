@@ -31,3 +31,10 @@ func NewBonusBoxDroppedPacket() *BonusBoxDroppedPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1831462385, "BonusBoxDroppedPacket", func() packets.Packet {
+        return NewBonusBoxDroppedPacket()
+    })
+}

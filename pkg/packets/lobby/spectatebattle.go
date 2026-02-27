@@ -21,3 +21,10 @@ func NewSpectateBattlePacket() *SpectateBattlePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1315002220, "SpectateBattlePacket", func() packets.Packet {
+        return NewSpectateBattlePacket()
+    })
+}

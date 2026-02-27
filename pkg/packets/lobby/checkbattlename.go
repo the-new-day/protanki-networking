@@ -26,3 +26,10 @@ func NewCheckBattleNamePacket() *CheckBattleNamePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(566652736, "CheckBattleNamePacket", func() packets.Packet {
+        return NewCheckBattleNamePacket()
+    })
+}

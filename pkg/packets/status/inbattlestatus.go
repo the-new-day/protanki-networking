@@ -26,3 +26,10 @@ func NewInBattleStatusPacket() *InBattleStatusPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1895446889, "InBattleStatusPacket", func() packets.Packet {
+        return NewInBattleStatusPacket()
+    })
+}

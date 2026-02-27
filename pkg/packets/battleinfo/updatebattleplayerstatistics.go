@@ -27,3 +27,10 @@ func NewUpdateBattlePlayerStatisticsPacket() *UpdateBattlePlayerStatisticsPacket
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(696140460, "UpdateBattlePlayerStatisticsPacket", func() packets.Packet {
+        return NewUpdateBattlePlayerStatisticsPacket()
+    })
+}

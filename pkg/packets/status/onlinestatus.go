@@ -31,3 +31,10 @@ func NewOnlineStatusPacket() *OnlineStatusPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(2041598093, "OnlineStatusPacket", func() packets.Packet {
+        return NewOnlineStatusPacket()
+    })
+}

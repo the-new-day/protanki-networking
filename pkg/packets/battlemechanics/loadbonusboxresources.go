@@ -26,3 +26,10 @@ func NewLoadBonusBoxResourcesPacket() *LoadBonusBoxResourcesPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(228171466, "LoadBonusBoxResourcesPacket", func() packets.Packet {
+        return NewLoadBonusBoxResourcesPacket()
+    })
+}

@@ -26,3 +26,10 @@ func NewShopInfoPacket() *ShopInfoPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1863710730, "ShopInfoPacket", func() packets.Packet {
+        return NewShopInfoPacket()
+    })
+}

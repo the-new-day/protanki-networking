@@ -26,3 +26,10 @@ func NewSubscribeStatusPacket() *SubscribeStatusPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1774907609, "SubscribeStatusPacket", func() packets.Packet {
+        return NewSubscribeStatusPacket()
+    })
+}

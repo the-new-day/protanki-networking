@@ -33,3 +33,10 @@ func NewLoadNewPlayerTeamPacket() *LoadNewPlayerTeamPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(2040021062, "LoadPlayerTeamPacket", func() packets.Packet {
+        return NewLoadNewPlayerTeamPacket()
+    })
+}

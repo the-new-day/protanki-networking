@@ -29,3 +29,10 @@ func NewSendGameChatPacket() *SendGameChatPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(945463181, "SendGameChatPacket", func() packets.Packet {
+        return NewSendGameChatPacket()
+    })
+}

@@ -26,3 +26,10 @@ func NewLoadPurchasableItemsPacket() *LoadPurchasableItemsPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-300370823, "LoadPurchasableItemsPacket", func() packets.Packet {
+        return NewLoadPurchasableItemsPacket()
+    })
+}

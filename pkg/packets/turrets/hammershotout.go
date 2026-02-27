@@ -33,3 +33,10 @@ func NewHammerShotOutPacket() *HammerShotOutPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-541655881, "HammerShotOutPacket", func() packets.Packet {
+        return NewHammerShotOutPacket()
+    })
+}

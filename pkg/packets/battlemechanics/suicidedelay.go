@@ -26,3 +26,10 @@ func NewSuicideDelayPacket() *SuicideDelayPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-911983090, "SuicideDelayPacket", func() packets.Packet {
+        return NewSuicideDelayPacket()
+    })
+}

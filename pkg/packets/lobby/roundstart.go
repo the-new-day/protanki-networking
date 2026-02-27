@@ -26,3 +26,10 @@ func NewRoundStartPacket() *RoundStartPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-344514517, "RoundStartPacket", func() packets.Packet {
+        return NewRoundStartPacket()
+    })
+}

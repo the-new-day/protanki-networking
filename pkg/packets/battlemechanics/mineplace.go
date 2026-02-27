@@ -26,3 +26,10 @@ func NewMinePlacePacket() *MinePlacePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-624217047, "MinePlacePacket", func() packets.Packet {
+        return NewMinePlacePacket()
+    })
+}

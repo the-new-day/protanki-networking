@@ -26,3 +26,10 @@ func NewLoadMapLightsPacket() *LoadMapLightsPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-152638117, "LoadMapLightsPacket", func() packets.Packet {
+        return NewLoadMapLightsPacket()
+    })
+}

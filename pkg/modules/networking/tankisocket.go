@@ -264,7 +264,7 @@ func (s *TankiSocket) processPacket(packetID int32, encryptedData []byte, isComp
 
 // fitPacket converts raw data into a packet object using the packet registry.
 func (s *TankiSocket) fitPacket(packetID int32, data []byte) (packets.Packet, error) {
-	packet := packets.GetPacketByID(packetID)
+	packet := packets.Get(packetID)
 	if packet == nil {
 		return nil, fmt.Errorf("no packet with id %d found", packetID)
 	}

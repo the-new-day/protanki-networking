@@ -26,3 +26,10 @@ func NewWipeLobbyMessagesPacket() *WipeLobbyMessagesPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1993050216, "WipeLobbyMessagesPacket", func() packets.Packet {
+        return NewWipeLobbyMessagesPacket()
+    })
+}

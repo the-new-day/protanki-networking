@@ -26,3 +26,10 @@ func NewFullyRespawnedPacket() *FullyRespawnedPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1868573511, "FullyRespawnedPacket", func() packets.Packet {
+        return NewFullyRespawnedPacket()
+    })
+}

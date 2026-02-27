@@ -31,3 +31,10 @@ func NewCreateAccountPacket() *CreateAccountPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(427083290, "CreateAccountPacket", func() packets.Packet {
+        return NewCreateAccountPacket()
+    })
+}

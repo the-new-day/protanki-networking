@@ -30,3 +30,10 @@ func NewLoadNewPlayerDmPacket() *LoadNewPlayerDmPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(862913394, "LoadPlayerDmPacket", func() packets.Packet {
+        return NewLoadNewPlayerDmPacket()
+    })
+}

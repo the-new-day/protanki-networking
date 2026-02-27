@@ -26,3 +26,10 @@ func NewAcceptMissionPacket() *AcceptMissionPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-867767128, "AcceptMissionPacket", func() packets.Packet {
+        return NewAcceptMissionPacket()
+    })
+}

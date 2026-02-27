@@ -21,3 +21,10 @@ func NewCompletedMissionPacket() *CompletedMissionPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1579425801, "CompletedMissionPacket", func() packets.Packet {
+        return NewCompletedMissionPacket()
+    })
+}

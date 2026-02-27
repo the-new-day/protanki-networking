@@ -26,3 +26,10 @@ func NewUserChangedEquipmentPacket() *UserChangedEquipmentPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1767633906, "UserChangedEquipmentPacket", func() packets.Packet {
+        return NewUserChangedEquipmentPacket()
+    })
+}

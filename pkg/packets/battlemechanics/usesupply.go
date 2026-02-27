@@ -26,3 +26,10 @@ func NewUseSupplyPacket() *UseSupplyPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-2102525054, "UseSupplyPacket", func() packets.Packet {
+        return NewUseSupplyPacket()
+    })
+}

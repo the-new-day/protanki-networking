@@ -29,3 +29,10 @@ func NewWrongNewCaptchaPacket() *WrongNewCaptchaPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-373510957, "WrongCaptchaPacket", func() packets.Packet {
+        return NewWrongNewCaptchaPacket()
+    })
+}

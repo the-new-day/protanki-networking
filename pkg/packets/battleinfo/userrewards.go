@@ -30,3 +30,10 @@ func NewBattleUserRewardsPacket() *BattleUserRewardsPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(560336625, "BattleUserRewardsPacket", func() packets.Packet {
+        return NewBattleUserRewardsPacket()
+    })
+}

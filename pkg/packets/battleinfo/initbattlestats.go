@@ -48,3 +48,10 @@ func NewInitBattleStatsPacket() *InitBattleStatsPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(522993449, "InitBattleStatsPacket", func() packets.Packet {
+        return NewInitBattleStatsPacket()
+    })
+}

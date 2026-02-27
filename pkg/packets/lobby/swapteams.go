@@ -26,3 +26,10 @@ func NewSwapTeamsPacket() *SwapTeamsPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-994817471, "SwapTeamsPacket", func() packets.Packet {
+        return NewSwapTeamsPacket()
+    })
+}

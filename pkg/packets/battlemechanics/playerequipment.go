@@ -26,3 +26,10 @@ func NewPlayerEquipmentPacket() *PlayerEquipmentPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1643824092, "PlayerEquipmentPacket", func() packets.Packet {
+        return NewPlayerEquipmentPacket()
+    })
+}

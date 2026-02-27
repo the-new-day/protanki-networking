@@ -32,3 +32,10 @@ func NewLoginReadyPacket() *LoginReadyPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1277343167, "LoginReadyPacket", func() packets.Packet {
+        return NewLoginReadyPacket()
+    })
+}

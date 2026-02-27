@@ -26,3 +26,10 @@ func NewSyncTurretDataPacket() *SyncTurretDataPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-2124388778, "SyncTurretDataPacket", func() packets.Packet {
+        return NewSyncTurretDataPacket()
+    })
+}

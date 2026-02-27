@@ -29,3 +29,10 @@ func NewShotEffectPacket() *ShotEffectPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1994318624, "ShotEffectPacket", func() packets.Packet {
+        return NewShotEffectPacket()
+    })
+}

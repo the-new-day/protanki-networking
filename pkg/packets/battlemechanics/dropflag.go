@@ -21,3 +21,10 @@ func NewDropFlagPacket() *DropFlagPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1832611824, "DropFlagPacket", func() packets.Packet {
+        return NewDropFlagPacket()
+    })
+}

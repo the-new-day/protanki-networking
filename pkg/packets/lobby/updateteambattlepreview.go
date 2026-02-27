@@ -31,3 +31,10 @@ func NewUpdateTeamBattlePreviewPacket() *UpdateTeamBattlePreviewPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1428217189, "UpdateTeamBattlePreviewPacket", func() packets.Packet {
+        return NewUpdateTeamBattlePreviewPacket()
+    })
+}

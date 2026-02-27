@@ -28,7 +28,7 @@ func NewBattleFundPacket() *BattleFundPacket {
 }
 
 func init() {
-	packets.Register(1149211509, func() packets.Packet {
+	packets.Register(1149211509, "BattleFundPacket", func() packets.Packet {
 		return NewBattleFundPacket()
 	})
 }

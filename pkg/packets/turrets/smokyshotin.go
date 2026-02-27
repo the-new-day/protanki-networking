@@ -35,3 +35,10 @@ func NewSmokyShotInPacket() *SmokyShotInPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1334002026, "SmokyShotInPacket", func() packets.Packet {
+        return NewSmokyShotInPacket()
+    })
+}

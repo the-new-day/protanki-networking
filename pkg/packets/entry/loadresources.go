@@ -29,3 +29,10 @@ func NewLoadResourcesPacket() *LoadResourcesPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1797047325, "LoadResourcesPacket", func() packets.Packet {
+        return NewLoadResourcesPacket()
+    })
+}

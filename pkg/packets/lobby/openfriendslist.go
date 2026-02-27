@@ -21,3 +21,10 @@ func NewOpenFriendsListPacket() *OpenFriendsListPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1441234714, "OpenFriendsListPacket", func() packets.Packet {
+        return NewOpenFriendsListPacket()
+    })
+}

@@ -21,3 +21,10 @@ func NewPongPacket() *PongPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1484572481, "PongPacket", func() packets.Packet {
+        return NewPongPacket()
+    })
+}

@@ -29,3 +29,10 @@ func NewFlagDeliveredPacket() *FlagDeliveredPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1870108387, "FlagDeliveredPacket", func() packets.Packet {
+        return NewFlagDeliveredPacket()
+    })
+}

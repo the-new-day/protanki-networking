@@ -17,9 +17,11 @@ type Packet interface {
 	ID() int32
 
 	// Decodes the binary data into individual objects.
+	// Stores decoded objects for future use.
 	Unwrap(packetData *bytes.Buffer) (map[string]any, error)
 
 	// Encodes all the objects into binary data for the packet payload.
+	// Does not affect inner state.
 	Wrap(protection protection.Protection) (*bytes.Buffer, error)
 }
 

@@ -26,3 +26,10 @@ func NewCloseSettingsPacket() *CloseSettingsPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-731115522, "CloseSettingsPacket", func() packets.Packet {
+        return NewCloseSettingsPacket()
+    })
+}

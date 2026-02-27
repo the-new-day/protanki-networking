@@ -26,3 +26,10 @@ func NewRequestCaptchaPacket() *RequestCaptchaPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-349828108, "RequestCaptchaPacket", func() packets.Packet {
+        return NewRequestCaptchaPacket()
+    })
+}

@@ -26,3 +26,10 @@ func NewRemoveBattlePacket() *RemoveBattlePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1848001147, "RemoveBattlePacket", func() packets.Packet {
+        return NewRemoveBattlePacket()
+    })
+}

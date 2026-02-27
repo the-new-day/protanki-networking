@@ -33,3 +33,10 @@ func NewShotDirectionPacket() *ShotDirectionPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-118119523, "ShotDirectionPacket", func() packets.Packet {
+        return NewShotDirectionPacket()
+    })
+}

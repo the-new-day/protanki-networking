@@ -26,3 +26,10 @@ func NewChangeMissionPacket() *ChangeMissionPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1642608662, "ChangeMissionPacket", func() packets.Packet {
+        return NewChangeMissionPacket()
+    })
+}

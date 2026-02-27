@@ -26,3 +26,10 @@ func NewVulcanStartOutPacket() *VulcanStartOutPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-520655432, "VulcanStartOutPacket", func() packets.Packet {
+        return NewVulcanStartOutPacket()
+    })
+}

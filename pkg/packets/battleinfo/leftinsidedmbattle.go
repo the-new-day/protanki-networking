@@ -26,3 +26,10 @@ func NewLeftInsideDmBattlePacket() *LeftInsideDmBattlePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1689876764, "LeftInsideDmBattlePacket", func() packets.Packet {
+        return NewLeftInsideDmBattlePacket()
+    })
+}

@@ -26,3 +26,10 @@ func NewSetClientLangPacket() *SetClientLangPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1864333717, "SetClientLangPacket", func() packets.Packet {
+        return NewSetClientLangPacket()
+    })
+}

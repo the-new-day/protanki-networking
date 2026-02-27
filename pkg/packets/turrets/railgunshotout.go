@@ -39,3 +39,10 @@ func NewRailgunShotOutPacket() *RailgunShotOutPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-484994657, "RailgunShotOutPacket", func() packets.Packet {
+        return NewRailgunShotOutPacket()
+    })
+}

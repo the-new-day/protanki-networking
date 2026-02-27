@@ -26,3 +26,10 @@ func NewMountItemPacket() *MountItemPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1505530736, "MountItemPacket", func() packets.Packet {
+        return NewMountItemPacket()
+    })
+}

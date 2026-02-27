@@ -21,3 +21,10 @@ func NewEndRespFantomPacket() *EndRespFantomPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1178028365, "EndRespFantomPacket", func() packets.Packet {
+        return NewEndRespFantomPacket()
+    })
+}

@@ -34,3 +34,10 @@ func NewReferralDataPacket() *ReferralDataPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1587315905, "ReferralDataPacket", func() packets.Packet {
+        return NewReferralDataPacket()
+    })
+}

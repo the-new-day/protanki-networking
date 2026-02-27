@@ -26,3 +26,10 @@ func NewLeftInsideTeamBattlePacket() *LeftInsideTeamBattlePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1411656080, "LeftInsideTeamBattlePacket", func() packets.Packet {
+        return NewLeftInsideTeamBattlePacket()
+    })
+}

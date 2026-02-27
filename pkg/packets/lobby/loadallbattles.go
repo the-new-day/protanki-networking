@@ -26,3 +26,10 @@ func NewLoadAllBattlesPacket() *LoadAllBattlesPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(552006706, "LoadAllBattlesPacket", func() packets.Packet {
+        return NewLoadAllBattlesPacket()
+    })
+}

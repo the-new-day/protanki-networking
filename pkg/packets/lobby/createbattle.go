@@ -80,3 +80,10 @@ func NewCreateBattlePacket() *CreateBattlePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-2135234426, "CreateBattlePacket", func() packets.Packet {
+        return NewCreateBattlePacket()
+    })
+}

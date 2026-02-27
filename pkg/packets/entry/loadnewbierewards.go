@@ -27,3 +27,10 @@ func NewLoadNewbieRewardsPacket() *LoadNewbieRewardsPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(602656160, "LoadbieRewardsPacket", func() packets.Packet {
+        return NewLoadNewbieRewardsPacket()
+    })
+}

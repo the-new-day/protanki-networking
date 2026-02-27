@@ -26,3 +26,10 @@ func NewChangeLocationPacket() *ChangeLocationPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(921004371, "ChangeLocationPacket", func() packets.Packet {
+        return NewChangeLocationPacket()
+    })
+}

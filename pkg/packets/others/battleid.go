@@ -26,3 +26,10 @@ func NewLastBattleIdPacket() *LastBattleIdPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-602527073, "LastBattleIdPacket", func() packets.Packet {
+        return NewLastBattleIdPacket()
+    })
+}

@@ -26,3 +26,10 @@ func NewLeaveBattlePacket() *LeaveBattlePacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(377959142, "LeaveBattlePacket", func() packets.Packet {
+        return NewLeaveBattlePacket()
+    })
+}

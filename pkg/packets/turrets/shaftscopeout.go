@@ -39,3 +39,10 @@ func NewShaftScopeOutPacket() *ShaftScopeOutPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1632423559, "ShaftScopeOutPacket", func() packets.Packet {
+        return NewShaftScopeOutPacket()
+    })
+}

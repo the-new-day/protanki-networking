@@ -26,3 +26,10 @@ func NewCheckNameAvailabilityPacket() *CheckNameAvailabilityPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(1083705823, "CheckNameAvailabilityPacket", func() packets.Packet {
+        return NewCheckNameAvailabilityPacket()
+    })
+}

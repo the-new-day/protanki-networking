@@ -21,3 +21,10 @@ func NewDeathDelayEndPacket() *DeathDelayEndPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(268832557, "DeathDelayEndPacket", func() packets.Packet {
+        return NewDeathDelayEndPacket()
+    })
+}

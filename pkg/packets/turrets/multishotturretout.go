@@ -33,3 +33,10 @@ func NewMultiShotTurretOutPacket() *MultiShotTurretOutPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1889502569, "MultiShotTurretOutPacket", func() packets.Packet {
+        return NewMultiShotTurretOutPacket()
+    })
+}

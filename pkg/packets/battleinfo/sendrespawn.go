@@ -21,3 +21,10 @@ func NewSendRespawnPacket() *SendRespawnPacket {
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
 }
+
+
+func init() {
+    packets.Register(-1378839846, "SendRespawnPacket", func() packets.Packet {
+        return NewSendRespawnPacket()
+    })
+}
