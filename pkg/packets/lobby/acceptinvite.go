@@ -27,9 +27,8 @@ func NewAcceptInvitePacket() *AcceptInvitePacket {
 	}
 }
 
-
 func init() {
-    packets.Register(814687528, "AcceptInvitePacket", func() packets.Packet {
-        return NewAcceptInvitePacket()
-    })
+	packets.Register(814687528, "AcceptInvitePacket", func() packets.Packet {
+		return NewAcceptInvitePacket()
+	})
 }

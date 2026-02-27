@@ -30,9 +30,8 @@ func NewRespawnDelayPacket() *RespawnDelayPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-173682854, "RespawnDelayPacket", func() packets.Packet {
-        return NewRespawnDelayPacket()
-    })
+	packets.Register(-173682854, "RespawnDelayPacket", func() packets.Packet {
+		return NewRespawnDelayPacket()
+	})
 }

@@ -27,9 +27,8 @@ func NewLoadMapInfoPacket() *LoadMapInfoPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-838186985, "LoadMapInfoPacket", func() packets.Packet {
-        return NewLoadMapInfoPacket()
-    })
+	packets.Register(-838186985, "LoadMapInfoPacket", func() packets.Packet {
+		return NewLoadMapInfoPacket()
+	})
 }

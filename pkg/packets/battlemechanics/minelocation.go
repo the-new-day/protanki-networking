@@ -36,9 +36,8 @@ func NewMineLocationPacket() *MineLocationPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(272183855, "MineLocationPacket", func() packets.Packet {
-        return NewMineLocationPacket()
-    })
+	packets.Register(272183855, "MineLocationPacket", func() packets.Packet {
+		return NewMineLocationPacket()
+	})
 }

@@ -27,9 +27,8 @@ func NewSwapTeamsPacket() *SwapTeamsPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-994817471, "SwapTeamsPacket", func() packets.Packet {
-        return NewSwapTeamsPacket()
-    })
+	packets.Register(-994817471, "SwapTeamsPacket", func() packets.Packet {
+		return NewSwapTeamsPacket()
+	})
 }

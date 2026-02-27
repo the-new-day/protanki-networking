@@ -30,9 +30,8 @@ func NewReceiveCaptchaPacket() *ReceiveCaptchaPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1670408519, "ReceiveCaptchaPacket", func() packets.Packet {
-        return NewReceiveCaptchaPacket()
-    })
+	packets.Register(-1670408519, "ReceiveCaptchaPacket", func() packets.Packet {
+		return NewReceiveCaptchaPacket()
+	})
 }

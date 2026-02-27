@@ -38,9 +38,8 @@ func NewStartRespFantomPacket() *StartRespFantomPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(875259457, "StartRespFantomPacket", func() packets.Packet {
-        return NewStartRespFantomPacket()
-    })
+	packets.Register(875259457, "StartRespFantomPacket", func() packets.Packet {
+		return NewStartRespFantomPacket()
+	})
 }

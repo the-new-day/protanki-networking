@@ -27,9 +27,8 @@ func NewMountItemPacket() *MountItemPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1505530736, "MountItemPacket", func() packets.Packet {
-        return NewMountItemPacket()
-    })
+	packets.Register(-1505530736, "MountItemPacket", func() packets.Packet {
+		return NewMountItemPacket()
+	})
 }

@@ -33,9 +33,8 @@ func NewLoginReadyPacket() *LoginReadyPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1277343167, "LoginReadyPacket", func() packets.Packet {
-        return NewLoginReadyPacket()
-    })
+	packets.Register(-1277343167, "LoginReadyPacket", func() packets.Packet {
+		return NewLoginReadyPacket()
+	})
 }

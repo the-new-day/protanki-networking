@@ -27,9 +27,8 @@ func NewBattlePingInfoPacket() *BattlePingInfoPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(34068208, "BattlePingInfoPacket", func() packets.Packet {
-        return NewBattlePingInfoPacket()
-    })
+	packets.Register(34068208, "BattlePingInfoPacket", func() packets.Packet {
+		return NewBattlePingInfoPacket()
+	})
 }

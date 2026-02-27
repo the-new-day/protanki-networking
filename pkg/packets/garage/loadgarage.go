@@ -22,9 +22,8 @@ func NewLoadGaragePacket() *LoadGaragePacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-479046431, "LoadGaragePacket", func() packets.Packet {
-        return NewLoadGaragePacket()
-    })
+	packets.Register(-479046431, "LoadGaragePacket", func() packets.Packet {
+		return NewLoadGaragePacket()
+	})
 }

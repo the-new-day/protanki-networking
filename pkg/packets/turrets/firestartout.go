@@ -27,9 +27,8 @@ func NewFireStartOutPacket() *FireStartOutPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1986638927, "FireStartOutPacket", func() packets.Packet {
-        return NewFireStartOutPacket()
-    })
+	packets.Register(-1986638927, "FireStartOutPacket", func() packets.Packet {
+		return NewFireStartOutPacket()
+	})
 }

@@ -34,9 +34,8 @@ func NewShotDirectionPacket() *ShotDirectionPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-118119523, "ShotDirectionPacket", func() packets.Packet {
-        return NewShotDirectionPacket()
-    })
+	packets.Register(-118119523, "ShotDirectionPacket", func() packets.Packet {
+		return NewShotDirectionPacket()
+	})
 }

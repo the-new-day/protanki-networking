@@ -27,9 +27,8 @@ func NewBannedPacket() *BannedPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-600078553, "BannedPacket", func() packets.Packet {
-        return NewBannedPacket()
-    })
+	packets.Register(-600078553, "BannedPacket", func() packets.Packet {
+		return NewBannedPacket()
+	})
 }

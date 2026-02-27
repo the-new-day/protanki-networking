@@ -32,9 +32,8 @@ func NewKillConfirmPacket() *KillConfirmPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-42520728, "KillConfirmPacket", func() packets.Packet {
-        return NewKillConfirmPacket()
-    })
+	packets.Register(-42520728, "KillConfirmPacket", func() packets.Packet {
+		return NewKillConfirmPacket()
+	})
 }

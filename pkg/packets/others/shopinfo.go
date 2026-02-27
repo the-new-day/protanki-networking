@@ -27,9 +27,8 @@ func NewShopInfoPacket() *ShopInfoPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(1863710730, "ShopInfoPacket", func() packets.Packet {
-        return NewShopInfoPacket()
-    })
+	packets.Register(1863710730, "ShopInfoPacket", func() packets.Packet {
+		return NewShopInfoPacket()
+	})
 }

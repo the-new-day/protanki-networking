@@ -28,9 +28,8 @@ func NewSetCaptchaKeysPacket() *SetCaptchaKeysPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(321971701, "SetCaptchaKeysPacket", func() packets.Packet {
-        return NewSetCaptchaKeysPacket()
-    })
+	packets.Register(321971701, "SetCaptchaKeysPacket", func() packets.Packet {
+		return NewSetCaptchaKeysPacket()
+	})
 }

@@ -27,9 +27,8 @@ func NewLoadSupplyEffectPacket() *LoadSupplyEffectPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(417965410, "LoadSupplyEffectPacket", func() packets.Packet {
-        return NewLoadSupplyEffectPacket()
-    })
+	packets.Register(417965410, "LoadSupplyEffectPacket", func() packets.Packet {
+		return NewLoadSupplyEffectPacket()
+	})
 }

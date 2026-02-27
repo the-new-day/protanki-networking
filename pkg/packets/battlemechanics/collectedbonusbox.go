@@ -27,9 +27,8 @@ func NewCollectedBonusBoxPacket() *CollectedBonusBoxPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1291499147, "CollectedBonusBoxPacket", func() packets.Packet {
-        return NewCollectedBonusBoxPacket()
-    })
+	packets.Register(-1291499147, "CollectedBonusBoxPacket", func() packets.Packet {
+		return NewCollectedBonusBoxPacket()
+	})
 }

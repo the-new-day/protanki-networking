@@ -27,9 +27,8 @@ func NewSelectBattlePacket() *SelectBattlePacket {
 	}
 }
 
-
 func init() {
-    packets.Register(2092412133, "SelectBattlePacket", func() packets.Packet {
-        return NewSelectBattlePacket()
-    })
+	packets.Register(2092412133, "SelectBattlePacket", func() packets.Packet {
+		return NewSelectBattlePacket()
+	})
 }

@@ -27,9 +27,8 @@ func NewSettingsNotificationPacket() *SettingsNotificationPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(1447082276, "SettingsNotificationPacket", func() packets.Packet {
-        return NewSettingsNotificationPacket()
-    })
+	packets.Register(1447082276, "SettingsNotificationPacket", func() packets.Packet {
+		return NewSettingsNotificationPacket()
+	})
 }

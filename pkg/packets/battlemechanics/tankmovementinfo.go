@@ -34,9 +34,8 @@ func NewTankMovementInfoPacket() *TankMovementInfoPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1683279062, "TankMovementInfoPacket", func() packets.Packet {
-        return NewTankMovementInfoPacket()
-    })
+	packets.Register(-1683279062, "TankMovementInfoPacket", func() packets.Packet {
+		return NewTankMovementInfoPacket()
+	})
 }

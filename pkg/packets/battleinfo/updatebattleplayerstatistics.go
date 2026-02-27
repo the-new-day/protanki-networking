@@ -28,9 +28,8 @@ func NewUpdateBattlePlayerStatisticsPacket() *UpdateBattlePlayerStatisticsPacket
 	}
 }
 
-
 func init() {
-    packets.Register(696140460, "UpdateBattlePlayerStatisticsPacket", func() packets.Packet {
-        return NewUpdateBattlePlayerStatisticsPacket()
-    })
+	packets.Register(696140460, "UpdateBattlePlayerStatisticsPacket", func() packets.Packet {
+		return NewUpdateBattlePlayerStatisticsPacket()
+	})
 }

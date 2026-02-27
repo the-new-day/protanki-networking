@@ -27,9 +27,8 @@ func NewSubscribeStatusPacket() *SubscribeStatusPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(1774907609, "SubscribeStatusPacket", func() packets.Packet {
-        return NewSubscribeStatusPacket()
-    })
+	packets.Register(1774907609, "SubscribeStatusPacket", func() packets.Packet {
+		return NewSubscribeStatusPacket()
+	})
 }

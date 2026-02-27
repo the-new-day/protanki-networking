@@ -27,9 +27,8 @@ func NewCloseSettingsPacket() *CloseSettingsPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-731115522, "CloseSettingsPacket", func() packets.Packet {
-        return NewCloseSettingsPacket()
-    })
+	packets.Register(-731115522, "CloseSettingsPacket", func() packets.Packet {
+		return NewCloseSettingsPacket()
+	})
 }

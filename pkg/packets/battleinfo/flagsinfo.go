@@ -41,9 +41,8 @@ func NewFlagsInfoPacket() *FlagsInfoPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(789790814, "FlagsInfoPacket", func() packets.Packet {
-        return NewFlagsInfoPacket()
-    })
+	packets.Register(789790814, "FlagsInfoPacket", func() packets.Packet {
+		return NewFlagsInfoPacket()
+	})
 }

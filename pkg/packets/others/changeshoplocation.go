@@ -29,9 +29,8 @@ func NewBuyFromShopPacket() *BuyFromShopPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(880756819, "BuyFromShopPacket", func() packets.Packet {
-        return NewBuyFromShopPacket()
-    })
+	packets.Register(880756819, "BuyFromShopPacket", func() packets.Packet {
+		return NewBuyFromShopPacket()
+	})
 }

@@ -22,9 +22,8 @@ func NewLoginFailedPacket() *LoginFailedPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(103812952, "LoginFailedPacket", func() packets.Packet {
-        return NewLoginFailedPacket()
-    })
+	packets.Register(103812952, "LoginFailedPacket", func() packets.Packet {
+		return NewLoginFailedPacket()
+	})
 }

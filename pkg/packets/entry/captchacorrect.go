@@ -27,9 +27,8 @@ func NewCaptchaCorrectPacket() *CaptchaCorrectPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-819536476, "CaptchaCorrectPacket", func() packets.Packet {
-        return NewCaptchaCorrectPacket()
-    })
+	packets.Register(-819536476, "CaptchaCorrectPacket", func() packets.Packet {
+		return NewCaptchaCorrectPacket()
+	})
 }

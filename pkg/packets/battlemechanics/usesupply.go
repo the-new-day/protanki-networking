@@ -27,9 +27,8 @@ func NewUseSupplyPacket() *UseSupplyPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-2102525054, "UseSupplyPacket", func() packets.Packet {
-        return NewUseSupplyPacket()
-    })
+	packets.Register(-2102525054, "UseSupplyPacket", func() packets.Packet {
+		return NewUseSupplyPacket()
+	})
 }

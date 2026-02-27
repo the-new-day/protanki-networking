@@ -29,9 +29,8 @@ func NewUpdateTeamBattleScorePacket() *UpdateTeamBattleScorePacket {
 	}
 }
 
-
 func init() {
-    packets.Register(561771020, "UpdateTeamBattleScorePacket", func() packets.Packet {
-        return NewUpdateTeamBattleScorePacket()
-    })
+	packets.Register(561771020, "UpdateTeamBattleScorePacket", func() packets.Packet {
+		return NewUpdateTeamBattleScorePacket()
+	})
 }

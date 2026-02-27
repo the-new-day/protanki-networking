@@ -27,9 +27,8 @@ func NewRoundStartPacket() *RoundStartPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-344514517, "RoundStartPacket", func() packets.Packet {
-        return NewRoundStartPacket()
-    })
+	packets.Register(-344514517, "RoundStartPacket", func() packets.Packet {
+		return NewRoundStartPacket()
+	})
 }

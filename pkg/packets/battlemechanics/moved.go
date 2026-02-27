@@ -30,9 +30,8 @@ func NewMovedPacket() *MovedPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-64696933, "MovedPacket", func() packets.Packet {
-        return NewMovedPacket()
-    })
+	packets.Register(-64696933, "MovedPacket", func() packets.Packet {
+		return NewMovedPacket()
+	})
 }

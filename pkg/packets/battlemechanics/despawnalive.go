@@ -27,9 +27,8 @@ func NewDespawnAlivePacket() *DespawnAlivePacket {
 	}
 }
 
-
 func init() {
-    packets.Register(1719707347, "DespawnAlivePacket", func() packets.Packet {
-        return NewDespawnAlivePacket()
-    })
+	packets.Register(1719707347, "DespawnAlivePacket", func() packets.Packet {
+		return NewDespawnAlivePacket()
+	})
 }

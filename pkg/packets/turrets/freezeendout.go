@@ -27,9 +27,8 @@ func NewFreezeEndOutPacket() *FreezeEndOutPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1654947652, "FreezeEndOutPacket", func() packets.Packet {
-        return NewFreezeEndOutPacket()
-    })
+	packets.Register(-1654947652, "FreezeEndOutPacket", func() packets.Packet {
+		return NewFreezeEndOutPacket()
+	})
 }

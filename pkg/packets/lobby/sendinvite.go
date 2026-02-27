@@ -29,9 +29,8 @@ func NewSendInvitePacket() *SendInvitePacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-864265623, "SendInvitePacket", func() packets.Packet {
-        return NewSendInvitePacket()
-    })
+	packets.Register(-864265623, "SendInvitePacket", func() packets.Packet {
+		return NewSendInvitePacket()
+	})
 }

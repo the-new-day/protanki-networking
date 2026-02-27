@@ -30,9 +30,8 @@ func NewCheckItemMountedPacket() *CheckItemMountedPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(2062201643, "CheckItemMountedPacket", func() packets.Packet {
-        return NewCheckItemMountedPacket()
-    })
+	packets.Register(2062201643, "CheckItemMountedPacket", func() packets.Packet {
+		return NewCheckItemMountedPacket()
+	})
 }

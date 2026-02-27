@@ -30,9 +30,8 @@ func NewSendGameChatPacket() *SendGameChatPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(945463181, "SendGameChatPacket", func() packets.Packet {
-        return NewSendGameChatPacket()
-    })
+	packets.Register(945463181, "SendGameChatPacket", func() packets.Packet {
+		return NewSendGameChatPacket()
+	})
 }

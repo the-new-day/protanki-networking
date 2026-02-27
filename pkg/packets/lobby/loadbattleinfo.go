@@ -27,9 +27,8 @@ func NewLoadBattleInfoPacket() *LoadBattleInfoPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(546722394, "LoadBattleInfoPacket", func() packets.Packet {
-        return NewLoadBattleInfoPacket()
-    })
+	packets.Register(546722394, "LoadBattleInfoPacket", func() packets.Packet {
+		return NewLoadBattleInfoPacket()
+	})
 }

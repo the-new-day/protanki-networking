@@ -50,9 +50,8 @@ func NewLoadAccountStatsPacket() *LoadAccountStatsPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(907073245, "LoadAccountStatsPacket", func() packets.Packet {
-        return NewLoadAccountStatsPacket()
-    })
+	packets.Register(907073245, "LoadAccountStatsPacket", func() packets.Packet {
+		return NewLoadAccountStatsPacket()
+	})
 }

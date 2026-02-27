@@ -22,9 +22,8 @@ func NewNameAvailablePacket() *NameAvailablePacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-706679202, "NameAvailablePacket", func() packets.Packet {
-        return NewNameAvailablePacket()
-    })
+	packets.Register(-706679202, "NameAvailablePacket", func() packets.Packet {
+		return NewNameAvailablePacket()
+	})
 }

@@ -22,9 +22,8 @@ func NewLoginSuccessPacket() *LoginSuccessPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1923286328, "LoginSuccessPacket", func() packets.Packet {
-        return NewLoginSuccessPacket()
-    })
+	packets.Register(-1923286328, "LoginSuccessPacket", func() packets.Packet {
+		return NewLoginSuccessPacket()
+	})
 }

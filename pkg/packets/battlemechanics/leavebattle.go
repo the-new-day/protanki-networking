@@ -27,9 +27,8 @@ func NewLeaveBattlePacket() *LeaveBattlePacket {
 	}
 }
 
-
 func init() {
-    packets.Register(377959142, "LeaveBattlePacket", func() packets.Packet {
-        return NewLeaveBattlePacket()
-    })
+	packets.Register(377959142, "LeaveBattlePacket", func() packets.Packet {
+		return NewLeaveBattlePacket()
+	})
 }

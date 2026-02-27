@@ -22,9 +22,8 @@ func NewPromocodeFailedPacket() *PromocodeFailedPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1850050333, "PromocodeFailedPacket", func() packets.Packet {
-        return NewPromocodeFailedPacket()
-    })
+	packets.Register(-1850050333, "PromocodeFailedPacket", func() packets.Packet {
+		return NewPromocodeFailedPacket()
+	})
 }

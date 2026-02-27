@@ -27,9 +27,8 @@ func NewBattleCreatedPacket() *BattleCreatedPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(802300608, "BattleCreatedPacket", func() packets.Packet {
-        return NewBattleCreatedPacket()
-    })
+	packets.Register(802300608, "BattleCreatedPacket", func() packets.Packet {
+		return NewBattleCreatedPacket()
+	})
 }

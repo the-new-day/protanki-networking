@@ -32,9 +32,8 @@ func NewBonusBoxDroppedPacket() *BonusBoxDroppedPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(1831462385, "BonusBoxDroppedPacket", func() packets.Packet {
-        return NewBonusBoxDroppedPacket()
-    })
+	packets.Register(1831462385, "BonusBoxDroppedPacket", func() packets.Packet {
+		return NewBonusBoxDroppedPacket()
+	})
 }

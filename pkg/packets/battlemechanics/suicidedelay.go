@@ -27,9 +27,8 @@ func NewSuicideDelayPacket() *SuicideDelayPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-911983090, "SuicideDelayPacket", func() packets.Packet {
-        return NewSuicideDelayPacket()
-    })
+	packets.Register(-911983090, "SuicideDelayPacket", func() packets.Packet {
+		return NewSuicideDelayPacket()
+	})
 }

@@ -29,9 +29,8 @@ func NewLeftOutsideDmBattlePacket() *LeftOutsideDmBattlePacket {
 	}
 }
 
-
 func init() {
-    packets.Register(504016996, "LeftOutsideDmBattlePacket", func() packets.Packet {
-        return NewLeftOutsideDmBattlePacket()
-    })
+	packets.Register(504016996, "LeftOutsideDmBattlePacket", func() packets.Packet {
+		return NewLeftOutsideDmBattlePacket()
+	})
 }

@@ -27,9 +27,8 @@ func NewRequestCaptchaPacket() *RequestCaptchaPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-349828108, "RequestCaptchaPacket", func() packets.Packet {
-        return NewRequestCaptchaPacket()
-    })
+	packets.Register(-349828108, "RequestCaptchaPacket", func() packets.Packet {
+		return NewRequestCaptchaPacket()
+	})
 }

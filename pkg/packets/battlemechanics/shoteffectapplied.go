@@ -29,9 +29,8 @@ func NewShotEffectAppliedPacket() *ShotEffectAppliedPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(546849203, "ShotEffectAppliedPacket", func() packets.Packet {
-        return NewShotEffectAppliedPacket()
-    })
+	packets.Register(546849203, "ShotEffectAppliedPacket", func() packets.Packet {
+		return NewShotEffectAppliedPacket()
+	})
 }

@@ -27,9 +27,8 @@ func NewRemoveBattlePacket() *RemoveBattlePacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1848001147, "RemoveBattlePacket", func() packets.Packet {
-        return NewRemoveBattlePacket()
-    })
+	packets.Register(-1848001147, "RemoveBattlePacket", func() packets.Packet {
+		return NewRemoveBattlePacket()
+	})
 }

@@ -22,9 +22,8 @@ func NewPingPacket() *PingPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-555602629, "PingPacket", func() packets.Packet {
-        return NewPingPacket()
-    })
+	packets.Register(-555602629, "PingPacket", func() packets.Packet {
+		return NewPingPacket()
+	})
 }

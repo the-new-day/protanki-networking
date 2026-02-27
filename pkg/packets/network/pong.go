@@ -22,9 +22,8 @@ func NewPongPacket() *PongPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(1484572481, "PongPacket", func() packets.Packet {
-        return NewPongPacket()
-    })
+	packets.Register(1484572481, "PongPacket", func() packets.Packet {
+		return NewPongPacket()
+	})
 }

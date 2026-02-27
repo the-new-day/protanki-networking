@@ -32,9 +32,8 @@ func NewOnlineStatusPacket() *OnlineStatusPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(2041598093, "OnlineStatusPacket", func() packets.Packet {
-        return NewOnlineStatusPacket()
-    })
+	packets.Register(2041598093, "OnlineStatusPacket", func() packets.Packet {
+		return NewOnlineStatusPacket()
+	})
 }

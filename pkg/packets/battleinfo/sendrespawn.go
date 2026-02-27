@@ -22,9 +22,8 @@ func NewSendRespawnPacket() *SendRespawnPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1378839846, "SendRespawnPacket", func() packets.Packet {
-        return NewSendRespawnPacket()
-    })
+	packets.Register(-1378839846, "SendRespawnPacket", func() packets.Packet {
+		return NewSendRespawnPacket()
+	})
 }

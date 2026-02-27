@@ -22,9 +22,8 @@ func NewLoadMissionsPacket() *LoadMissionsPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(1227293080, "LoadMissionsPacket", func() packets.Packet {
-        return NewLoadMissionsPacket()
-    })
+	packets.Register(1227293080, "LoadMissionsPacket", func() packets.Packet {
+		return NewLoadMissionsPacket()
+	})
 }

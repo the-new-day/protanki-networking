@@ -27,9 +27,8 @@ func NewUserChangedEquipmentPacket() *UserChangedEquipmentPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1767633906, "UserChangedEquipmentPacket", func() packets.Packet {
-        return NewUserChangedEquipmentPacket()
-    })
+	packets.Register(-1767633906, "UserChangedEquipmentPacket", func() packets.Packet {
+		return NewUserChangedEquipmentPacket()
+	})
 }

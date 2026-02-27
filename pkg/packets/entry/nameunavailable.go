@@ -27,9 +27,8 @@ func NewNameUnavailablePacket() *NameUnavailablePacket {
 	}
 }
 
-
 func init() {
-    packets.Register(442888643, "NameUnavailablePacket", func() packets.Packet {
-        return NewNameUnavailablePacket()
-    })
+	packets.Register(442888643, "NameUnavailablePacket", func() packets.Packet {
+		return NewNameUnavailablePacket()
+	})
 }

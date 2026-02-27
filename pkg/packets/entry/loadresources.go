@@ -30,9 +30,8 @@ func NewLoadResourcesPacket() *LoadResourcesPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1797047325, "LoadResourcesPacket", func() packets.Packet {
-        return NewLoadResourcesPacket()
-    })
+	packets.Register(-1797047325, "LoadResourcesPacket", func() packets.Packet {
+		return NewLoadResourcesPacket()
+	})
 }

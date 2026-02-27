@@ -38,9 +38,8 @@ func NewTankStatSyncedPacket() *TankStatSyncedPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1672577397, "TankStatSyncedPacket", func() packets.Packet {
-        return NewTankStatSyncedPacket()
-    })
+	packets.Register(-1672577397, "TankStatSyncedPacket", func() packets.Packet {
+		return NewTankStatSyncedPacket()
+	})
 }

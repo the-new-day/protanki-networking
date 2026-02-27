@@ -22,9 +22,8 @@ func NewDeathDelayEndPacket() *DeathDelayEndPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(268832557, "DeathDelayEndPacket", func() packets.Packet {
-        return NewDeathDelayEndPacket()
-    })
+	packets.Register(268832557, "DeathDelayEndPacket", func() packets.Packet {
+		return NewDeathDelayEndPacket()
+	})
 }

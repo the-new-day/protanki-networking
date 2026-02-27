@@ -32,9 +32,8 @@ func NewTurretRotationPacket() *TurretRotationPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-114968993, "TurretRotationPacket", func() packets.Packet {
-        return NewTurretRotationPacket()
-    })
+	packets.Register(-114968993, "TurretRotationPacket", func() packets.Packet {
+		return NewTurretRotationPacket()
+	})
 }

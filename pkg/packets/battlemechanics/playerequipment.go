@@ -27,9 +27,8 @@ func NewPlayerEquipmentPacket() *PlayerEquipmentPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1643824092, "PlayerEquipmentPacket", func() packets.Packet {
-        return NewPlayerEquipmentPacket()
-    })
+	packets.Register(-1643824092, "PlayerEquipmentPacket", func() packets.Packet {
+		return NewPlayerEquipmentPacket()
+	})
 }

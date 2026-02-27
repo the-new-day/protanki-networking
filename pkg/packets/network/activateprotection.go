@@ -28,9 +28,8 @@ func NewActivateProtectionPacket() *ActivateProtectionPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(2001736388, "ActivateProtectionPacket", func() packets.Packet {
-        return NewActivateProtectionPacket()
-    })
+	packets.Register(2001736388, "ActivateProtectionPacket", func() packets.Packet {
+		return NewActivateProtectionPacket()
+	})
 }

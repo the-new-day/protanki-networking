@@ -27,9 +27,8 @@ func NewCollectCryBoxPacket() *CollectCryBoxPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1047185003, "CollectCryBoxPacket", func() packets.Packet {
-        return NewCollectCryBoxPacket()
-    })
+	packets.Register(-1047185003, "CollectCryBoxPacket", func() packets.Packet {
+		return NewCollectCryBoxPacket()
+	})
 }

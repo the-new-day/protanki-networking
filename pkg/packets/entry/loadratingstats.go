@@ -29,9 +29,8 @@ func NewLoadRatingStatsPacket() *LoadRatingStatsPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1128606444, "LoadRatingStatsPacket", func() packets.Packet {
-        return NewLoadRatingStatsPacket()
-    })
+	packets.Register(-1128606444, "LoadRatingStatsPacket", func() packets.Packet {
+		return NewLoadRatingStatsPacket()
+	})
 }

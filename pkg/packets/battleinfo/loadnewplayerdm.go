@@ -31,9 +31,8 @@ func NewLoadNewPlayerDmPacket() *LoadNewPlayerDmPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(862913394, "LoadPlayerDmPacket", func() packets.Packet {
-        return NewLoadNewPlayerDmPacket()
-    })
+	packets.Register(862913394, "LoadPlayerDmPacket", func() packets.Packet {
+		return NewLoadNewPlayerDmPacket()
+	})
 }

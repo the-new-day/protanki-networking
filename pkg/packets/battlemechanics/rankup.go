@@ -30,9 +30,8 @@ func NewRankUpPacket() *RankUpPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(1262947513, "RankUpPacket", func() packets.Packet {
-        return NewRankUpPacket()
-    })
+	packets.Register(1262947513, "RankUpPacket", func() packets.Packet {
+		return NewRankUpPacket()
+	})
 }

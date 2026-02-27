@@ -22,9 +22,8 @@ func NewLoadLobbyPacket() *LoadLobbyPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(1452181070, "LoadLobbyPacket", func() packets.Packet {
-        return NewLoadLobbyPacket()
-    })
+	packets.Register(1452181070, "LoadLobbyPacket", func() packets.Packet {
+		return NewLoadLobbyPacket()
+	})
 }

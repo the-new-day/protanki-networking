@@ -27,9 +27,8 @@ func NewRemoveBonusBoxPacket() *RemoveBonusBoxPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-2026749922, "RemoveBonusBoxPacket", func() packets.Packet {
-        return NewRemoveBonusBoxPacket()
-    })
+	packets.Register(-2026749922, "RemoveBonusBoxPacket", func() packets.Packet {
+		return NewRemoveBonusBoxPacket()
+	})
 }

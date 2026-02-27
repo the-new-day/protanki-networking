@@ -27,9 +27,8 @@ func NewLoadOwnedGarageItemsPacket() *LoadOwnedGarageItemsPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-255516505, "LoadOwnedGarageItemsPacket", func() packets.Packet {
-        return NewLoadOwnedGarageItemsPacket()
-    })
+	packets.Register(-255516505, "LoadOwnedGarageItemsPacket", func() packets.Packet {
+		return NewLoadOwnedGarageItemsPacket()
+	})
 }

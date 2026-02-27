@@ -27,9 +27,8 @@ func NewShaftScopeInitOutPacket() *ShaftScopeInitOutPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-367760678, "ShaftScopeInitOutPacket", func() packets.Packet {
-        return NewShaftScopeInitOutPacket()
-    })
+	packets.Register(-367760678, "ShaftScopeInitOutPacket", func() packets.Packet {
+		return NewShaftScopeInitOutPacket()
+	})
 }

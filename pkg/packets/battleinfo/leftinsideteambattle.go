@@ -27,9 +27,8 @@ func NewLeftInsideTeamBattlePacket() *LeftInsideTeamBattlePacket {
 	}
 }
 
-
 func init() {
-    packets.Register(1411656080, "LeftInsideTeamBattlePacket", func() packets.Packet {
-        return NewLeftInsideTeamBattlePacket()
-    })
+	packets.Register(1411656080, "LeftInsideTeamBattlePacket", func() packets.Packet {
+		return NewLeftInsideTeamBattlePacket()
+	})
 }

@@ -22,9 +22,8 @@ func NewDropFlagPacket() *DropFlagPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-1832611824, "DropFlagPacket", func() packets.Packet {
-        return NewDropFlagPacket()
-    })
+	packets.Register(-1832611824, "DropFlagPacket", func() packets.Packet {
+		return NewDropFlagPacket()
+	})
 }

@@ -27,9 +27,8 @@ func NewUserSuppliesInfoPacket() *UserSuppliesInfoPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(-137249251, "UserSuppliesInfoPacket", func() packets.Packet {
-        return NewUserSuppliesInfoPacket()
-    })
+	packets.Register(-137249251, "UserSuppliesInfoPacket", func() packets.Packet {
+		return NewUserSuppliesInfoPacket()
+	})
 }

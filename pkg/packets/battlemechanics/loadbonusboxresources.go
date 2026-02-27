@@ -27,9 +27,8 @@ func NewLoadBonusBoxResourcesPacket() *LoadBonusBoxResourcesPacket {
 	}
 }
 
-
 func init() {
-    packets.Register(228171466, "LoadBonusBoxResourcesPacket", func() packets.Packet {
-        return NewLoadBonusBoxResourcesPacket()
-    })
+	packets.Register(228171466, "LoadBonusBoxResourcesPacket", func() packets.Packet {
+		return NewLoadBonusBoxResourcesPacket()
+	})
 }
