@@ -6,13 +6,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Mock packet for testing
-type mockPacket struct {
+type MockPacket struct {
 	BasePacket
 }
 
-func newMockPacket() Packet {
-	return &mockPacket{}
+func NewMockPacket() Packet {
+	return &MockPacket{}
 }
 
 func TestNewPacketRegistry(t *testing.T) {
@@ -25,7 +24,7 @@ func TestNewPacketRegistry(t *testing.T) {
 func TestPacketRegistry_Register(t *testing.T) {
 	registry := NewPacketRegistry()
 
-	registry.Register(1001, "TestPacket", newMockPacket)
+	registry.Register(1001, "TestPacket", NewMockPacket)
 
 	stored, exists := registry.packets[1001]
 	assert.True(t, exists)
@@ -36,21 +35,21 @@ func TestPacketRegistry_Register(t *testing.T) {
 func TestPacketRegistry_Register_DuplicatePanics(t *testing.T) {
 	registry := NewPacketRegistry()
 
-	registry.Register(1001, "FirstPacket", newMockPacket)
+	registry.Register(1001, "FirstPacket", NewMockPacket)
 
 	assert.Panics(t, func() {
-		registry.Register(1001, "SecondPacket", newMockPacket)
+		registry.Register(1001, "SecondPacket", NewMockPacket)
 	})
 }
 
 func TestPacketRegistry_Get_Existing(t *testing.T) {
 	registry := NewPacketRegistry()
 
-	registry.Register(1001, "TestPacket", newMockPacket)
+	registry.Register(1001, "TestPacket", NewMockPacket)
 
 	packet := registry.Get(1001)
 	assert.NotNil(t, packet)
-	assert.IsType(t, &mockPacket{}, packet)
+	assert.IsType(t, &MockPacket{}, packet)
 }
 
 func TestPacketRegistry_Get_NonExisting(t *testing.T) {
@@ -63,7 +62,7 @@ func TestPacketRegistry_Get_NonExisting(t *testing.T) {
 func TestPacketRegistry_GetName_Existing(t *testing.T) {
 	registry := NewPacketRegistry()
 
-	registry.Register(1001, "TestPacket", newMockPacket)
+	registry.Register(1001, "TestPacket", NewMockPacket)
 
 	name := registry.GetName(1001)
 	assert.Equal(t, "TestPacket", name)
@@ -79,9 +78,9 @@ func TestPacketRegistry_GetName_NonExisting(t *testing.T) {
 func TestPacketRegistry_MultiplePackets(t *testing.T) {
 	registry := NewPacketRegistry()
 
-	registry.Register(1001, "FirstPacket", newMockPacket)
-	registry.Register(1002, "SecondPacket", newMockPacket)
-	registry.Register(1003, "ThirdPacket", newMockPacket)
+	registry.Register(1001, "FirstPacket", NewMockPacket)
+	registry.Register(1002, "SecondPacket", NewMockPacket)
+	registry.Register(1003, "ThirdPacket", NewMockPacket)
 
 	assert.Len(t, registry.packets, 3)
 
@@ -101,7 +100,7 @@ func TestPacketRegistry_MultiplePackets(t *testing.T) {
 func TestPacketRegistry_FactoryReturnsNewInstance(t *testing.T) {
 	registry := NewPacketRegistry()
 
-	registry.Register(1001, "TestPacket", newMockPacket)
+	registry.Register(1001, "TestPacket", NewMockPacket)
 
 	p1 := registry.Get(1001)
 	p2 := registry.Get(1001)

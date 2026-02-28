@@ -24,8 +24,8 @@ const (
 	packetHeaderLength      = 8
 )
 
-// TankiSocket handles asynchronous network communication with the game server
-type TankiSocket struct {
+// GameSocket handles asynchronous network communication with the game server
+type GameSocket struct {
 	// endpoint is the target game server address (host:port)
 	endpoint *Address
 
@@ -63,7 +63,7 @@ type TankiSocket struct {
 	socketMaxRetries int
 }
 
-// NewTankiSocket creates a new socket instance.
+// NewGameSocket creates a new socket instance.
 //
 // Parameters:
 //   - endpoint: target game server address
@@ -74,16 +74,16 @@ type TankiSocket struct {
 //   - onSocketClose: callback for socket closure events
 //
 // The socket starts in disconnected state. Call ProcessSocket() to begin operation.
-func NewTankiSocket(
+func NewGameSocket(
 	endpoint *Address,
 	protection protection.Protection,
 	proxy *Address,
 	ctx context.Context,
 	onDataReceived func(packet packets.Packet) error,
 	onSocketClose func(err error, source string, details string),
-) *TankiSocket {
+) *GameSocket {
 	ctx, cancel := context.WithCancel(ctx)
-	s := &TankiSocket{
+	s := &GameSocket{
 		endpoint:         endpoint,
 		protection:       protection,
 		proxy:            proxy,
@@ -101,19 +101,19 @@ func NewTankiSocket(
 
 // SetSocketRetryDelay sets socket retry delay.
 // DefaultSocketRetryDelay is used by default.
-func (s *TankiSocket) SetSocketRetryDelay(delay time.Duration) {
+func (s *GameSocket) SetSocketRetryDelay(delay time.Duration) {
 	s.socketRetryDelay = delay
 }
 
 // SetSocketMaxRetries sets socket max retries.
 // DefaultSocketMaxRetries is used by default.
-func (s *TankiSocket) SetSocketMaxRetries(maxRetries int) {
+func (s *GameSocket) SetSocketMaxRetries(maxRetries int) {
 	s.socketMaxRetries = maxRetries
 }
 
 // readFull reads exactly n bytes from the connection.
 // It assumes the caller has already ensured that s.conn is not nil.
-func (s *TankiSocket) readFull(n int) ([]byte, error) {
+func (s *GameSocket) readFull(n int) ([]byte, error) {
 	buf := make([]byte, n)
 	_, err := io.ReadFull(s.conn, buf)
 	return buf, err
@@ -121,7 +121,7 @@ func (s *TankiSocket) readFull(n int) ([]byte, error) {
 
 // connect establishes connection to endpoint with retry and backoff.
 // Returns nil on success, otherwise an error.
-func (s *TankiSocket) connect() error {
+func (s *GameSocket) connect() error {
 	var lastErr error
 
 	for attempt := 0; attempt < s.socketMaxRetries; attempt++ {
@@ -169,7 +169,7 @@ func (s *TankiSocket) connect() error {
 }
 
 // connectDirect establishes a direct TCP or TLS connection.
-func (s *TankiSocket) connectDirect(targetAddr string) (net.Conn, error) {
+func (s *GameSocket) connectDirect(targetAddr string) (net.Conn, error) {
 	if s.endpoint.Port == 443 {
 		return tls.Dial("tcp", targetAddr, &tls.Config{
 			ServerName: s.endpoint.Host,
@@ -180,7 +180,7 @@ func (s *TankiSocket) connectDirect(targetAddr string) (net.Conn, error) {
 
 // connectViaProxy establishes a connection through a SOCKS5 proxy.
 // If the target port is 443, the connection is wrapped with TLS after the proxy tunnel.
-func (s *TankiSocket) connectViaProxy(targetAddr string) (net.Conn, error) {
+func (s *GameSocket) connectViaProxy(targetAddr string) (net.Conn, error) {
 	proxyAddr := fmt.Sprintf("%s:%d", s.proxy.Host, s.proxy.Port)
 	auth := &proxy.Auth{
 		User:     s.proxy.Username,
@@ -214,11 +214,11 @@ func (s *TankiSocket) connectViaProxy(targetAddr string) (net.Conn, error) {
 }
 
 // ProcessSocket is the main socket processing loop.
-func (s *TankiSocket) ProcessSocket() {
+func (s *GameSocket) ProcessSocket() {
 	defer close(s.processingDone)
 
 	if err := s.connect(); err != nil {
-		s.onSocketClose(err, "TankiSocket.connect", "Failed to connect")
+		s.onSocketClose(err, "GameSocket.connect", fmt.Sprintf("Failed to connect: %s", err))
 		return
 	}
 
@@ -229,8 +229,8 @@ func (s *TankiSocket) ProcessSocket() {
 		default:
 			packetLen, packetID, isCompressed, err := s.readPacketHeader()
 			if err != nil {
-				s.onSocketClose(err, "TankiSocket.processSocket",
-					"Connected | Failed to read header")
+				s.onSocketClose(err, "GameSocket.processSocket",
+					fmt.Sprintf("Connected | Failed to read header: %s", err))
 				return
 			}
 
@@ -240,15 +240,15 @@ func (s *TankiSocket) ProcessSocket() {
 			if packetDataLen > 0 {
 				encryptedData, err = s.readFull(int(packetDataLen))
 				if err != nil {
-					s.onSocketClose(err, "TankiSocket.processSocket",
-						fmt.Sprintf("Connected | Packet Length: %d | Failed to read data", packetLen))
+					s.onSocketClose(err, "GameSocket.processSocket",
+						fmt.Sprintf("Connected | Packet Length: %d | Failed to read data: %s", packetLen, err))
 					return
 				}
 			}
 
 			if err := s.processPacket(packetID, encryptedData, isCompressed); err != nil {
-				s.onSocketClose(err, "TankiSocket.processSocket",
-					fmt.Sprintf("Connected | Packet ID: %d | Failed to process", packetID))
+				s.onSocketClose(err, "GameSocket.processSocket",
+					fmt.Sprintf("Connected | Packet ID: %d | Failed to process: %s", packetID, err))
 				return
 			}
 		}
@@ -256,7 +256,7 @@ func (s *TankiSocket) ProcessSocket() {
 }
 
 // readPacketHeader reads the 8-byte header (4 bytes length+flags, 4 bytes packet ID).
-func (s *TankiSocket) readPacketHeader() (int32, int32, bool, error) {
+func (s *GameSocket) readPacketHeader() (int32, int32, bool, error) {
 	s.mu.RLock()
 	conn := s.conn
 	s.mu.RUnlock()
@@ -287,7 +287,7 @@ func (s *TankiSocket) readPacketHeader() (int32, int32, bool, error) {
 }
 
 // processPacket decrypts, decompresses (if needed), and delivers the packet.
-func (s *TankiSocket) processPacket(packetID int32, encryptedData []byte, isCompressed bool) error {
+func (s *GameSocket) processPacket(packetID int32, encryptedData []byte, isCompressed bool) error {
 	decrypted := s.protection.Decrypt(encryptedData)
 
 	if isCompressed {
@@ -310,7 +310,7 @@ func (s *TankiSocket) processPacket(packetID int32, encryptedData []byte, isComp
 }
 
 // fitPacket converts raw data (decrypted) into a packet object using the packet registry.
-func (s *TankiSocket) fitPacket(packetID int32, data []byte) (packets.Packet, error) {
+func (s *GameSocket) fitPacket(packetID int32, data []byte) (packets.Packet, error) {
 	packet := packets.Get(packetID)
 	if packet == nil {
 		return packets.NewUnknownPacket(packetID, data), nil
@@ -324,7 +324,7 @@ func (s *TankiSocket) fitPacket(packetID int32, data []byte) (packets.Packet, er
 }
 
 // Send writes raw data to the connection.
-func (s *TankiSocket) Send(data []byte) error {
+func (s *GameSocket) Send(data []byte) error {
 	select {
 	case <-s.emergencyHalt.Done():
 		return context.Canceled
@@ -344,7 +344,7 @@ func (s *TankiSocket) Send(data []byte) error {
 }
 
 // SendBatch concatenates multiple data chunks and sends them in one write.
-func (s *TankiSocket) SendBatch(packetsData [][]byte) error {
+func (s *GameSocket) SendBatch(packetsData [][]byte) error {
 	var batch []byte
 	for _, p := range packetsData {
 		batch = append(batch, p...)
@@ -353,7 +353,7 @@ func (s *TankiSocket) SendBatch(packetsData [][]byte) error {
 }
 
 // closeConn safely closes and removes the current connection.
-func (s *TankiSocket) closeConn() {
+func (s *GameSocket) closeConn() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -364,7 +364,7 @@ func (s *TankiSocket) closeConn() {
 }
 
 // Close gracefully shuts down the socket and waits for the processing loop to exit.
-func (s *TankiSocket) Close() error {
+func (s *GameSocket) Close() error {
 	s.cancel()
 	s.closeConn()
 

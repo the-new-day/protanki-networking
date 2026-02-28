@@ -24,9 +24,9 @@ func (m *MockTimeProvider) Advance(ms int64) {
 	m.currentTime += ms
 }
 
-func TestNewTankiTimer_InitializesCorrectly(t *testing.T) {
+func TestNewGameTimer_InitializesCorrectly(t *testing.T) {
 	mock := &MockTimeProvider{currentTime: 1000}
-	timer := NewTankiTimerWithProvider(mock)
+	timer := NewGameTimerWithProvider(mock)
 
 	assert.Equal(t, int64(0), timer.clientTime)
 	assert.Equal(t, int64(1000), timer.lastTimestamp)
@@ -36,7 +36,7 @@ func TestNewTankiTimer_InitializesCorrectly(t *testing.T) {
 
 func TestClientTime_IncreasesWithRealTime(t *testing.T) {
 	mock := &MockTimeProvider{currentTime: 1000}
-	timer := NewTankiTimerWithProvider(mock)
+	timer := NewGameTimerWithProvider(mock)
 
 	first := timer.ClientTime()
 	assert.Equal(t, int64(0), first)
@@ -52,7 +52,7 @@ func TestClientTime_IncreasesWithRealTime(t *testing.T) {
 
 func TestClientTime_NeverGoesBackward(t *testing.T) {
 	mock := &MockTimeProvider{currentTime: 1000}
-	timer := NewTankiTimerWithProvider(mock)
+	timer := NewGameTimerWithProvider(mock)
 
 	values := []int64{}
 	for i := 0; i < 10; i++ {
@@ -67,7 +67,7 @@ func TestClientTime_NeverGoesBackward(t *testing.T) {
 
 func TestClientTime_SetToFutureValue(t *testing.T) {
 	mock := &MockTimeProvider{currentTime: 1000}
-	timer := NewTankiTimerWithProvider(mock)
+	timer := NewGameTimerWithProvider(mock)
 
 	timer.SetClientTime(5000)
 	assert.Equal(t, int64(5000), timer.clientTime)
@@ -80,7 +80,7 @@ func TestClientTime_SetToFutureValue(t *testing.T) {
 
 func TestClientTime_IgnoresPastValue(t *testing.T) {
 	mock := &MockTimeProvider{currentTime: 1000}
-	timer := NewTankiTimerWithProvider(mock)
+	timer := NewGameTimerWithProvider(mock)
 
 	timer.SetClientTime(5000)
 	timer.SetClientTime(4000)
@@ -89,7 +89,7 @@ func TestClientTime_IgnoresPastValue(t *testing.T) {
 
 func TestPhysicsTime_FirstCallReturnsClientTime(t *testing.T) {
 	mock := &MockTimeProvider{currentTime: 1000}
-	timer := NewTankiTimerWithProvider(mock)
+	timer := NewGameTimerWithProvider(mock)
 
 	mock.Advance(150)
 	result := timer.PhysicsTime()
@@ -98,7 +98,7 @@ func TestPhysicsTime_FirstCallReturnsClientTime(t *testing.T) {
 
 func TestPhysicsTime_SecondCallReturnsCalculatedTime(t *testing.T) {
 	mock := &MockTimeProvider{currentTime: 1000}
-	timer := NewTankiTimerWithProvider(mock)
+	timer := NewGameTimerWithProvider(mock)
 	mock.Advance(1) // imitate real timer (1ms)
 
 	timer.PhysicsTime()
@@ -111,7 +111,7 @@ func TestPhysicsTime_SecondCallReturnsCalculatedTime(t *testing.T) {
 
 func TestPhysicsTime_StepsBy33ms(t *testing.T) {
 	mock := &MockTimeProvider{currentTime: 1000}
-	timer := NewTankiTimerWithProvider(mock)
+	timer := NewGameTimerWithProvider(mock)
 	mock.Advance(1)
 
 	first := timer.PhysicsTime()
@@ -129,7 +129,7 @@ func TestPhysicsTime_StepsBy33ms(t *testing.T) {
 
 func TestPhysicsTime_AccumulatesMultipleSteps(t *testing.T) {
 	mock := &MockTimeProvider{currentTime: 1000}
-	timer := NewTankiTimerWithProvider(mock)
+	timer := NewGameTimerWithProvider(mock)
 	mock.Advance(1)
 
 	first := timer.PhysicsTime()
@@ -142,7 +142,7 @@ func TestPhysicsTime_AccumulatesMultipleSteps(t *testing.T) {
 
 func TestPhysicsTime_HandlesLargeClientTimeJump(t *testing.T) {
 	mock := &MockTimeProvider{currentTime: 1000}
-	timer := NewTankiTimerWithProvider(mock)
+	timer := NewGameTimerWithProvider(mock)
 	mock.Advance(1)
 
 	first := timer.PhysicsTime()
@@ -157,7 +157,7 @@ func TestPhysicsTime_HandlesLargeClientTimeJump(t *testing.T) {
 
 func TestSetPhysicsTime_ValidMultipleSucceeds(t *testing.T) {
 	mock := &MockTimeProvider{currentTime: 1000}
-	timer := NewTankiTimerWithProvider(mock)
+	timer := NewGameTimerWithProvider(mock)
 
 	base := timer.PhysicsTime()
 
@@ -172,7 +172,7 @@ func TestSetPhysicsTime_ValidMultipleSucceeds(t *testing.T) {
 
 func TestSetPhysicsTime_InvalidMultipleFails(t *testing.T) {
 	mock := &MockTimeProvider{currentTime: 1000}
-	timer := NewTankiTimerWithProvider(mock)
+	timer := NewGameTimerWithProvider(mock)
 
 	base := timer.PhysicsTime()
 	err := timer.SetPhysicsTime(base + 10)
@@ -182,7 +182,7 @@ func TestSetPhysicsTime_InvalidMultipleFails(t *testing.T) {
 
 func TestSetPhysicsTime_BackwardValueFails(t *testing.T) {
 	mock := &MockTimeProvider{currentTime: 1000}
-	timer := NewTankiTimerWithProvider(mock)
+	timer := NewGameTimerWithProvider(mock)
 
 	base := timer.PhysicsTime()
 	err := timer.SetPhysicsTime(base - 33)
@@ -192,7 +192,7 @@ func TestSetPhysicsTime_BackwardValueFails(t *testing.T) {
 
 func TestReset_ClearsAllCounters(t *testing.T) {
 	mock := &MockTimeProvider{currentTime: 1000}
-	timer := NewTankiTimerWithProvider(mock)
+	timer := NewGameTimerWithProvider(mock)
 
 	mock.Advance(500)
 	timer.ClientTime()
@@ -212,7 +212,7 @@ func TestReset_ClearsAllCounters(t *testing.T) {
 
 func TestConcurrentAccess_NoDeadlocks(t *testing.T) {
 	mock := &MockTimeProvider{currentTime: 1000}
-	timer := NewTankiTimerWithProvider(mock)
+	timer := NewGameTimerWithProvider(mock)
 	done := make(chan bool)
 
 	for range 10 {

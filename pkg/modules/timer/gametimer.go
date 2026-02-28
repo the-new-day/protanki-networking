@@ -5,7 +5,7 @@ import (
 	"sync"
 )
 
-// TankiTimer provides thread-safe timer for client time tracking.
+// GameTimer provides thread-safe timer for client time tracking.
 //
 // It maintains three related but distinct time values:
 //   - clientTime: Current logical time that advances with real clock
@@ -16,7 +16,7 @@ import (
 //   - Time never goes backward (monotonic)
 //   - Physics time advances in fixed 33ms steps (30 FPS)
 //   - Multiple goroutines can safely access time values
-type TankiTimer struct {
+type GameTimer struct {
 	// clientTime is the current logical time in milliseconds.
 	// It advances with real time but can be set by server for sync.
 	clientTime int64
@@ -37,8 +37,8 @@ type TankiTimer struct {
 	mu           sync.RWMutex
 }
 
-func NewTankiTimerWithProvider(tp TimeProvider) *TankiTimer {
-	return &TankiTimer{
+func NewGameTimerWithProvider(tp TimeProvider) *GameTimer {
+	return &GameTimer{
 		clientTime:       0,
 		lastReturnedTime: 0,
 		lastPhysicsTime:  0,
@@ -47,10 +47,10 @@ func NewTankiTimerWithProvider(tp TimeProvider) *TankiTimer {
 	}
 }
 
-// NewTankiTimer initializes TankiTimer with RealTimeProvider
-func NewTankiTimer() *TankiTimer {
+// NewGameTimer initializes GameTimer with RealTimeProvider
+func NewGameTimer() *GameTimer {
 	tp := &RealTimeProvider{}
-	return &TankiTimer{
+	return &GameTimer{
 		clientTime:       0,
 		lastReturnedTime: 0,
 		lastPhysicsTime:  0,
@@ -61,7 +61,7 @@ func NewTankiTimer() *TankiTimer {
 
 // updateClientTime updates client (logical) time based on elapsed time.
 // It is not thread-safe.
-func (t *TankiTimer) updateClientTime() {
+func (t *GameTimer) updateClientTime() {
 	currentTimestamp := t.timeProvider.Now()
 	elapsedTime := currentTimestamp - t.lastTimestamp
 
@@ -74,7 +74,7 @@ func (t *TankiTimer) updateClientTime() {
 }
 
 // ClientTime gets current client time with thread-safe updates
-func (t *TankiTimer) ClientTime() int64 {
+func (t *GameTimer) ClientTime() int64 {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
@@ -84,7 +84,7 @@ func (t *TankiTimer) ClientTime() int64 {
 }
 
 // SetClientTime sets client time (thread-safe)
-func (t *TankiTimer) SetClientTime(value int64) {
+func (t *GameTimer) SetClientTime(value int64) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
@@ -103,7 +103,7 @@ func (t *TankiTimer) SetClientTime(value int64) {
 }
 
 // PhysicsTime gets time with consistent 33ms intervals between calls
-func (t *TankiTimer) PhysicsTime() int64 {
+func (t *GameTimer) PhysicsTime() int64 {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
@@ -134,7 +134,7 @@ func (t *TankiTimer) PhysicsTime() int64 {
 }
 
 // SetPhysicsTime allows manual setting of physics time with validation
-func (t *TankiTimer) SetPhysicsTime(value int64) error {
+func (t *GameTimer) SetPhysicsTime(value int64) error {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
@@ -154,7 +154,7 @@ func (t *TankiTimer) SetPhysicsTime(value int64) error {
 }
 
 // Reset resets the timer to initial state
-func (t *TankiTimer) Reset() {
+func (t *GameTimer) Reset() {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 

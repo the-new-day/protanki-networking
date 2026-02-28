@@ -14,6 +14,7 @@ const HeaderLength = 8
 
 // Packet represents packets that are sent and received by the server.
 type Packet interface {
+	// ID returns packet ID, usually set during initialization.
 	ID() int32
 
 	// Unwrap decodes the binary data into individual objects.
@@ -29,7 +30,22 @@ type Packet interface {
 // Provides all necessary functionality and should be embedded to concrete packet implementations.
 //
 // Concrete packet implementations should only
-// provide id, codecs, attributes in their constructors.
+// provide id, codecs, attributes in their constructors
+// unless they need some specific implementation, as in the example:
+//
+//	type FireEndOutPacket struct {
+//		packets.BasePacket
+//	}
+//
+//	func NewFireEndOutPacket() *FireEndOutPacket {
+//		codecs := []codec.Codec{codec.Wrap(&primitive.IntCodec{})}
+//		attributes := []string{"clientTime"}
+//		var id int32 = -1300958299
+//
+//		return &FireEndOutPacket{
+//			BasePacket: *packets.NewBasePacket(id, codecs, attributes),
+//		}
+//	}
 type BasePacket struct {
 	id         int32
 	codecs     []codec.Codec
