@@ -49,3 +49,7 @@ func (p *UnknownPacket) Wrap(protection protection.Protection) (*bytes.Buffer, e
 	final.Write(encrypted)
 	return final, nil
 }
+
+func (p *UnknownPacket) Get(_ string) any {
+	panic("UnknownPacket.Get is not allowed")
+}

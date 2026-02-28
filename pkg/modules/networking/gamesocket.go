@@ -30,7 +30,7 @@ type GameSocket struct {
 	endpoint *Address
 
 	// proxy is an optional SOCKS5 proxy address (host:port with optional auth)
-	proxy *Address
+	proxy *ProxyCredentials
 
 	// protection provides encryption/decryption for packet data
 	protection protection.Protection
@@ -69,27 +69,23 @@ type GameSocket struct {
 //   - endpoint: target game server address
 //   - protection: encryption/decryption object
 //   - proxy: optional SOCKS5 proxy address (nil for direct connection)
-//   - ctx: parent context for cancellation propagation
-//   - onDataReceived: callback for incoming packets
-//   - onSocketClose: callback for socket closure events
+//   - emergencyHalt: parent context for cancellation propagation
 //
 // The socket starts in disconnected state. Call ProcessSocket() to begin operation.
 func NewGameSocket(
 	endpoint *Address,
 	protection protection.Protection,
-	proxy *Address,
-	ctx context.Context,
-	onDataReceived func(packet packets.Packet) error,
-	onSocketClose func(err error, source string, details string),
+	proxy *ProxyCredentials,
+	emergencyHalt context.Context,
 ) *GameSocket {
-	ctx, cancel := context.WithCancel(ctx)
+	emergencyHalt, cancel := context.WithCancel(emergencyHalt)
 	s := &GameSocket{
 		endpoint:         endpoint,
 		protection:       protection,
 		proxy:            proxy,
-		emergencyHalt:    ctx,
-		onDataReceived:   onDataReceived,
-		onSocketClose:    onSocketClose,
+		emergencyHalt:    emergencyHalt,
+		onDataReceived:   func(packet packets.Packet) error { return nil },
+		onSocketClose:    func(err error, source string, details string) {},
 		cancel:           cancel,
 		processingDone:   make(chan struct{}),
 		socketRetryDelay: DefaultSocketRetryDelay,
@@ -97,6 +93,16 @@ func NewGameSocket(
 	}
 
 	return s
+}
+
+// OnDataReceived sets callback for handling incoming packets.
+func (s *GameSocket) OnDataReceived(handler func(packet packets.Packet) error) {
+	s.onDataReceived = handler
+}
+
+// OnSocketClose sets callback for socket closure events.
+func (s *GameSocket) OnSocketClose(handler func(err error, source string, details string)) {
+	s.onSocketClose = handler
 }
 
 // SetSocketRetryDelay sets socket retry delay.
@@ -181,10 +187,10 @@ func (s *GameSocket) connectDirect(targetAddr string) (net.Conn, error) {
 // connectViaProxy establishes a connection through a SOCKS5 proxy.
 // If the target port is 443, the connection is wrapped with TLS after the proxy tunnel.
 func (s *GameSocket) connectViaProxy(targetAddr string) (net.Conn, error) {
-	proxyAddr := fmt.Sprintf("%s:%d", s.proxy.Host, s.proxy.Port)
+	proxyAddr := fmt.Sprintf("%s:%d", s.proxy.Address.Host, s.proxy.Address.Port)
 	auth := &proxy.Auth{
-		User:     s.proxy.Username,
-		Password: s.proxy.Password,
+		User:     s.proxy.Credentials.Username,
+		Password: s.proxy.Credentials.Password,
 	}
 
 	dialer, err := proxy.SOCKS5("tcp", proxyAddr, auth, proxy.Direct)
@@ -367,6 +373,8 @@ func (s *GameSocket) closeConn() {
 func (s *GameSocket) Close() error {
 	s.cancel()
 	s.closeConn()
+
+	s.onSocketClose(nil, "GameSocket.Close", "closing the socket")
 
 	<-s.processingDone
 	return nil

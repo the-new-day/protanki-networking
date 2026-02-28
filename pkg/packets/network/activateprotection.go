@@ -21,7 +21,7 @@ func NewActivateProtectionPacket() *ActivateProtectionPacket {
 		"keys",
 	}
 
-	var id int32 = 2001736388
+	var id int32 = packets.ActivateProtectionID
 
 	return &ActivateProtectionPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -29,7 +29,7 @@ func NewActivateProtectionPacket() *ActivateProtectionPacket {
 }
 
 func init() {
-	packets.Register(2001736388, "ActivateProtectionPacket", func() packets.Packet {
+	packets.Register(packets.ActivateProtectionID, "ActivateProtectionPacket", func() packets.Packet {
 		return NewActivateProtectionPacket()
 	})
 }

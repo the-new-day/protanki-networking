@@ -21,7 +21,7 @@ func NewSetCaptchaKeysPacket() *SetCaptchaKeysPacket {
 		"keys",
 	}
 
-	var id int32 = 321971701
+	var id int32 = packets.SetCaptchaKeysID
 
 	return &SetCaptchaKeysPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -29,7 +29,7 @@ func NewSetCaptchaKeysPacket() *SetCaptchaKeysPacket {
 }
 
 func init() {
-	packets.Register(321971701, "SetCaptchaKeysPacket", func() packets.Packet {
+	packets.Register(packets.SetCaptchaKeysID, "SetCaptchaKeysPacket", func() packets.Packet {
 		return NewSetCaptchaKeysPacket()
 	})
 }

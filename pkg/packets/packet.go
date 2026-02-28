@@ -24,6 +24,8 @@ type Packet interface {
 	// Wrap encodes all the objects into binary data for the packet payload.
 	// Does not affect inner state.
 	Wrap(protection protection.Protection) (*bytes.Buffer, error)
+
+	Get(attribute string) any
 }
 
 // Base packet for concrete packets.
@@ -125,6 +127,15 @@ func (bp *BasePacket) Wrap(protection protection.Protection) (*bytes.Buffer, err
 	}
 
 	return packetData, nil
+}
+
+func (bp *BasePacket) Get(attribute string) any {
+	bp.implement()
+	value, ok := bp.object[attribute]
+	if !ok {
+		panic(fmt.Sprintf("BasePacket.Get: attribute %q not found. ID: %d", attribute, bp.ID()))
+	}
+	return value
 }
 
 // Implements the packet object based on the attribute key list and the decoded object list.
