@@ -21,6 +21,8 @@ type mockProtection struct {
 	decryptResult []byte
 }
 
+func (m *mockProtection) Activate(keys []byte) {}
+
 func (m *mockProtection) Encrypt(data []byte) []byte {
 	m.encryptCalled = true
 	if m.encryptResult != nil {

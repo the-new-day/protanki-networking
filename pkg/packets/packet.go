@@ -12,15 +12,15 @@ import (
 // Packet header length in bytes.
 const HeaderLength = 8
 
-// Represents packets that are sent and received by the server.
+// Packet represents packets that are sent and received by the server.
 type Packet interface {
 	ID() int32
 
-	// Decodes the binary data into individual objects.
-	// Stores decoded objects for future use.
+	// Unwrap decodes the binary data into individual objects.
+	// May store decoded objects for future use.
 	Unwrap(packetData *bytes.Buffer) (map[string]any, error)
 
-	// Encodes all the objects into binary data for the packet payload.
+	// Wrap encodes all the objects into binary data for the packet payload.
 	// Does not affect inner state.
 	Wrap(protection protection.Protection) (*bytes.Buffer, error)
 }
@@ -88,10 +88,11 @@ func (bp *BasePacket) Wrap(protection protection.Protection) (*bytes.Buffer, err
 		dataLen += n
 	}
 
-	intCodec := primitive.IntCodec{}
 	encryptedData := protection.Encrypt(packetData.Bytes())
 
 	packetData = &bytes.Buffer{}
+	intCodec := primitive.IntCodec{}
+
 	_, err := intCodec.Encode(int32(dataLen), packetData)
 	if err != nil {
 		return nil, fmt.Errorf("BasePacket.Wrap: failed to encode data length: %w", err)

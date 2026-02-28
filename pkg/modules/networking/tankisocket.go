@@ -19,28 +19,61 @@ import (
 )
 
 const (
-	socketRetryDelay   = 2 * time.Second
-	socketMaxRetries   = 3
-	packetHeaderLength = 8
+	DefaultSocketRetryDelay = 2 * time.Second
+	DefaultSocketMaxRetries = 3
+	packetHeaderLength      = 8
 )
 
 // TankiSocket handles asynchronous network communication with the game server
 type TankiSocket struct {
-	endpoint   *Address
-	proxy      *Address
+	// endpoint is the target game server address (host:port)
+	endpoint *Address
+
+	// proxy is an optional SOCKS5 proxy address (host:port with optional auth)
+	proxy *Address
+
+	// protection provides encryption/decryption for packet data
 	protection protection.Protection
 
-	emergencyHalt  context.Context
-	onDataReceived func(packet packets.Packet) error
-	onSocketClose  func(err error, source string, details string)
+	// emergencyHalt is a context that signals all goroutines to stop
+	emergencyHalt context.Context
 
-	conn           net.Conn
-	mu             sync.RWMutex
-	cancel         context.CancelFunc
+	// onDataReceived is called when a new packet is successfully received and parsed
+	onDataReceived func(packet packets.Packet) error
+
+	// onSocketClose is called when the socket is closed (due to error or intentionally)
+	onSocketClose func(err error, source string, details string)
+
+	// mu protects concurrent access to conn
+	mu sync.RWMutex
+
+	// conn is the current active network connection
+	conn net.Conn
+
+	// cancel cancels the emergencyHalt context
+	cancel context.CancelFunc
+
+	// processingDone is closed when ProcessSocket goroutine exits
 	processingDone chan struct{}
+
+	// socketRetryDelay is the base delay between connection attempts (increases exponentially)
+	socketRetryDelay time.Duration
+
+	// socketMaxRetries is the maximum number of connection attempts
+	socketMaxRetries int
 }
 
-// NewTankiSocket creates a new socket instance
+// NewTankiSocket creates a new socket instance.
+//
+// Parameters:
+//   - endpoint: target game server address
+//   - protection: encryption/decryption object
+//   - proxy: optional SOCKS5 proxy address (nil for direct connection)
+//   - ctx: parent context for cancellation propagation
+//   - onDataReceived: callback for incoming packets
+//   - onSocketClose: callback for socket closure events
+//
+// The socket starts in disconnected state. Call ProcessSocket() to begin operation.
 func NewTankiSocket(
 	endpoint *Address,
 	protection protection.Protection,
@@ -51,17 +84,31 @@ func NewTankiSocket(
 ) *TankiSocket {
 	ctx, cancel := context.WithCancel(ctx)
 	s := &TankiSocket{
-		endpoint:       endpoint,
-		protection:     protection,
-		proxy:          proxy,
-		emergencyHalt:  ctx,
-		onDataReceived: onDataReceived,
-		onSocketClose:  onSocketClose,
-		cancel:         cancel,
-		processingDone: make(chan struct{}),
+		endpoint:         endpoint,
+		protection:       protection,
+		proxy:            proxy,
+		emergencyHalt:    ctx,
+		onDataReceived:   onDataReceived,
+		onSocketClose:    onSocketClose,
+		cancel:           cancel,
+		processingDone:   make(chan struct{}),
+		socketRetryDelay: DefaultSocketRetryDelay,
+		socketMaxRetries: DefaultSocketMaxRetries,
 	}
 
 	return s
+}
+
+// SetSocketRetryDelay sets socket retry delay.
+// DefaultSocketRetryDelay is used by default.
+func (s *TankiSocket) SetSocketRetryDelay(delay time.Duration) {
+	s.socketRetryDelay = delay
+}
+
+// SetSocketMaxRetries sets socket max retries.
+// DefaultSocketMaxRetries is used by default.
+func (s *TankiSocket) SetSocketMaxRetries(maxRetries int) {
+	s.socketMaxRetries = maxRetries
 }
 
 // readFull reads exactly n bytes from the connection.
@@ -77,7 +124,7 @@ func (s *TankiSocket) readFull(n int) ([]byte, error) {
 func (s *TankiSocket) connect() error {
 	var lastErr error
 
-	for attempt := 0; attempt < socketMaxRetries; attempt++ {
+	for attempt := 0; attempt < s.socketMaxRetries; attempt++ {
 		select {
 		case <-s.emergencyHalt.Done():
 			return context.Canceled
@@ -112,13 +159,13 @@ func (s *TankiSocket) connect() error {
 
 		lastErr = err
 
-		if attempt < socketMaxRetries-1 {
-			backoff := socketRetryDelay * time.Duration(1<<uint(attempt))
+		if attempt < s.socketMaxRetries-1 {
+			backoff := s.socketRetryDelay * time.Duration(1<<uint(attempt))
 			time.Sleep(backoff)
 		}
 	}
 
-	return fmt.Errorf("failed to connect after %d attempts: %w", socketMaxRetries, lastErr)
+	return fmt.Errorf("failed to connect after %d attempts: %w", s.socketMaxRetries, lastErr)
 }
 
 // connectDirect establishes a direct TCP or TLS connection.
@@ -262,11 +309,11 @@ func (s *TankiSocket) processPacket(packetID int32, encryptedData []byte, isComp
 	return s.onDataReceived(packet)
 }
 
-// fitPacket converts raw data into a packet object using the packet registry.
+// fitPacket converts raw data (decrypted) into a packet object using the packet registry.
 func (s *TankiSocket) fitPacket(packetID int32, data []byte) (packets.Packet, error) {
 	packet := packets.Get(packetID)
 	if packet == nil {
-		return nil, fmt.Errorf("no packet with id %d found", packetID)
+		return packets.NewUnknownPacket(packetID, data), nil
 	}
 
 	if _, err := packet.Unwrap(bytes.NewBuffer(data)); err != nil {
