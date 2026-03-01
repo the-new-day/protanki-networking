@@ -23,7 +23,7 @@ func NewRespawnDelayPacket() *RespawnDelayPacket {
 		"respawnDelay",
 	}
 
-	var id int32 = -173682854
+	var id int32 = packets.RespawnDelayID
 
 	return &RespawnDelayPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -31,7 +31,7 @@ func NewRespawnDelayPacket() *RespawnDelayPacket {
 }
 
 func init() {
-	packets.Register(-173682854, "RespawnDelay", func() packets.Packet {
+	packets.Register(packets.RespawnDelayID, "RespawnDelay", func() packets.Packet {
 		return NewRespawnDelayPacket()
 	})
 }

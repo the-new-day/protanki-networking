@@ -21,7 +21,7 @@ func NewLoadNewbieRewardsPacket() *LoadNewbieRewardsPacket {
 		"incompleteRewards",
 	}
 
-	var id int32 = 602656160
+	var id int32 = packets.LoadNewbieRewardsID
 
 	return &LoadNewbieRewardsPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -29,7 +29,7 @@ func NewLoadNewbieRewardsPacket() *LoadNewbieRewardsPacket {
 }
 
 func init() {
-	packets.Register(602656160, "LoadbieRewards", func() packets.Packet {
+	packets.Register(packets.LoadNewbieRewardsID, "LoadbieRewards", func() packets.Packet {
 		return NewLoadNewbieRewardsPacket()
 	})
 }

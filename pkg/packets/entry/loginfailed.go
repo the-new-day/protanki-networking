@@ -15,7 +15,7 @@ func NewLoginFailedPacket() *LoginFailedPacket {
 
 	attributes := []string{}
 
-	var id int32 = 103812952
+	var id int32 = packets.LoginFailedID
 
 	return &LoginFailedPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewLoginFailedPacket() *LoginFailedPacket {
 }
 
 func init() {
-	packets.Register(103812952, "LoginFailed", func() packets.Packet {
+	packets.Register(packets.LoginFailedID, "LoginFailed", func() packets.Packet {
 		return NewLoginFailedPacket()
 	})
 }

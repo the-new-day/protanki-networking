@@ -20,7 +20,7 @@ func NewInviteCodeStatusPacket() *InviteCodeStatusPacket {
 		"inviteEnabled",
 	}
 
-	var id int32 = 444933603
+	var id int32 = packets.InviteCodeStatusID
 
 	return &InviteCodeStatusPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewInviteCodeStatusPacket() *InviteCodeStatusPacket {
 }
 
 func init() {
-	packets.Register(444933603, "InviteCodeStatus", func() packets.Packet {
+	packets.Register(packets.InviteCodeStatusID, "InviteCodeStatus", func() packets.Packet {
 		return NewInviteCodeStatusPacket()
 	})
 }

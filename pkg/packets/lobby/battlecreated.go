@@ -20,7 +20,7 @@ func NewBattleCreatedPacket() *BattleCreatedPacket {
 		"json",
 	}
 
-	var id int32 = 802300608
+	var id int32 = packets.BattleCreatedID
 
 	return &BattleCreatedPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewBattleCreatedPacket() *BattleCreatedPacket {
 }
 
 func init() {
-	packets.Register(802300608, "BattleCreated", func() packets.Packet {
+	packets.Register(packets.BattleCreatedID, "BattleCreated", func() packets.Packet {
 		return NewBattleCreatedPacket()
 	})
 }

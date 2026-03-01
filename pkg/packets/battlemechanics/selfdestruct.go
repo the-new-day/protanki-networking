@@ -15,7 +15,7 @@ func NewSelfDestructPacket() *SelfDestructPacket {
 
 	attributes := []string{}
 
-	var id int32 = 988664577
+	var id int32 = packets.SelfDestructID
 
 	return &SelfDestructPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewSelfDestructPacket() *SelfDestructPacket {
 }
 
 func init() {
-	packets.Register(988664577, "SelfDestruct", func() packets.Packet {
+	packets.Register(packets.SelfDestructID, "SelfDestruct", func() packets.Packet {
 		return NewSelfDestructPacket()
 	})
 }

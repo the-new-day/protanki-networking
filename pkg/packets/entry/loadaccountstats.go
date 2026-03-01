@@ -43,7 +43,7 @@ func NewLoadAccountStatsPacket() *LoadAccountStatsPacket {
 		"userProfileUrl",
 	}
 
-	var id int32 = 907073245
+	var id int32 = packets.LoadAccountStatsID
 
 	return &LoadAccountStatsPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -51,7 +51,7 @@ func NewLoadAccountStatsPacket() *LoadAccountStatsPacket {
 }
 
 func init() {
-	packets.Register(907073245, "LoadAccountStats", func() packets.Packet {
+	packets.Register(packets.LoadAccountStatsID, "LoadAccountStats", func() packets.Packet {
 		return NewLoadAccountStatsPacket()
 	})
 }

@@ -20,7 +20,7 @@ func NewMountItemPacket() *MountItemPacket {
 		"item_id",
 	}
 
-	var id int32 = -1505530736
+	var id int32 = packets.MountItemID
 
 	return &MountItemPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewMountItemPacket() *MountItemPacket {
 }
 
 func init() {
-	packets.Register(-1505530736, "MountItem", func() packets.Packet {
+	packets.Register(packets.MountItemID, "MountItem", func() packets.Packet {
 		return NewMountItemPacket()
 	})
 }

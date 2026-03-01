@@ -20,7 +20,7 @@ func NewRequestCaptchaPacket() *RequestCaptchaPacket {
 		"type_",
 	}
 
-	var id int32 = -349828108
+	var id int32 = packets.RequestCaptchaID
 
 	return &RequestCaptchaPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewRequestCaptchaPacket() *RequestCaptchaPacket {
 }
 
 func init() {
-	packets.Register(-349828108, "RequestCaptcha", func() packets.Packet {
+	packets.Register(packets.RequestCaptchaID, "RequestCaptcha", func() packets.Packet {
 		return NewRequestCaptchaPacket()
 	})
 }

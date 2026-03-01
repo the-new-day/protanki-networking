@@ -24,7 +24,7 @@ func NewLoadFriendsListPacket() *LoadFriendsListPacket {
 		"outgoing",
 	}
 
-	var id int32 = 1422563374
+	var id int32 = packets.LoadFriendsListID
 
 	return &LoadFriendsListPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -32,7 +32,7 @@ func NewLoadFriendsListPacket() *LoadFriendsListPacket {
 }
 
 func init() {
-	packets.Register(1422563374, "LoadFriendsList", func() packets.Packet {
+	packets.Register(packets.LoadFriendsListID, "LoadFriendsList", func() packets.Packet {
 		return NewLoadFriendsListPacket()
 	})
 }

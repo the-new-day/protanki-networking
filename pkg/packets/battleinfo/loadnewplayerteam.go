@@ -27,7 +27,7 @@ func NewLoadNewPlayerTeamPacket() *LoadNewPlayerTeamPacket {
 		"team",
 	}
 
-	var id int32 = 2040021062
+	var id int32 = packets.LoadNewPlayerTeamID
 
 	return &LoadNewPlayerTeamPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -35,7 +35,7 @@ func NewLoadNewPlayerTeamPacket() *LoadNewPlayerTeamPacket {
 }
 
 func init() {
-	packets.Register(2040021062, "LoadPlayerTeam", func() packets.Packet {
+	packets.Register(packets.LoadNewPlayerTeamID, "LoadPlayerTeam", func() packets.Packet {
 		return NewLoadNewPlayerTeamPacket()
 	})
 }

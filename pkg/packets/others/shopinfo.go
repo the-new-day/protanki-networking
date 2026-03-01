@@ -20,7 +20,7 @@ func NewShopInfoPacket() *ShopInfoPacket {
 		"data",
 	}
 
-	var id int32 = 1863710730
+	var id int32 = packets.ShopInfoID
 
 	return &ShopInfoPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewShopInfoPacket() *ShopInfoPacket {
 }
 
 func init() {
-	packets.Register(1863710730, "ShopInfo", func() packets.Packet {
+	packets.Register(packets.ShopInfoID, "ShopInfo", func() packets.Packet {
 		return NewShopInfoPacket()
 	})
 }

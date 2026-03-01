@@ -20,7 +20,7 @@ func NewSendPromocodePacket() *SendPromocodePacket {
 		"promocode",
 	}
 
-	var id int32 = -511004908
+	var id int32 = packets.SendPromocodeID
 
 	return &SendPromocodePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewSendPromocodePacket() *SendPromocodePacket {
 }
 
 func init() {
-	packets.Register(-511004908, "SendPromocode", func() packets.Packet {
+	packets.Register(packets.SendPromocodeID, "SendPromocode", func() packets.Packet {
 		return NewSendPromocodePacket()
 	})
 }

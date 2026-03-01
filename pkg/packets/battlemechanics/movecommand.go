@@ -26,7 +26,7 @@ func NewMoveCommandPacket() *MoveCommandPacket {
 		"turretDirection",
 	}
 
-	var id int32 = 1516578027
+	var id int32 = packets.MoveCommandID
 
 	return &MoveCommandPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -34,7 +34,7 @@ func NewMoveCommandPacket() *MoveCommandPacket {
 }
 
 func init() {
-	packets.Register(1516578027, "MoveCommand", func() packets.Packet {
+	packets.Register(packets.MoveCommandID, "MoveCommand", func() packets.Packet {
 		return NewMoveCommandPacket()
 	})
 }

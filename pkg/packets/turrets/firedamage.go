@@ -29,7 +29,7 @@ func NewFireDamagePacket() *FireDamagePacket {
 		"targetHitPoints",
 	}
 
-	var id int32 = 1395251766
+	var id int32 = packets.FireDamageID
 
 	return &FireDamagePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -37,7 +37,7 @@ func NewFireDamagePacket() *FireDamagePacket {
 }
 
 func init() {
-	packets.Register(1395251766, "FireDamage", func() packets.Packet {
+	packets.Register(packets.FireDamageID, "FireDamage", func() packets.Packet {
 		return NewFireDamagePacket()
 	})
 }

@@ -22,7 +22,7 @@ func NewLeftSelectedPreviewPacket() *LeftSelectedPreviewPacket {
 		"username",
 	}
 
-	var id int32 = 1924874982
+	var id int32 = packets.LeftSelectedPreviewID
 
 	return &LeftSelectedPreviewPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -30,7 +30,7 @@ func NewLeftSelectedPreviewPacket() *LeftSelectedPreviewPacket {
 }
 
 func init() {
-	packets.Register(1924874982, "LeftSelectedPreview", func() packets.Packet {
+	packets.Register(packets.LeftSelectedPreviewID, "LeftSelectedPreview", func() packets.Packet {
 		return NewLeftSelectedPreviewPacket()
 	})
 }

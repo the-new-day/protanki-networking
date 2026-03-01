@@ -20,7 +20,7 @@ func NewCollectCryBoxPacket() *CollectCryBoxPacket {
 		"bonusId",
 	}
 
-	var id int32 = -1047185003
+	var id int32 = packets.CollectCryBoxID
 
 	return &CollectCryBoxPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewCollectCryBoxPacket() *CollectCryBoxPacket {
 }
 
 func init() {
-	packets.Register(-1047185003, "CollectCryBox", func() packets.Packet {
+	packets.Register(packets.CollectCryBoxID, "CollectCryBox", func() packets.Packet {
 		return NewCollectCryBoxPacket()
 	})
 }

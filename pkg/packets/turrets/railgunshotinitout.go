@@ -20,7 +20,7 @@ func NewRailgunShotInitOutPacket() *RailgunShotInitOutPacket {
 		"clientTime",
 	}
 
-	var id int32 = -1759063234
+	var id int32 = packets.RailgunShotInitOutID
 
 	return &RailgunShotInitOutPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewRailgunShotInitOutPacket() *RailgunShotInitOutPacket {
 }
 
 func init() {
-	packets.Register(-1759063234, "RailgunShotInitOut", func() packets.Packet {
+	packets.Register(packets.RailgunShotInitOutID, "RailgunShotInitOut", func() packets.Packet {
 		return NewRailgunShotInitOutPacket()
 	})
 }

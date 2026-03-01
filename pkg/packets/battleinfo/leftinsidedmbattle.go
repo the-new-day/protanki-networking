@@ -20,7 +20,7 @@ func NewLeftInsideDmBattlePacket() *LeftInsideDmBattlePacket {
 		"username",
 	}
 
-	var id int32 = -1689876764
+	var id int32 = packets.LeftInsideDmBattleID
 
 	return &LeftInsideDmBattlePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewLeftInsideDmBattlePacket() *LeftInsideDmBattlePacket {
 }
 
 func init() {
-	packets.Register(-1689876764, "LeftInsideDmBattle", func() packets.Packet {
+	packets.Register(packets.LeftInsideDmBattleID, "LeftInsideDmBattle", func() packets.Packet {
 		return NewLeftInsideDmBattlePacket()
 	})
 }

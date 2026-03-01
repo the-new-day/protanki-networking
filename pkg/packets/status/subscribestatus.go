@@ -20,7 +20,7 @@ func NewSubscribeStatusPacket() *SubscribeStatusPacket {
 		"username",
 	}
 
-	var id int32 = 1774907609
+	var id int32 = packets.SubscribeStatusID
 
 	return &SubscribeStatusPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewSubscribeStatusPacket() *SubscribeStatusPacket {
 }
 
 func init() {
-	packets.Register(1774907609, "SubscribeStatus", func() packets.Packet {
+	packets.Register(packets.SubscribeStatusID, "SubscribeStatus", func() packets.Packet {
 		return NewSubscribeStatusPacket()
 	})
 }

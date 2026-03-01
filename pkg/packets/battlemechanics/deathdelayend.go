@@ -15,7 +15,7 @@ func NewDeathDelayEndPacket() *DeathDelayEndPacket {
 
 	attributes := []string{}
 
-	var id int32 = 268832557
+	var id int32 = packets.DeathDelayEndID
 
 	return &DeathDelayEndPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewDeathDelayEndPacket() *DeathDelayEndPacket {
 }
 
 func init() {
-	packets.Register(268832557, "DeathDelayEnd", func() packets.Packet {
+	packets.Register(packets.DeathDelayEndID, "DeathDelayEnd", func() packets.Packet {
 		return NewDeathDelayEndPacket()
 	})
 }

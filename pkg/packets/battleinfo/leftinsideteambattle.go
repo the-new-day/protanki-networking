@@ -20,7 +20,7 @@ func NewLeftInsideTeamBattlePacket() *LeftInsideTeamBattlePacket {
 		"username",
 	}
 
-	var id int32 = 1411656080
+	var id int32 = packets.LeftInsideTeamBattleID
 
 	return &LeftInsideTeamBattlePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewLeftInsideTeamBattlePacket() *LeftInsideTeamBattlePacket {
 }
 
 func init() {
-	packets.Register(1411656080, "LeftInsideTeamBattle", func() packets.Packet {
+	packets.Register(packets.LeftInsideTeamBattleID, "LeftInsideTeamBattle", func() packets.Packet {
 		return NewLeftInsideTeamBattlePacket()
 	})
 }

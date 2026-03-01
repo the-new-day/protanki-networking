@@ -29,7 +29,7 @@ func NewEffectAftermathPacket() *EffectAftermathPacket {
 		"effectLevel",
 	}
 
-	var id int32 = -1639713644
+	var id int32 = packets.EffectAftermathID
 
 	return &EffectAftermathPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -37,7 +37,7 @@ func NewEffectAftermathPacket() *EffectAftermathPacket {
 }
 
 func init() {
-	packets.Register(-1639713644, "EffectAftermath", func() packets.Packet {
+	packets.Register(packets.EffectAftermathID, "EffectAftermath", func() packets.Packet {
 		return NewEffectAftermathPacket()
 	})
 }

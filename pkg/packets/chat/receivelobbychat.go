@@ -21,7 +21,7 @@ func NewReceiveLobbyChatPacket() *ReceiveLobbyChatPacket {
 		"messages",
 	}
 
-	var id int32 = -1263520410
+	var id int32 = packets.ReceiveLobbyChatID
 
 	return &ReceiveLobbyChatPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -29,7 +29,7 @@ func NewReceiveLobbyChatPacket() *ReceiveLobbyChatPacket {
 }
 
 func init() {
-	packets.Register(-1263520410, "ReceiveLobbyChat", func() packets.Packet {
+	packets.Register(packets.ReceiveLobbyChatID, "ReceiveLobbyChat", func() packets.Packet {
 		return NewReceiveLobbyChatPacket()
 	})
 }

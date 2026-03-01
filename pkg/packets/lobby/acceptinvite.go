@@ -20,7 +20,7 @@ func NewAcceptInvitePacket() *AcceptInvitePacket {
 		"username",
 	}
 
-	var id int32 = 814687528
+	var id int32 = packets.AcceptInviteID
 
 	return &AcceptInvitePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewAcceptInvitePacket() *AcceptInvitePacket {
 }
 
 func init() {
-	packets.Register(814687528, "AcceptInvite", func() packets.Packet {
+	packets.Register(packets.AcceptInviteID, "AcceptInvite", func() packets.Packet {
 		return NewAcceptInvitePacket()
 	})
 }

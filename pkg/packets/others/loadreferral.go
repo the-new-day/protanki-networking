@@ -15,7 +15,7 @@ func NewLoadReferralPacket() *LoadReferralPacket {
 
 	attributes := []string{}
 
-	var id int32 = -169921234
+	var id int32 = packets.LoadReferralID
 
 	return &LoadReferralPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewLoadReferralPacket() *LoadReferralPacket {
 }
 
 func init() {
-	packets.Register(-169921234, "LoadReferral", func() packets.Packet {
+	packets.Register(packets.LoadReferralID, "LoadReferral", func() packets.Packet {
 		return NewLoadReferralPacket()
 	})
 }

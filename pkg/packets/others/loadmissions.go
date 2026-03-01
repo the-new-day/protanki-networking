@@ -15,7 +15,7 @@ func NewLoadMissionsPacket() *LoadMissionsPacket {
 
 	attributes := []string{}
 
-	var id int32 = 1227293080
+	var id int32 = packets.LoadMissionsID
 
 	return &LoadMissionsPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewLoadMissionsPacket() *LoadMissionsPacket {
 }
 
 func init() {
-	packets.Register(1227293080, "LoadMissions", func() packets.Packet {
+	packets.Register(packets.LoadMissionsID, "LoadMissions", func() packets.Packet {
 		return NewLoadMissionsPacket()
 	})
 }

@@ -25,7 +25,7 @@ func NewBonusBoxDroppedPacket() *BonusBoxDroppedPacket {
 		"fallTimeThreshold",
 	}
 
-	var id int32 = 1831462385
+	var id int32 = packets.BonusBoxDroppedID
 
 	return &BonusBoxDroppedPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -33,7 +33,7 @@ func NewBonusBoxDroppedPacket() *BonusBoxDroppedPacket {
 }
 
 func init() {
-	packets.Register(1831462385, "BonusBoxDropped", func() packets.Packet {
+	packets.Register(packets.BonusBoxDroppedID, "BonusBoxDropped", func() packets.Packet {
 		return NewBonusBoxDroppedPacket()
 	})
 }

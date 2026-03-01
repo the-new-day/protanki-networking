@@ -23,7 +23,7 @@ func NewRankStatusPacket() *RankStatusPacket {
 		"username",
 	}
 
-	var id int32 = -962759489
+	var id int32 = packets.RankStatusID
 
 	return &RankStatusPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -31,7 +31,7 @@ func NewRankStatusPacket() *RankStatusPacket {
 }
 
 func init() {
-	packets.Register(-962759489, "RankStatus", func() packets.Packet {
+	packets.Register(packets.RankStatusID, "RankStatus", func() packets.Packet {
 		return NewRankStatusPacket()
 	})
 }

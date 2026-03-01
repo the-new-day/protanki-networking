@@ -20,7 +20,7 @@ func NewBattleFundPacket() *BattleFundPacket {
 		"fund",
 	}
 
-	var id int32 = 1149211509
+	var id int32 = packets.BattleFundID
 
 	return &BattleFundPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewBattleFundPacket() *BattleFundPacket {
 }
 
 func init() {
-	packets.Register(1149211509, "BattleFund", func() packets.Packet {
+	packets.Register(packets.BattleFundID, "BattleFund", func() packets.Packet {
 		return NewBattleFundPacket()
 	})
 }

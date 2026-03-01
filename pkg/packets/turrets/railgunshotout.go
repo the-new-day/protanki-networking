@@ -33,7 +33,7 @@ func NewRailgunShotOutPacket() *RailgunShotOutPacket {
 		"globalHitPoints",
 	}
 
-	var id int32 = -484994657
+	var id int32 = packets.RailgunShotOutID
 
 	return &RailgunShotOutPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -41,7 +41,7 @@ func NewRailgunShotOutPacket() *RailgunShotOutPacket {
 }
 
 func init() {
-	packets.Register(-484994657, "RailgunShotOut", func() packets.Packet {
+	packets.Register(packets.RailgunShotOutID, "RailgunShotOut", func() packets.Packet {
 		return NewRailgunShotOutPacket()
 	})
 }

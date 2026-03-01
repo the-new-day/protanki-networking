@@ -26,7 +26,7 @@ func NewLoginReadyPacket() *LoginReadyPacket {
 		"minPWLen",
 	}
 
-	var id int32 = -1277343167
+	var id int32 = packets.LoginReadyID
 
 	return &LoginReadyPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -34,7 +34,7 @@ func NewLoginReadyPacket() *LoginReadyPacket {
 }
 
 func init() {
-	packets.Register(-1277343167, "LoginReady", func() packets.Packet {
+	packets.Register(packets.LoginReadyID, "LoginReady", func() packets.Packet {
 		return NewLoginReadyPacket()
 	})
 }

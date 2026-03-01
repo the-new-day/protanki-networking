@@ -23,7 +23,7 @@ func NewWrongNewCaptchaPacket() *WrongNewCaptchaPacket {
 		"imagedata",
 	}
 
-	var id int32 = -373510957
+	var id int32 = packets.WrongNewCaptchaID
 
 	return &WrongNewCaptchaPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -31,7 +31,7 @@ func NewWrongNewCaptchaPacket() *WrongNewCaptchaPacket {
 }
 
 func init() {
-	packets.Register(-373510957, "WrongCaptcha", func() packets.Packet {
+	packets.Register(packets.WrongNewCaptchaID, "WrongCaptcha", func() packets.Packet {
 		return NewWrongNewCaptchaPacket()
 	})
 }

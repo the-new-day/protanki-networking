@@ -20,7 +20,7 @@ func NewFreezeStartOutPacket() *FreezeStartOutPacket {
 		"clientTime",
 	}
 
-	var id int32 = -75406982
+	var id int32 = packets.FreezeStartOutID
 
 	return &FreezeStartOutPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewFreezeStartOutPacket() *FreezeStartOutPacket {
 }
 
 func init() {
-	packets.Register(-75406982, "FreezeStartOut", func() packets.Packet {
+	packets.Register(packets.FreezeStartOutID, "FreezeStartOut", func() packets.Packet {
 		return NewFreezeStartOutPacket()
 	})
 }

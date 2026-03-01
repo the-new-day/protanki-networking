@@ -23,7 +23,7 @@ func NewBuyKitPacket() *BuyKitPacket {
 		"base_cost",
 	}
 
-	var id int32 = -523392052
+	var id int32 = packets.BuyKitID
 
 	return &BuyKitPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -31,7 +31,7 @@ func NewBuyKitPacket() *BuyKitPacket {
 }
 
 func init() {
-	packets.Register(-523392052, "BuyKit", func() packets.Packet {
+	packets.Register(packets.BuyKitID, "BuyKit", func() packets.Packet {
 		return NewBuyKitPacket()
 	})
 }

@@ -22,7 +22,7 @@ func NewLoadRatingStatsPacket() *LoadRatingStatsPacket {
 		"place",
 	}
 
-	var id int32 = -1128606444
+	var id int32 = packets.LoadRatingStatsID
 
 	return &LoadRatingStatsPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -30,7 +30,7 @@ func NewLoadRatingStatsPacket() *LoadRatingStatsPacket {
 }
 
 func init() {
-	packets.Register(-1128606444, "LoadRatingStats", func() packets.Packet {
+	packets.Register(packets.LoadRatingStatsID, "LoadRatingStats", func() packets.Packet {
 		return NewLoadRatingStatsPacket()
 	})
 }

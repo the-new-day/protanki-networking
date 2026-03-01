@@ -20,7 +20,7 @@ func NewRemoveBonusBoxPacket() *RemoveBonusBoxPacket {
 		"bonusId",
 	}
 
-	var id int32 = -2026749922
+	var id int32 = packets.RemoveBonusBoxID
 
 	return &RemoveBonusBoxPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewRemoveBonusBoxPacket() *RemoveBonusBoxPacket {
 }
 
 func init() {
-	packets.Register(-2026749922, "RemoveBonusBox", func() packets.Packet {
+	packets.Register(packets.RemoveBonusBoxID, "RemoveBonusBox", func() packets.Packet {
 		return NewRemoveBonusBoxPacket()
 	})
 }

@@ -25,7 +25,7 @@ func NewUpdateTeamBattlePreviewPacket() *UpdateTeamBattlePreviewPacket {
 		"score",
 	}
 
-	var id int32 = 1428217189
+	var id int32 = packets.UpdateTeamBattlePreviewID
 
 	return &UpdateTeamBattlePreviewPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -33,7 +33,7 @@ func NewUpdateTeamBattlePreviewPacket() *UpdateTeamBattlePreviewPacket {
 }
 
 func init() {
-	packets.Register(1428217189, "UpdateTeamBattlePreview", func() packets.Packet {
+	packets.Register(packets.UpdateTeamBattlePreviewID, "UpdateTeamBattlePreview", func() packets.Packet {
 		return NewUpdateTeamBattlePreviewPacket()
 	})
 }

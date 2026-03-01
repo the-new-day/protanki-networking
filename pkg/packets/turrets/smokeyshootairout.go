@@ -20,7 +20,7 @@ func NewSmokyShootAirOutPacket() *SmokyShootAirOutPacket {
 		"clientTime",
 	}
 
-	var id int32 = 1478921140
+	var id int32 = packets.SmokyShootAirOutID
 
 	return &SmokyShootAirOutPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewSmokyShootAirOutPacket() *SmokyShootAirOutPacket {
 }
 
 func init() {
-	packets.Register(1478921140, "SmokyShootAirOut", func() packets.Packet {
+	packets.Register(packets.SmokyShootAirOutID, "SmokyShootAirOut", func() packets.Packet {
 		return NewSmokyShootAirOutPacket()
 	})
 }

@@ -31,7 +31,7 @@ func NewSmokyShootTargetOutPacket() *SmokyShootTargetOutPacket {
 		"globalHitPoint",
 	}
 
-	var id int32 = 229267683
+	var id int32 = packets.SmokyShootTargetOutID
 
 	return &SmokyShootTargetOutPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -39,7 +39,7 @@ func NewSmokyShootTargetOutPacket() *SmokyShootTargetOutPacket {
 }
 
 func init() {
-	packets.Register(229267683, "SmokyShootTargetOut", func() packets.Packet {
+	packets.Register(packets.SmokyShootTargetOutID, "SmokyShootTargetOut", func() packets.Packet {
 		return NewSmokyShootTargetOutPacket()
 	})
 }

@@ -20,7 +20,7 @@ func NewCollectedBonusBoxPacket() *CollectedBonusBoxPacket {
 		"bonusId",
 	}
 
-	var id int32 = -1291499147
+	var id int32 = packets.CollectedBonusBoxID
 
 	return &CollectedBonusBoxPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewCollectedBonusBoxPacket() *CollectedBonusBoxPacket {
 }
 
 func init() {
-	packets.Register(-1291499147, "CollectedBonusBox", func() packets.Packet {
+	packets.Register(packets.CollectedBonusBoxID, "CollectedBonusBox", func() packets.Packet {
 		return NewCollectedBonusBoxPacket()
 	})
 }

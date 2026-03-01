@@ -15,7 +15,7 @@ func NewSpectateBattlePacket() *SpectateBattlePacket {
 
 	attributes := []string{}
 
-	var id int32 = -1315002220
+	var id int32 = packets.SpectateBattleID
 
 	return &SpectateBattlePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewSpectateBattlePacket() *SpectateBattlePacket {
 }
 
 func init() {
-	packets.Register(-1315002220, "SpectateBattle", func() packets.Packet {
+	packets.Register(packets.SpectateBattleID, "SpectateBattle", func() packets.Packet {
 		return NewSpectateBattlePacket()
 	})
 }

@@ -29,7 +29,7 @@ func NewMineLocationPacket() *MineLocationPacket {
 		"userId",
 	}
 
-	var id int32 = 272183855
+	var id int32 = packets.MineLocationID
 
 	return &MineLocationPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -37,7 +37,7 @@ func NewMineLocationPacket() *MineLocationPacket {
 }
 
 func init() {
-	packets.Register(272183855, "MineLocation", func() packets.Packet {
+	packets.Register(packets.MineLocationID, "MineLocation", func() packets.Packet {
 		return NewMineLocationPacket()
 	})
 }

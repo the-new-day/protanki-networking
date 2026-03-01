@@ -34,7 +34,7 @@ func NewFlagsInfoPacket() *FlagsInfoPacket {
 		"flag_sfx",
 	}
 
-	var id int32 = 789790814
+	var id int32 = packets.FlagsInfoID
 
 	return &FlagsInfoPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -42,7 +42,7 @@ func NewFlagsInfoPacket() *FlagsInfoPacket {
 }
 
 func init() {
-	packets.Register(789790814, "FlagsInfo", func() packets.Packet {
+	packets.Register(packets.FlagsInfoID, "FlagsInfo", func() packets.Packet {
 		return NewFlagsInfoPacket()
 	})
 }

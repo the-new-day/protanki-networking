@@ -23,7 +23,7 @@ func NewBattleUserControlPacket() *BattleUserControlPacket {
 		"control",
 	}
 
-	var id int32 = -301298508
+	var id int32 = packets.BattleUserControlID
 
 	return &BattleUserControlPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -31,7 +31,7 @@ func NewBattleUserControlPacket() *BattleUserControlPacket {
 }
 
 func init() {
-	packets.Register(-301298508, "BattleUserControl", func() packets.Packet {
+	packets.Register(packets.BattleUserControlID, "BattleUserControl", func() packets.Packet {
 		return NewBattleUserControlPacket()
 	})
 }

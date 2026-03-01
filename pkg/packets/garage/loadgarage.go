@@ -15,7 +15,7 @@ func NewLoadGaragePacket() *LoadGaragePacket {
 
 	attributes := []string{}
 
-	var id int32 = -479046431
+	var id int32 = packets.LoadGarageID
 
 	return &LoadGaragePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewLoadGaragePacket() *LoadGaragePacket {
 }
 
 func init() {
-	packets.Register(-479046431, "LoadGarage", func() packets.Packet {
+	packets.Register(packets.LoadGarageID, "LoadGarage", func() packets.Packet {
 		return NewLoadGaragePacket()
 	})
 }

@@ -25,7 +25,7 @@ func NewCreateAccountPacket() *CreateAccountPacket {
 		"rememberMe",
 	}
 
-	var id int32 = 427083290
+	var id int32 = packets.CreateAccountID
 
 	return &CreateAccountPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -33,7 +33,7 @@ func NewCreateAccountPacket() *CreateAccountPacket {
 }
 
 func init() {
-	packets.Register(427083290, "CreateAccount", func() packets.Packet {
+	packets.Register(packets.CreateAccountID, "CreateAccount", func() packets.Packet {
 		return NewCreateAccountPacket()
 	})
 }

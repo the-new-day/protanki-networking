@@ -20,7 +20,7 @@ func NewShaftScopeInitOutPacket() *ShaftScopeInitOutPacket {
 		"clientTime",
 	}
 
-	var id int32 = -367760678
+	var id int32 = packets.ShaftScopeInitOutID
 
 	return &ShaftScopeInitOutPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewShaftScopeInitOutPacket() *ShaftScopeInitOutPacket {
 }
 
 func init() {
-	packets.Register(-367760678, "ShaftScopeInitOut", func() packets.Packet {
+	packets.Register(packets.ShaftScopeInitOutID, "ShaftScopeInitOut", func() packets.Packet {
 		return NewShaftScopeInitOutPacket()
 	})
 }

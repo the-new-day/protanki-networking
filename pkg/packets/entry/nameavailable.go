@@ -15,7 +15,7 @@ func NewNameAvailablePacket() *NameAvailablePacket {
 
 	attributes := []string{}
 
-	var id int32 = -706679202
+	var id int32 = packets.NameAvailableID
 
 	return &NameAvailablePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewNameAvailablePacket() *NameAvailablePacket {
 }
 
 func init() {
-	packets.Register(-706679202, "NameAvailable", func() packets.Packet {
+	packets.Register(packets.NameAvailableID, "NameAvailable", func() packets.Packet {
 		return NewNameAvailablePacket()
 	})
 }

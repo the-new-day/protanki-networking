@@ -23,7 +23,7 @@ func NewGoldBoxDropTextPacket() *GoldBoxDropTextPacket {
 		"soundID",
 	}
 
-	var id int32 = -666893269
+	var id int32 = packets.GoldBoxDropTextID
 
 	return &GoldBoxDropTextPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -31,7 +31,7 @@ func NewGoldBoxDropTextPacket() *GoldBoxDropTextPacket {
 }
 
 func init() {
-	packets.Register(-666893269, "GoldBoxDropText", func() packets.Packet {
+	packets.Register(packets.GoldBoxDropTextID, "GoldBoxDropText", func() packets.Packet {
 		return NewGoldBoxDropTextPacket()
 	})
 }

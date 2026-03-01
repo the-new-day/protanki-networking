@@ -23,7 +23,7 @@ func NewSendGameChatPacket() *SendGameChatPacket {
 		"teamOnly",
 	}
 
-	var id int32 = 945463181
+	var id int32 = packets.SendGameChatID
 
 	return &SendGameChatPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -31,7 +31,7 @@ func NewSendGameChatPacket() *SendGameChatPacket {
 }
 
 func init() {
-	packets.Register(945463181, "SendGameChat", func() packets.Packet {
+	packets.Register(packets.SendGameChatID, "SendGameChat", func() packets.Packet {
 		return NewSendGameChatPacket()
 	})
 }

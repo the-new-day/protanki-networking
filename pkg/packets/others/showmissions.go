@@ -23,7 +23,7 @@ func NewShowMissionsPacket() *ShowMissionsPacket {
 		"weeklyStreakInfo",
 	}
 
-	var id int32 = 809822533
+	var id int32 = packets.ShowMissionsID
 
 	return &ShowMissionsPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -31,7 +31,7 @@ func NewShowMissionsPacket() *ShowMissionsPacket {
 }
 
 func init() {
-	packets.Register(809822533, "ShowMissions", func() packets.Packet {
+	packets.Register(packets.ShowMissionsID, "ShowMissions", func() packets.Packet {
 		return NewShowMissionsPacket()
 	})
 }

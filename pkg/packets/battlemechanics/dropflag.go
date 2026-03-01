@@ -15,7 +15,7 @@ func NewDropFlagPacket() *DropFlagPacket {
 
 	attributes := []string{}
 
-	var id int32 = -1832611824
+	var id int32 = packets.DropFlagID
 
 	return &DropFlagPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewDropFlagPacket() *DropFlagPacket {
 }
 
 func init() {
-	packets.Register(-1832611824, "DropFlag", func() packets.Packet {
+	packets.Register(packets.DropFlagID, "DropFlag", func() packets.Packet {
 		return NewDropFlagPacket()
 	})
 }

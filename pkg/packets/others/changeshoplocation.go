@@ -22,7 +22,7 @@ func NewBuyFromShopPacket() *BuyFromShopPacket {
 		"itemType",
 	}
 
-	var id int32 = 880756819
+	var id int32 = packets.BuyFromShopID
 
 	return &BuyFromShopPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -30,7 +30,7 @@ func NewBuyFromShopPacket() *BuyFromShopPacket {
 }
 
 func init() {
-	packets.Register(880756819, "BuyFromShop", func() packets.Packet {
+	packets.Register(packets.BuyFromShopID, "BuyFromShop", func() packets.Packet {
 		return NewBuyFromShopPacket()
 	})
 }

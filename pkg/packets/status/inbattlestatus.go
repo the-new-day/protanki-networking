@@ -20,7 +20,7 @@ func NewInBattleStatusPacket() *InBattleStatusPacket {
 		"battleNotifier",
 	}
 
-	var id int32 = -1895446889
+	var id int32 = packets.InBattleStatusID
 
 	return &InBattleStatusPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewInBattleStatusPacket() *InBattleStatusPacket {
 }
 
 func init() {
-	packets.Register(-1895446889, "InBattleStatus", func() packets.Packet {
+	packets.Register(packets.InBattleStatusID, "InBattleStatus", func() packets.Packet {
 		return NewInBattleStatusPacket()
 	})
 }

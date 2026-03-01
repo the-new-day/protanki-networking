@@ -20,7 +20,7 @@ func NewLoadMapInfoPacket() *LoadMapInfoPacket {
 		"json",
 	}
 
-	var id int32 = -838186985
+	var id int32 = packets.LoadMapInfoID
 
 	return &LoadMapInfoPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewLoadMapInfoPacket() *LoadMapInfoPacket {
 }
 
 func init() {
-	packets.Register(-838186985, "LoadMapInfo", func() packets.Packet {
+	packets.Register(packets.LoadMapInfoID, "LoadMapInfo", func() packets.Packet {
 		return NewLoadMapInfoPacket()
 	})
 }

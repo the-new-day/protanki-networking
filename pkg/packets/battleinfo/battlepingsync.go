@@ -20,7 +20,7 @@ func NewBattlePingSyncPacket() *BattlePingSyncPacket {
 		"latencyInfo",
 	}
 
-	var id int32 = 2074243318
+	var id int32 = packets.BattlePingSyncID
 
 	return &BattlePingSyncPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewBattlePingSyncPacket() *BattlePingSyncPacket {
 }
 
 func init() {
-	packets.Register(2074243318, "BattlePingSync", func() packets.Packet {
+	packets.Register(packets.BattlePingSyncID, "BattlePingSync", func() packets.Packet {
 		return NewBattlePingSyncPacket()
 	})
 }

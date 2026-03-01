@@ -15,7 +15,7 @@ func NewLoadLobbyPacket() *LoadLobbyPacket {
 
 	attributes := []string{}
 
-	var id int32 = 1452181070
+	var id int32 = packets.LoadLobbyID
 
 	return &LoadLobbyPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewLoadLobbyPacket() *LoadLobbyPacket {
 }
 
 func init() {
-	packets.Register(1452181070, "LoadLobby", func() packets.Packet {
+	packets.Register(packets.LoadLobbyID, "LoadLobby", func() packets.Packet {
 		return NewLoadLobbyPacket()
 	})
 }

@@ -24,7 +24,7 @@ func NewBattleUserRewardsPacket() *BattleUserRewardsPacket {
 		"timeToRestart",
 	}
 
-	var id int32 = 560336625
+	var id int32 = packets.BattleUserRewardsID
 
 	return &BattleUserRewardsPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -32,7 +32,7 @@ func NewBattleUserRewardsPacket() *BattleUserRewardsPacket {
 }
 
 func init() {
-	packets.Register(560336625, "BattleUserRewards", func() packets.Packet {
+	packets.Register(packets.BattleUserRewardsID, "BattleUserRewards", func() packets.Packet {
 		return NewBattleUserRewardsPacket()
 	})
 }

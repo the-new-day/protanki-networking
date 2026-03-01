@@ -20,7 +20,7 @@ func NewRoundFinishPacket() *RoundFinishPacket {
 		"battleID",
 	}
 
-	var id int32 = 1534651002
+	var id int32 = packets.RoundFinishID
 
 	return &RoundFinishPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewRoundFinishPacket() *RoundFinishPacket {
 }
 
 func init() {
-	packets.Register(1534651002, "RoundFinish", func() packets.Packet {
+	packets.Register(packets.RoundFinishID, "RoundFinish", func() packets.Packet {
 		return NewRoundFinishPacket()
 	})
 }

@@ -27,7 +27,7 @@ func NewHammerShotOutPacket() *HammerShotOutPacket {
 		"shots",
 	}
 
-	var id int32 = -541655881
+	var id int32 = packets.HammerShotOutID
 
 	return &HammerShotOutPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -35,7 +35,7 @@ func NewHammerShotOutPacket() *HammerShotOutPacket {
 }
 
 func init() {
-	packets.Register(-541655881, "HammerShotOut", func() packets.Packet {
+	packets.Register(packets.HammerShotOutID, "HammerShotOut", func() packets.Packet {
 		return NewHammerShotOutPacket()
 	})
 }

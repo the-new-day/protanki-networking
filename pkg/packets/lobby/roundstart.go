@@ -20,7 +20,7 @@ func NewRoundStartPacket() *RoundStartPacket {
 		"battleID",
 	}
 
-	var id int32 = -344514517
+	var id int32 = packets.RoundStartID
 
 	return &RoundStartPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewRoundStartPacket() *RoundStartPacket {
 }
 
 func init() {
-	packets.Register(-344514517, "RoundStart", func() packets.Packet {
+	packets.Register(packets.RoundStartID, "RoundStart", func() packets.Packet {
 		return NewRoundStartPacket()
 	})
 }

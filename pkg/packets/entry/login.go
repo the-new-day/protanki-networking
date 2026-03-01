@@ -25,7 +25,7 @@ func NewLoginPacket() *LoginPacket {
 		"rememberMe",
 	}
 
-	var id int32 = -739684591
+	var id int32 = packets.LoginID
 
 	return &LoginPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -33,7 +33,7 @@ func NewLoginPacket() *LoginPacket {
 }
 
 func init() {
-	packets.Register(-739684591, "Login", func() packets.Packet {
+	packets.Register(packets.LoginID, "Login", func() packets.Packet {
 		return NewLoginPacket()
 	})
 }

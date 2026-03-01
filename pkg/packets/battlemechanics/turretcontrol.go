@@ -24,7 +24,7 @@ func NewTurretControlPacket() *TurretControlPacket {
 		"control",
 	}
 
-	var id int32 = -1749108178
+	var id int32 = packets.TurretControlID
 
 	return &TurretControlPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -32,7 +32,7 @@ func NewTurretControlPacket() *TurretControlPacket {
 }
 
 func init() {
-	packets.Register(-1749108178, "TurretControl", func() packets.Packet {
+	packets.Register(packets.TurretControlID, "TurretControl", func() packets.Packet {
 		return NewTurretControlPacket()
 	})
 }

@@ -20,7 +20,7 @@ func NewBannedPacket() *BannedPacket {
 		"reason",
 	}
 
-	var id int32 = -600078553
+	var id int32 = packets.BannedID
 
 	return &BannedPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewBannedPacket() *BannedPacket {
 }
 
 func init() {
-	packets.Register(-600078553, "Banned", func() packets.Packet {
+	packets.Register(packets.BannedID, "Banned", func() packets.Packet {
 		return NewBannedPacket()
 	})
 }

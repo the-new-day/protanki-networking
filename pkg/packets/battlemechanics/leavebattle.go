@@ -20,7 +20,7 @@ func NewLeaveBattlePacket() *LeaveBattlePacket {
 		"layout",
 	}
 
-	var id int32 = 377959142
+	var id int32 = packets.LeaveBattleID
 
 	return &LeaveBattlePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewLeaveBattlePacket() *LeaveBattlePacket {
 }
 
 func init() {
-	packets.Register(377959142, "LeaveBattle", func() packets.Packet {
+	packets.Register(packets.LeaveBattleID, "LeaveBattle", func() packets.Packet {
 		return NewLeaveBattlePacket()
 	})
 }

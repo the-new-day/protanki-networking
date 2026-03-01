@@ -25,7 +25,7 @@ func NewJoinedOutsideTeamBattlePacket() *JoinedOutsideTeamBattlePacket {
 		"team",
 	}
 
-	var id int32 = -169305322
+	var id int32 = packets.JoinedOutsideTeamBattleID
 
 	return &JoinedOutsideTeamBattlePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -33,7 +33,7 @@ func NewJoinedOutsideTeamBattlePacket() *JoinedOutsideTeamBattlePacket {
 }
 
 func init() {
-	packets.Register(-169305322, "JoinedOutsideTeamBattle", func() packets.Packet {
+	packets.Register(packets.JoinedOutsideTeamBattleID, "JoinedOutsideTeamBattle", func() packets.Packet {
 		return NewJoinedOutsideTeamBattlePacket()
 	})
 }

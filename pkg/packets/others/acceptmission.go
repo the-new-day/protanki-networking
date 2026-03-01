@@ -20,7 +20,7 @@ func NewAcceptMissionPacket() *AcceptMissionPacket {
 		"missionId",
 	}
 
-	var id int32 = -867767128
+	var id int32 = packets.AcceptMissionID
 
 	return &AcceptMissionPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewAcceptMissionPacket() *AcceptMissionPacket {
 }
 
 func init() {
-	packets.Register(-867767128, "AcceptMission", func() packets.Packet {
+	packets.Register(packets.AcceptMissionID, "AcceptMission", func() packets.Packet {
 		return NewAcceptMissionPacket()
 	})
 }

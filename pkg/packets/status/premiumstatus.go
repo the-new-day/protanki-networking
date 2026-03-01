@@ -23,7 +23,7 @@ func NewPremiumStatusPacket() *PremiumStatusPacket {
 		"username",
 	}
 
-	var id int32 = -2069508071
+	var id int32 = packets.PremiumStatusID
 
 	return &PremiumStatusPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -31,7 +31,7 @@ func NewPremiumStatusPacket() *PremiumStatusPacket {
 }
 
 func init() {
-	packets.Register(-2069508071, "PremiumStatus", func() packets.Packet {
+	packets.Register(packets.PremiumStatusID, "PremiumStatus", func() packets.Packet {
 		return NewPremiumStatusPacket()
 	})
 }

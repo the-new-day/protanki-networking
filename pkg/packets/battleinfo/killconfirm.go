@@ -25,7 +25,7 @@ func NewKillConfirmPacket() *KillConfirmPacket {
 		"respDelay",
 	}
 
-	var id int32 = -42520728
+	var id int32 = packets.KillConfirmID
 
 	return &KillConfirmPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -33,7 +33,7 @@ func NewKillConfirmPacket() *KillConfirmPacket {
 }
 
 func init() {
-	packets.Register(-42520728, "KillConfirm", func() packets.Packet {
+	packets.Register(packets.KillConfirmID, "KillConfirm", func() packets.Packet {
 		return NewKillConfirmPacket()
 	})
 }

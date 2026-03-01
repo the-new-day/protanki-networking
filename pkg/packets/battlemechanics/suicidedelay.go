@@ -20,7 +20,7 @@ func NewSuicideDelayPacket() *SuicideDelayPacket {
 		"suicideDelayMS",
 	}
 
-	var id int32 = -911983090
+	var id int32 = packets.SuicideDelayID
 
 	return &SuicideDelayPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewSuicideDelayPacket() *SuicideDelayPacket {
 }
 
 func init() {
-	packets.Register(-911983090, "SuicideDelay", func() packets.Packet {
+	packets.Register(packets.SuicideDelayID, "SuicideDelay", func() packets.Packet {
 		return NewSuicideDelayPacket()
 	})
 }

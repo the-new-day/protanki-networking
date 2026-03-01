@@ -20,7 +20,7 @@ func NewLoadBonusBoxResourcesPacket() *LoadBonusBoxResourcesPacket {
 		"json",
 	}
 
-	var id int32 = 228171466
+	var id int32 = packets.LoadBonusBoxResourcesID
 
 	return &LoadBonusBoxResourcesPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewLoadBonusBoxResourcesPacket() *LoadBonusBoxResourcesPacket {
 }
 
 func init() {
-	packets.Register(228171466, "LoadBonusBoxResources", func() packets.Packet {
+	packets.Register(packets.LoadBonusBoxResourcesID, "LoadBonusBoxResources", func() packets.Packet {
 		return NewLoadBonusBoxResourcesPacket()
 	})
 }

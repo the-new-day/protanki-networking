@@ -22,7 +22,7 @@ func NewJoinedOutsideDmBattlePacket() *JoinedOutsideDmBattlePacket {
 		"username",
 	}
 
-	var id int32 = -2133657895
+	var id int32 = packets.JoinedOutsideDmBattleID
 
 	return &JoinedOutsideDmBattlePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -30,7 +30,7 @@ func NewJoinedOutsideDmBattlePacket() *JoinedOutsideDmBattlePacket {
 }
 
 func init() {
-	packets.Register(-2133657895, "JoinedOutsideDmBattle", func() packets.Packet {
+	packets.Register(packets.JoinedOutsideDmBattleID, "JoinedOutsideDmBattle", func() packets.Packet {
 		return NewJoinedOutsideDmBattlePacket()
 	})
 }

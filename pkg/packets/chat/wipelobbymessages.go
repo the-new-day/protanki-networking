@@ -20,7 +20,7 @@ func NewWipeLobbyMessagesPacket() *WipeLobbyMessagesPacket {
 		"username",
 	}
 
-	var id int32 = 1993050216
+	var id int32 = packets.WipeLobbyMessagesID
 
 	return &WipeLobbyMessagesPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewWipeLobbyMessagesPacket() *WipeLobbyMessagesPacket {
 }
 
 func init() {
-	packets.Register(1993050216, "WipeLobbyMessages", func() packets.Packet {
+	packets.Register(packets.WipeLobbyMessagesID, "WipeLobbyMessages", func() packets.Packet {
 		return NewWipeLobbyMessagesPacket()
 	})
 }

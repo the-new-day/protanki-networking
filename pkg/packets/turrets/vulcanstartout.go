@@ -20,7 +20,7 @@ func NewVulcanStartOutPacket() *VulcanStartOutPacket {
 		"clientTime",
 	}
 
-	var id int32 = -520655432
+	var id int32 = packets.VulcanStartOutID
 
 	return &VulcanStartOutPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewVulcanStartOutPacket() *VulcanStartOutPacket {
 }
 
 func init() {
-	packets.Register(-520655432, "VulcanStartOut", func() packets.Packet {
+	packets.Register(packets.VulcanStartOutID, "VulcanStartOut", func() packets.Packet {
 		return NewVulcanStartOutPacket()
 	})
 }

@@ -23,7 +23,7 @@ func NewShotEffectPacket() *ShotEffectPacket {
 		"effectId",
 	}
 
-	var id int32 = -1994318624
+	var id int32 = packets.ShotEffectID
 
 	return &ShotEffectPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -31,7 +31,7 @@ func NewShotEffectPacket() *ShotEffectPacket {
 }
 
 func init() {
-	packets.Register(-1994318624, "ShotEffect", func() packets.Packet {
+	packets.Register(packets.ShotEffectID, "ShotEffect", func() packets.Packet {
 		return NewShotEffectPacket()
 	})
 }

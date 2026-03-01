@@ -20,7 +20,7 @@ func NewBattleTimeLeftPacket() *BattleTimeLeftPacket {
 		"timeLimitInSec",
 	}
 
-	var id int32 = 732434644
+	var id int32 = packets.BattleTimeLeftID
 
 	return &BattleTimeLeftPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewBattleTimeLeftPacket() *BattleTimeLeftPacket {
 }
 
 func init() {
-	packets.Register(732434644, "BattleTimeLeft", func() packets.Packet {
+	packets.Register(packets.BattleTimeLeftID, "BattleTimeLeft", func() packets.Packet {
 		return NewBattleTimeLeftPacket()
 	})
 }

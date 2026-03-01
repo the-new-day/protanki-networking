@@ -23,7 +23,7 @@ func NewFlagDeliveredPacket() *FlagDeliveredPacket {
 		"username",
 	}
 
-	var id int32 = -1870108387
+	var id int32 = packets.FlagDeliveredID
 
 	return &FlagDeliveredPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -31,7 +31,7 @@ func NewFlagDeliveredPacket() *FlagDeliveredPacket {
 }
 
 func init() {
-	packets.Register(-1870108387, "FlagDelivered", func() packets.Packet {
+	packets.Register(packets.FlagDeliveredID, "FlagDelivered", func() packets.Packet {
 		return NewFlagDeliveredPacket()
 	})
 }

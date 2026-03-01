@@ -20,7 +20,7 @@ func NewChangeLocationPacket() *ChangeLocationPacket {
 		"location_abbreviation",
 	}
 
-	var id int32 = 921004371
+	var id int32 = packets.ChangeLocationID
 
 	return &ChangeLocationPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewChangeLocationPacket() *ChangeLocationPacket {
 }
 
 func init() {
-	packets.Register(921004371, "ChangeLocation", func() packets.Packet {
+	packets.Register(packets.ChangeLocationID, "ChangeLocation", func() packets.Packet {
 		return NewChangeLocationPacket()
 	})
 }

@@ -20,7 +20,7 @@ func NewRejectInvitePacket() *RejectInvitePacket {
 		"username",
 	}
 
-	var id int32 = 1152865919
+	var id int32 = packets.RejectInviteID
 
 	return &RejectInvitePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewRejectInvitePacket() *RejectInvitePacket {
 }
 
 func init() {
-	packets.Register(1152865919, "RejectInvite", func() packets.Packet {
+	packets.Register(packets.RejectInviteID, "RejectInvite", func() packets.Packet {
 		return NewRejectInvitePacket()
 	})
 }

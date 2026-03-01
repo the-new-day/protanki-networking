@@ -20,7 +20,7 @@ func NewSettingsNotificationPacket() *SettingsNotificationPacket {
 		"notificationEnabled",
 	}
 
-	var id int32 = 1447082276
+	var id int32 = packets.SettingsNotificationID
 
 	return &SettingsNotificationPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewSettingsNotificationPacket() *SettingsNotificationPacket {
 }
 
 func init() {
-	packets.Register(1447082276, "SettingsNotification", func() packets.Packet {
+	packets.Register(packets.SettingsNotificationID, "SettingsNotification", func() packets.Packet {
 		return NewSettingsNotificationPacket()
 	})
 }

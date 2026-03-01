@@ -20,7 +20,7 @@ func NewCheckNameAvailabilityPacket() *CheckNameAvailabilityPacket {
 		"username",
 	}
 
-	var id int32 = 1083705823
+	var id int32 = packets.CheckNameAvailabilityID
 
 	return &CheckNameAvailabilityPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewCheckNameAvailabilityPacket() *CheckNameAvailabilityPacket {
 }
 
 func init() {
-	packets.Register(1083705823, "CheckNameAvailability", func() packets.Packet {
+	packets.Register(packets.CheckNameAvailabilityID, "CheckNameAvailability", func() packets.Packet {
 		return NewCheckNameAvailabilityPacket()
 	})
 }

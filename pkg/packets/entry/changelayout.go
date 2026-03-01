@@ -20,7 +20,7 @@ func NewChangeLayoutPacket() *ChangeLayoutPacket {
 		"layout",
 	}
 
-	var id int32 = 1118835050
+	var id int32 = packets.ChangeLayoutID
 
 	return &ChangeLayoutPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewChangeLayoutPacket() *ChangeLayoutPacket {
 }
 
 func init() {
-	packets.Register(1118835050, "ChangeLayout", func() packets.Packet {
+	packets.Register(packets.ChangeLayoutID, "ChangeLayout", func() packets.Packet {
 		return NewChangeLayoutPacket()
 	})
 }

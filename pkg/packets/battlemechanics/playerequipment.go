@@ -20,7 +20,7 @@ func NewPlayerEquipmentPacket() *PlayerEquipmentPacket {
 		"json",
 	}
 
-	var id int32 = -1643824092
+	var id int32 = packets.PlayerEquipmentID
 
 	return &PlayerEquipmentPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewPlayerEquipmentPacket() *PlayerEquipmentPacket {
 }
 
 func init() {
-	packets.Register(-1643824092, "PlayerEquipment", func() packets.Packet {
+	packets.Register(packets.PlayerEquipmentID, "PlayerEquipment", func() packets.Packet {
 		return NewPlayerEquipmentPacket()
 	})
 }

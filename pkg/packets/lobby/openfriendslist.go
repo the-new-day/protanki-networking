@@ -15,7 +15,7 @@ func NewOpenFriendsListPacket() *OpenFriendsListPacket {
 
 	attributes := []string{}
 
-	var id int32 = 1441234714
+	var id int32 = packets.OpenFriendsListID
 
 	return &OpenFriendsListPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewOpenFriendsListPacket() *OpenFriendsListPacket {
 }
 
 func init() {
-	packets.Register(1441234714, "OpenFriendsList", func() packets.Packet {
+	packets.Register(packets.OpenFriendsListID, "OpenFriendsList", func() packets.Packet {
 		return NewOpenFriendsListPacket()
 	})
 }

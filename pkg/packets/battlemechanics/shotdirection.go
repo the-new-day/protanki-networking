@@ -27,7 +27,7 @@ func NewShotDirectionPacket() *ShotDirectionPacket {
 		"shotDirectionZ",
 	}
 
-	var id int32 = -118119523
+	var id int32 = packets.ShotDirectionID
 
 	return &ShotDirectionPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -35,7 +35,7 @@ func NewShotDirectionPacket() *ShotDirectionPacket {
 }
 
 func init() {
-	packets.Register(-118119523, "ShotDirection", func() packets.Packet {
+	packets.Register(packets.ShotDirectionID, "ShotDirection", func() packets.Packet {
 		return NewShotDirectionPacket()
 	})
 }

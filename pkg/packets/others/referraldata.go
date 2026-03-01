@@ -28,7 +28,7 @@ func NewReferralDataPacket() *ReferralDataPacket {
 		"inviteMessage",
 	}
 
-	var id int32 = 1587315905
+	var id int32 = packets.ReferralDataID
 
 	return &ReferralDataPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -36,7 +36,7 @@ func NewReferralDataPacket() *ReferralDataPacket {
 }
 
 func init() {
-	packets.Register(1587315905, "ReferralData", func() packets.Packet {
+	packets.Register(packets.ReferralDataID, "ReferralData", func() packets.Packet {
 		return NewReferralDataPacket()
 	})
 }

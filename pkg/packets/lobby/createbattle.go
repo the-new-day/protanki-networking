@@ -74,7 +74,7 @@ func NewCreateBattlePacket() *CreateBattlePacket {
 		"dependentCooldown",
 	}
 
-	var id int32 = -2135234426
+	var id int32 = packets.CreateBattleID
 
 	return &CreateBattlePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -82,7 +82,7 @@ func NewCreateBattlePacket() *CreateBattlePacket {
 }
 
 func init() {
-	packets.Register(-2135234426, "CreateBattle", func() packets.Packet {
+	packets.Register(packets.CreateBattleID, "CreateBattle", func() packets.Packet {
 		return NewCreateBattlePacket()
 	})
 }

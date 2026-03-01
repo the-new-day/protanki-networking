@@ -23,7 +23,7 @@ func NewEmailPacket() *EmailPacket {
 		"emailConfirmed",
 	}
 
-	var id int32 = 613462801
+	var id int32 = packets.EmailID
 
 	return &EmailPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -31,7 +31,7 @@ func NewEmailPacket() *EmailPacket {
 }
 
 func init() {
-	packets.Register(613462801, "Email", func() packets.Packet {
+	packets.Register(packets.EmailID, "Email", func() packets.Packet {
 		return NewEmailPacket()
 	})
 }

@@ -31,7 +31,7 @@ func NewTankStatSyncedPacket() *TankStatSyncedPacket {
 		"specificationID",
 	}
 
-	var id int32 = -1672577397
+	var id int32 = packets.TankStatSyncedID
 
 	return &TankStatSyncedPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -39,7 +39,7 @@ func NewTankStatSyncedPacket() *TankStatSyncedPacket {
 }
 
 func init() {
-	packets.Register(-1672577397, "TankStatSynced", func() packets.Packet {
+	packets.Register(packets.TankStatSyncedID, "TankStatSynced", func() packets.Packet {
 		return NewTankStatSyncedPacket()
 	})
 }

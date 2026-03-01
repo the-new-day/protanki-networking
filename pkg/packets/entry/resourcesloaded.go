@@ -20,7 +20,7 @@ func NewResourcesLoadedPacket() *ResourcesLoadedPacket {
 		"callbackId",
 	}
 
-	var id int32 = -82304134
+	var id int32 = packets.ResourcesLoadedID
 
 	return &ResourcesLoadedPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewResourcesLoadedPacket() *ResourcesLoadedPacket {
 }
 
 func init() {
-	packets.Register(-82304134, "ResourcesLoaded", func() packets.Packet {
+	packets.Register(packets.ResourcesLoadedID, "ResourcesLoaded", func() packets.Packet {
 		return NewResourcesLoadedPacket()
 	})
 }

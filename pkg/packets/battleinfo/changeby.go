@@ -20,7 +20,7 @@ func NewChangeByPacket() *ChangeByPacket {
 		"changeBy",
 	}
 
-	var id int32 = -593513288
+	var id int32 = packets.ChangeByID
 
 	return &ChangeByPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewChangeByPacket() *ChangeByPacket {
 }
 
 func init() {
-	packets.Register(-593513288, "ChangeBy", func() packets.Packet {
+	packets.Register(packets.ChangeByID, "ChangeBy", func() packets.Packet {
 		return NewChangeByPacket()
 	})
 }

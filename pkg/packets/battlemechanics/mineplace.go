@@ -20,7 +20,7 @@ func NewMinePlacePacket() *MinePlacePacket {
 		"mineId",
 	}
 
-	var id int32 = -624217047
+	var id int32 = packets.MinePlaceID
 
 	return &MinePlacePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewMinePlacePacket() *MinePlacePacket {
 }
 
 func init() {
-	packets.Register(-624217047, "MinePlace", func() packets.Packet {
+	packets.Register(packets.MinePlaceID, "MinePlace", func() packets.Packet {
 		return NewMinePlacePacket()
 	})
 }

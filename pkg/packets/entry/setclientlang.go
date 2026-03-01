@@ -20,7 +20,7 @@ func NewSetClientLangPacket() *SetClientLangPacket {
 		"lang",
 	}
 
-	var id int32 = -1864333717
+	var id int32 = packets.SetClientLangID
 
 	return &SetClientLangPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewSetClientLangPacket() *SetClientLangPacket {
 }
 
 func init() {
-	packets.Register(-1864333717, "SetClientLang", func() packets.Packet {
+	packets.Register(packets.SetClientLangID, "SetClientLang", func() packets.Packet {
 		return NewSetClientLangPacket()
 	})
 }

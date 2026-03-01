@@ -20,7 +20,7 @@ func NewLoadSupplyEffectPacket() *LoadSupplyEffectPacket {
 		"json",
 	}
 
-	var id int32 = 417965410
+	var id int32 = packets.LoadSupplyEffectID
 
 	return &LoadSupplyEffectPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewLoadSupplyEffectPacket() *LoadSupplyEffectPacket {
 }
 
 func init() {
-	packets.Register(417965410, "LoadSupplyEffect", func() packets.Packet {
+	packets.Register(packets.LoadSupplyEffectID, "LoadSupplyEffect", func() packets.Packet {
 		return NewLoadSupplyEffectPacket()
 	})
 }

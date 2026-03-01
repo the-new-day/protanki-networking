@@ -25,7 +25,7 @@ func NewBuyMultipleItemsPacket() *BuyMultipleItemsPacket {
 		"base_cost",
 	}
 
-	var id int32 = -1961983005
+	var id int32 = packets.BuyMultipleItemsID
 
 	return &BuyMultipleItemsPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -33,7 +33,7 @@ func NewBuyMultipleItemsPacket() *BuyMultipleItemsPacket {
 }
 
 func init() {
-	packets.Register(-1961983005, "BuyMultipleItems", func() packets.Packet {
+	packets.Register(packets.BuyMultipleItemsID, "BuyMultipleItems", func() packets.Packet {
 		return NewBuyMultipleItemsPacket()
 	})
 }

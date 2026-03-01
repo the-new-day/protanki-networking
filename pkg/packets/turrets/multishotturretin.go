@@ -26,7 +26,7 @@ func NewMultiShotTurretInPacket() *MultiShotTurretInPacket {
 		"targetHits",
 	}
 
-	var id int32 = -891286317
+	var id int32 = packets.MultiShotTurretInID
 
 	return &MultiShotTurretInPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -34,7 +34,7 @@ func NewMultiShotTurretInPacket() *MultiShotTurretInPacket {
 }
 
 func init() {
-	packets.Register(-891286317, "MultiShotTurretIn", func() packets.Packet {
+	packets.Register(packets.MultiShotTurretInID, "MultiShotTurretIn", func() packets.Packet {
 		return NewMultiShotTurretInPacket()
 	})
 }

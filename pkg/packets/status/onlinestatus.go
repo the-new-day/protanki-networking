@@ -25,7 +25,7 @@ func NewOnlineStatusPacket() *OnlineStatusPacket {
 		"username",
 	}
 
-	var id int32 = 2041598093
+	var id int32 = packets.OnlineStatusID
 
 	return &OnlineStatusPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -33,7 +33,7 @@ func NewOnlineStatusPacket() *OnlineStatusPacket {
 }
 
 func init() {
-	packets.Register(2041598093, "OnlineStatus", func() packets.Packet {
+	packets.Register(packets.OnlineStatusID, "OnlineStatus", func() packets.Packet {
 		return NewOnlineStatusPacket()
 	})
 }

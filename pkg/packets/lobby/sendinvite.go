@@ -22,7 +22,7 @@ func NewSendInvitePacket() *SendInvitePacket {
 		"battleID",
 	}
 
-	var id int32 = -864265623
+	var id int32 = packets.SendInviteID
 
 	return &SendInvitePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -30,7 +30,7 @@ func NewSendInvitePacket() *SendInvitePacket {
 }
 
 func init() {
-	packets.Register(-864265623, "SendInvite", func() packets.Packet {
+	packets.Register(packets.SendInviteID, "SendInvite", func() packets.Packet {
 		return NewSendInvitePacket()
 	})
 }

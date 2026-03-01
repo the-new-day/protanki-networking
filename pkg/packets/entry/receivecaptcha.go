@@ -23,7 +23,7 @@ func NewReceiveCaptchaPacket() *ReceiveCaptchaPacket {
 		"imagedata",
 	}
 
-	var id int32 = -1670408519
+	var id int32 = packets.ReceiveCaptchaID
 
 	return &ReceiveCaptchaPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -31,7 +31,7 @@ func NewReceiveCaptchaPacket() *ReceiveCaptchaPacket {
 }
 
 func init() {
-	packets.Register(-1670408519, "ReceiveCaptcha", func() packets.Packet {
+	packets.Register(packets.ReceiveCaptchaID, "ReceiveCaptcha", func() packets.Packet {
 		return NewReceiveCaptchaPacket()
 	})
 }

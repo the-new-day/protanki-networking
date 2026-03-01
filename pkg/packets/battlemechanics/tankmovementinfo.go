@@ -27,7 +27,7 @@ func NewTankMovementInfoPacket() *TankMovementInfoPacket {
 		"turretDirection",
 	}
 
-	var id int32 = -1683279062
+	var id int32 = packets.TankMovementInfoID
 
 	return &TankMovementInfoPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -35,7 +35,7 @@ func NewTankMovementInfoPacket() *TankMovementInfoPacket {
 }
 
 func init() {
-	packets.Register(-1683279062, "TankMovementInfo", func() packets.Packet {
+	packets.Register(packets.TankMovementInfoID, "TankMovementInfo", func() packets.Packet {
 		return NewTankMovementInfoPacket()
 	})
 }

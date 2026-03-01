@@ -31,7 +31,7 @@ func NewStartRespFantomPacket() *StartRespFantomPacket {
 		"incarnationID",
 	}
 
-	var id int32 = 875259457
+	var id int32 = packets.StartRespFantomID
 
 	return &StartRespFantomPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -39,7 +39,7 @@ func NewStartRespFantomPacket() *StartRespFantomPacket {
 }
 
 func init() {
-	packets.Register(875259457, "StartRespFantom", func() packets.Packet {
+	packets.Register(packets.StartRespFantomID, "StartRespFantom", func() packets.Packet {
 		return NewStartRespFantomPacket()
 	})
 }

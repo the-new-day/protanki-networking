@@ -42,7 +42,7 @@ type Packet interface {
 //	func NewFireEndOutPacket() *FireEndOutPacket {
 //		codecs := []codec.Codec{codec.Wrap(&primitive.IntCodec{})}
 //		attributes := []string{"clientTime"}
-//		var id int32 = -1300958299
+//		var id int32 = packets.FireEndOutID
 //
 //		return &FireEndOutPacket{
 //			BasePacket: *packets.NewBasePacket(id, codecs, attributes),

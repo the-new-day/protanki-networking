@@ -20,7 +20,7 @@ func NewLoadOwnedGarageItemsPacket() *LoadOwnedGarageItemsPacket {
 		"json",
 	}
 
-	var id int32 = -255516505
+	var id int32 = packets.LoadOwnedGarageItemsID
 
 	return &LoadOwnedGarageItemsPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewLoadOwnedGarageItemsPacket() *LoadOwnedGarageItemsPacket {
 }
 
 func init() {
-	packets.Register(-255516505, "LoadOwnedGarageItems", func() packets.Packet {
+	packets.Register(packets.LoadOwnedGarageItemsID, "LoadOwnedGarageItems", func() packets.Packet {
 		return NewLoadOwnedGarageItemsPacket()
 	})
 }

@@ -20,7 +20,7 @@ func NewFullyRespawnedPacket() *FullyRespawnedPacket {
 		"username",
 	}
 
-	var id int32 = 1868573511
+	var id int32 = packets.FullyRespawnedID
 
 	return &FullyRespawnedPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewFullyRespawnedPacket() *FullyRespawnedPacket {
 }
 
 func init() {
-	packets.Register(1868573511, "FullyRespawned", func() packets.Packet {
+	packets.Register(packets.FullyRespawnedID, "FullyRespawned", func() packets.Packet {
 		return NewFullyRespawnedPacket()
 	})
 }

@@ -20,7 +20,7 @@ func NewRemoveBattlePacket() *RemoveBattlePacket {
 		"battleID",
 	}
 
-	var id int32 = -1848001147
+	var id int32 = packets.RemoveBattleID
 
 	return &RemoveBattlePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewRemoveBattlePacket() *RemoveBattlePacket {
 }
 
 func init() {
-	packets.Register(-1848001147, "RemoveBattle", func() packets.Packet {
+	packets.Register(packets.RemoveBattleID, "RemoveBattle", func() packets.Packet {
 		return NewRemoveBattlePacket()
 	})
 }

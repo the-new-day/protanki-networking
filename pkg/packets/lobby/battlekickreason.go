@@ -20,7 +20,7 @@ func NewBattleKickReasonPacket() *BattleKickReasonPacket {
 		"reason",
 	}
 
-	var id int32 = -322235316
+	var id int32 = packets.BattleKickReasonID
 
 	return &BattleKickReasonPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewBattleKickReasonPacket() *BattleKickReasonPacket {
 }
 
 func init() {
-	packets.Register(-322235316, "BattleKickReason", func() packets.Packet {
+	packets.Register(packets.BattleKickReasonID, "BattleKickReason", func() packets.Packet {
 		return NewBattleKickReasonPacket()
 	})
 }

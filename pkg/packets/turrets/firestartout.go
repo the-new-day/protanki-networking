@@ -20,7 +20,7 @@ func NewFireStartOutPacket() *FireStartOutPacket {
 		"clientTime",
 	}
 
-	var id int32 = -1986638927
+	var id int32 = packets.FireStartOutID
 
 	return &FireStartOutPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewFireStartOutPacket() *FireStartOutPacket {
 }
 
 func init() {
-	packets.Register(-1986638927, "FireStartOut", func() packets.Packet {
+	packets.Register(packets.FireStartOutID, "FireStartOut", func() packets.Packet {
 		return NewFireStartOutPacket()
 	})
 }

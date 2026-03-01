@@ -15,7 +15,7 @@ func NewSendRespawnPacket() *SendRespawnPacket {
 
 	attributes := []string{}
 
-	var id int32 = -1378839846
+	var id int32 = packets.SendRespawnID
 
 	return &SendRespawnPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewSendRespawnPacket() *SendRespawnPacket {
 }
 
 func init() {
-	packets.Register(-1378839846, "SendRespawn", func() packets.Packet {
+	packets.Register(packets.SendRespawnID, "SendRespawn", func() packets.Packet {
 		return NewSendRespawnPacket()
 	})
 }

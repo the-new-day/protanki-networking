@@ -23,7 +23,7 @@ func NewTankHealthPacket() *TankHealthPacket {
 		"health",
 	}
 
-	var id int32 = -611961116
+	var id int32 = packets.TankHealthID
 
 	return &TankHealthPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -31,7 +31,7 @@ func NewTankHealthPacket() *TankHealthPacket {
 }
 
 func init() {
-	packets.Register(-611961116, "TankHealth", func() packets.Packet {
+	packets.Register(packets.TankHealthID, "TankHealth", func() packets.Packet {
 		return NewTankHealthPacket()
 	})
 }

@@ -20,7 +20,7 @@ func NewReceiveGameSystemChatPacket() *ReceiveGameSystemChatPacket {
 		"message",
 	}
 
-	var id int32 = 606668848
+	var id int32 = packets.ReceiveGameSystemChatID
 
 	return &ReceiveGameSystemChatPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewReceiveGameSystemChatPacket() *ReceiveGameSystemChatPacket {
 }
 
 func init() {
-	packets.Register(606668848, "ReceiveGameSystemChat", func() packets.Packet {
+	packets.Register(packets.ReceiveGameSystemChatID, "ReceiveGameSystemChat", func() packets.Packet {
 		return NewReceiveGameSystemChatPacket()
 	})
 }

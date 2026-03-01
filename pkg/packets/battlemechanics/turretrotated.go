@@ -23,7 +23,7 @@ func NewTurretRotatedPacket() *TurretRotatedPacket {
 		"turretRotation",
 	}
 
-	var id int32 = 1927704181
+	var id int32 = packets.TurretRotatedID
 
 	return &TurretRotatedPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -31,7 +31,7 @@ func NewTurretRotatedPacket() *TurretRotatedPacket {
 }
 
 func init() {
-	packets.Register(1927704181, "TurretRotated", func() packets.Packet {
+	packets.Register(packets.TurretRotatedID, "TurretRotated", func() packets.Packet {
 		return NewTurretRotatedPacket()
 	})
 }

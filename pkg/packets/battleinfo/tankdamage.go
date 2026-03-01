@@ -21,7 +21,7 @@ func NewTankDamagePacket() *TankDamagePacket {
 		"damages",
 	}
 
-	var id int32 = -1165230470
+	var id int32 = packets.TankDamageID
 
 	return &TankDamagePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -29,7 +29,7 @@ func NewTankDamagePacket() *TankDamagePacket {
 }
 
 func init() {
-	packets.Register(-1165230470, "TankDamage", func() packets.Packet {
+	packets.Register(packets.TankDamageID, "TankDamage", func() packets.Packet {
 		return NewTankDamagePacket()
 	})
 }

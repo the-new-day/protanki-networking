@@ -22,7 +22,7 @@ func NewUpdateTeamBattleScorePacket() *UpdateTeamBattleScorePacket {
 		"score",
 	}
 
-	var id int32 = 561771020
+	var id int32 = packets.UpdateTeamBattleScoreID
 
 	return &UpdateTeamBattleScorePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -30,7 +30,7 @@ func NewUpdateTeamBattleScorePacket() *UpdateTeamBattleScorePacket {
 }
 
 func init() {
-	packets.Register(561771020, "UpdateTeamBattleScore", func() packets.Packet {
+	packets.Register(packets.UpdateTeamBattleScoreID, "UpdateTeamBattleScore", func() packets.Packet {
 		return NewUpdateTeamBattleScorePacket()
 	})
 }

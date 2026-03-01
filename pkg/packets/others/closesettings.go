@@ -20,7 +20,7 @@ func NewCloseSettingsPacket() *CloseSettingsPacket {
 		"close_state",
 	}
 
-	var id int32 = -731115522
+	var id int32 = packets.CloseSettingsID
 
 	return &CloseSettingsPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewCloseSettingsPacket() *CloseSettingsPacket {
 }
 
 func init() {
-	packets.Register(-731115522, "CloseSettings", func() packets.Packet {
+	packets.Register(packets.CloseSettingsID, "CloseSettings", func() packets.Packet {
 		return NewCloseSettingsPacket()
 	})
 }

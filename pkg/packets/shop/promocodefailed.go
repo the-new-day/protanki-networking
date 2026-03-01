@@ -15,7 +15,7 @@ func NewPromocodeFailedPacket() *PromocodeFailedPacket {
 
 	attributes := []string{}
 
-	var id int32 = -1850050333
+	var id int32 = packets.PromocodeFailedID
 
 	return &PromocodeFailedPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewPromocodeFailedPacket() *PromocodeFailedPacket {
 }
 
 func init() {
-	packets.Register(-1850050333, "PromocodeFailed", func() packets.Packet {
+	packets.Register(packets.PromocodeFailedID, "PromocodeFailed", func() packets.Packet {
 		return NewPromocodeFailedPacket()
 	})
 }

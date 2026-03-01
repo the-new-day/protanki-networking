@@ -33,7 +33,7 @@ func NewShaftArcadeOutPacket() *ShaftArcadeOutPacket {
 		"globalHitPoints",
 	}
 
-	var id int32 = -2030760866
+	var id int32 = packets.ShaftArcadeOutID
 
 	return &ShaftArcadeOutPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -41,7 +41,7 @@ func NewShaftArcadeOutPacket() *ShaftArcadeOutPacket {
 }
 
 func init() {
-	packets.Register(-2030760866, "ShaftArcadeOut", func() packets.Packet {
+	packets.Register(packets.ShaftArcadeOutID, "ShaftArcadeOut", func() packets.Packet {
 		return NewShaftArcadeOutPacket()
 	})
 }

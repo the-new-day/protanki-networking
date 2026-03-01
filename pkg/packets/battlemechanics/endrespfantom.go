@@ -15,7 +15,7 @@ func NewEndRespFantomPacket() *EndRespFantomPacket {
 
 	attributes := []string{}
 
-	var id int32 = 1178028365
+	var id int32 = packets.EndRespFantomID
 
 	return &EndRespFantomPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewEndRespFantomPacket() *EndRespFantomPacket {
 }
 
 func init() {
-	packets.Register(1178028365, "EndRespFantom", func() packets.Packet {
+	packets.Register(packets.EndRespFantomID, "EndRespFantom", func() packets.Packet {
 		return NewEndRespFantomPacket()
 	})
 }

@@ -20,7 +20,7 @@ func NewUserChangedEquipmentPacket() *UserChangedEquipmentPacket {
 		"tank",
 	}
 
-	var id int32 = -1767633906
+	var id int32 = packets.UserChangedEquipmentID
 
 	return &UserChangedEquipmentPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewUserChangedEquipmentPacket() *UserChangedEquipmentPacket {
 }
 
 func init() {
-	packets.Register(-1767633906, "UserChangedEquipment", func() packets.Packet {
+	packets.Register(packets.UserChangedEquipmentID, "UserChangedEquipment", func() packets.Packet {
 		return NewUserChangedEquipmentPacket()
 	})
 }

@@ -20,7 +20,7 @@ func NewSyncTurretDataPacket() *SyncTurretDataPacket {
 		"json",
 	}
 
-	var id int32 = -2124388778
+	var id int32 = packets.SyncTurretDataID
 
 	return &SyncTurretDataPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewSyncTurretDataPacket() *SyncTurretDataPacket {
 }
 
 func init() {
-	packets.Register(-2124388778, "SyncTurretData", func() packets.Packet {
+	packets.Register(packets.SyncTurretDataID, "SyncTurretData", func() packets.Packet {
 		return NewSyncTurretDataPacket()
 	})
 }

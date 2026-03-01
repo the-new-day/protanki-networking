@@ -20,7 +20,7 @@ func NewUserSuppliesInfoPacket() *UserSuppliesInfoPacket {
 		"json",
 	}
 
-	var id int32 = -137249251
+	var id int32 = packets.UserSuppliesInfoID
 
 	return &UserSuppliesInfoPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewUserSuppliesInfoPacket() *UserSuppliesInfoPacket {
 }
 
 func init() {
-	packets.Register(-137249251, "UserSuppliesInfo", func() packets.Packet {
+	packets.Register(packets.UserSuppliesInfoID, "UserSuppliesInfo", func() packets.Packet {
 		return NewUserSuppliesInfoPacket()
 	})
 }

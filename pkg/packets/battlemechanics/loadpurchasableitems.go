@@ -20,7 +20,7 @@ func NewLoadPurchasableItemsPacket() *LoadPurchasableItemsPacket {
 		"json",
 	}
 
-	var id int32 = -300370823
+	var id int32 = packets.LoadPurchasableItemsID
 
 	return &LoadPurchasableItemsPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewLoadPurchasableItemsPacket() *LoadPurchasableItemsPacket {
 }
 
 func init() {
-	packets.Register(-300370823, "LoadPurchasableItems", func() packets.Packet {
+	packets.Register(packets.LoadPurchasableItemsID, "LoadPurchasableItems", func() packets.Packet {
 		return NewLoadPurchasableItemsPacket()
 	})
 }

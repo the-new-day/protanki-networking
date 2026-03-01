@@ -20,7 +20,7 @@ func NewUseSupplyPacket() *UseSupplyPacket {
 		"supply_id",
 	}
 
-	var id int32 = -2102525054
+	var id int32 = packets.UseSupplyID
 
 	return &UseSupplyPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewUseSupplyPacket() *UseSupplyPacket {
 }
 
 func init() {
-	packets.Register(-2102525054, "UseSupply", func() packets.Packet {
+	packets.Register(packets.UseSupplyID, "UseSupply", func() packets.Packet {
 		return NewUseSupplyPacket()
 	})
 }

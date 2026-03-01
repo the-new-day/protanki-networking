@@ -15,7 +15,7 @@ func NewLoginSuccessPacket() *LoginSuccessPacket {
 
 	attributes := []string{}
 
-	var id int32 = -1923286328
+	var id int32 = packets.LoginSuccessID
 
 	return &LoginSuccessPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewLoginSuccessPacket() *LoginSuccessPacket {
 }
 
 func init() {
-	packets.Register(-1923286328, "LoginSuccess", func() packets.Packet {
+	packets.Register(packets.LoginSuccessID, "LoginSuccess", func() packets.Packet {
 		return NewLoginSuccessPacket()
 	})
 }

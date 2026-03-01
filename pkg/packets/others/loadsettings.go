@@ -15,7 +15,7 @@ func NewLoadSettingsPacket() *LoadSettingsPacket {
 
 	attributes := []string{}
 
-	var id int32 = 850220815
+	var id int32 = packets.LoadSettingsID
 
 	return &LoadSettingsPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewLoadSettingsPacket() *LoadSettingsPacket {
 }
 
 func init() {
-	packets.Register(850220815, "LoadSettings", func() packets.Packet {
+	packets.Register(packets.LoadSettingsID, "LoadSettings", func() packets.Packet {
 		return NewLoadSettingsPacket()
 	})
 }

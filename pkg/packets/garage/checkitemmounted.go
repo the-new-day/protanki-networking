@@ -23,7 +23,7 @@ func NewCheckItemMountedPacket() *CheckItemMountedPacket {
 		"mounted",
 	}
 
-	var id int32 = 2062201643
+	var id int32 = packets.CheckItemMountedID
 
 	return &CheckItemMountedPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -31,7 +31,7 @@ func NewCheckItemMountedPacket() *CheckItemMountedPacket {
 }
 
 func init() {
-	packets.Register(2062201643, "CheckItemMounted", func() packets.Packet {
+	packets.Register(packets.CheckItemMountedID, "CheckItemMounted", func() packets.Packet {
 		return NewCheckItemMountedPacket()
 	})
 }

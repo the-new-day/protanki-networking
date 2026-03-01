@@ -25,7 +25,7 @@ func NewMovePacket() *MovePacket {
 		"movement",
 	}
 
-	var id int32 = 329279865
+	var id int32 = packets.MoveID
 
 	return &MovePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -33,7 +33,7 @@ func NewMovePacket() *MovePacket {
 }
 
 func init() {
-	packets.Register(329279865, "Move", func() packets.Packet {
+	packets.Register(packets.MoveID, "Move", func() packets.Packet {
 		return NewMovePacket()
 	})
 }

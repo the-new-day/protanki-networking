@@ -20,7 +20,7 @@ func NewSwapTeamsPacket() *SwapTeamsPacket {
 		"battleID",
 	}
 
-	var id int32 = -994817471
+	var id int32 = packets.SwapTeamsID
 
 	return &SwapTeamsPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewSwapTeamsPacket() *SwapTeamsPacket {
 }
 
 func init() {
-	packets.Register(-994817471, "SwapTeams", func() packets.Packet {
+	packets.Register(packets.SwapTeamsID, "SwapTeams", func() packets.Packet {
 		return NewSwapTeamsPacket()
 	})
 }

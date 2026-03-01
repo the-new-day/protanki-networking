@@ -20,7 +20,7 @@ func NewDespawnAlivePacket() *DespawnAlivePacket {
 		"username",
 	}
 
-	var id int32 = 1719707347
+	var id int32 = packets.DespawnAliveID
 
 	return &DespawnAlivePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewDespawnAlivePacket() *DespawnAlivePacket {
 }
 
 func init() {
-	packets.Register(1719707347, "DespawnAlive", func() packets.Packet {
+	packets.Register(packets.DespawnAliveID, "DespawnAlive", func() packets.Packet {
 		return NewDespawnAlivePacket()
 	})
 }

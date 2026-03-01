@@ -20,7 +20,7 @@ func NewNameUnavailablePacket() *NameUnavailablePacket {
 		"usernames",
 	}
 
-	var id int32 = 442888643
+	var id int32 = packets.NameUnavailableID
 
 	return &NameUnavailablePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewNameUnavailablePacket() *NameUnavailablePacket {
 }
 
 func init() {
-	packets.Register(442888643, "NameUnavailable", func() packets.Packet {
+	packets.Register(packets.NameUnavailableID, "NameUnavailable", func() packets.Packet {
 		return NewNameUnavailablePacket()
 	})
 }

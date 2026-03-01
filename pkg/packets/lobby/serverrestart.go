@@ -20,7 +20,7 @@ func NewServerRestartPacket() *ServerRestartPacket {
 		"time",
 	}
 
-	var id int32 = -1712113407
+	var id int32 = packets.ServerRestartID
 
 	return &ServerRestartPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewServerRestartPacket() *ServerRestartPacket {
 }
 
 func init() {
-	packets.Register(-1712113407, "ServerRestart", func() packets.Packet {
+	packets.Register(packets.ServerRestartID, "ServerRestart", func() packets.Packet {
 		return NewServerRestartPacket()
 	})
 }

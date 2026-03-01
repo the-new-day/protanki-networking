@@ -15,7 +15,7 @@ func NewPongPacket() *PongPacket {
 
 	attributes := []string{}
 
-	var id int32 = 1484572481
+	var id int32 = packets.PongID
 
 	return &PongPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewPongPacket() *PongPacket {
 }
 
 func init() {
-	packets.Register(1484572481, "Pong", func() packets.Packet {
+	packets.Register(packets.PongID, "Pong", func() packets.Packet {
 		return NewPongPacket()
 	})
 }

@@ -24,7 +24,7 @@ func NewLoadNewPlayerDmPacket() *LoadNewPlayerDmPacket {
 		"userinfos",
 	}
 
-	var id int32 = 862913394
+	var id int32 = packets.LoadNewPlayerDmID
 
 	return &LoadNewPlayerDmPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -32,7 +32,7 @@ func NewLoadNewPlayerDmPacket() *LoadNewPlayerDmPacket {
 }
 
 func init() {
-	packets.Register(862913394, "LoadPlayerDm", func() packets.Packet {
+	packets.Register(packets.LoadNewPlayerDmID, "LoadPlayerDm", func() packets.Packet {
 		return NewLoadNewPlayerDmPacket()
 	})
 }

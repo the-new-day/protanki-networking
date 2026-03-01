@@ -15,7 +15,7 @@ func NewPromocodeSuccessPacket() *PromocodeSuccessPacket {
 
 	attributes := []string{}
 
-	var id int32 = -1859441081
+	var id int32 = packets.PromocodeSuccessID
 
 	return &PromocodeSuccessPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -23,7 +23,7 @@ func NewPromocodeSuccessPacket() *PromocodeSuccessPacket {
 }
 
 func init() {
-	packets.Register(-1859441081, "PromocodeSuccess", func() packets.Packet {
+	packets.Register(packets.PromocodeSuccessID, "PromocodeSuccess", func() packets.Packet {
 		return NewPromocodeSuccessPacket()
 	})
 }

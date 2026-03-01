@@ -22,7 +22,7 @@ func NewPlayerStartPositionPacket() *PlayerStartPositionPacket {
 		"orientation",
 	}
 
-	var id int32 = -157204477
+	var id int32 = packets.PlayerStartPositionID
 
 	return &PlayerStartPositionPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -30,7 +30,7 @@ func NewPlayerStartPositionPacket() *PlayerStartPositionPacket {
 }
 
 func init() {
-	packets.Register(-157204477, "PlayerStartPosition", func() packets.Packet {
+	packets.Register(packets.PlayerStartPositionID, "PlayerStartPosition", func() packets.Packet {
 		return NewPlayerStartPositionPacket()
 	})
 }

@@ -20,7 +20,7 @@ func NewSelectBattlePacket() *SelectBattlePacket {
 		"battleID",
 	}
 
-	var id int32 = 2092412133
+	var id int32 = packets.SelectBattleID
 
 	return &SelectBattlePacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewSelectBattlePacket() *SelectBattlePacket {
 }
 
 func init() {
-	packets.Register(2092412133, "SelectBattle", func() packets.Packet {
+	packets.Register(packets.SelectBattleID, "SelectBattle", func() packets.Packet {
 		return NewSelectBattlePacket()
 	})
 }

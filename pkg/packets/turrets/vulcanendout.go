@@ -20,7 +20,7 @@ func NewVulcanEndOutPacket() *VulcanEndOutPacket {
 		"clientTime",
 	}
 
-	var id int32 = 1794372798
+	var id int32 = packets.VulcanEndOutID
 
 	return &VulcanEndOutPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -28,7 +28,7 @@ func NewVulcanEndOutPacket() *VulcanEndOutPacket {
 }
 
 func init() {
-	packets.Register(1794372798, "VulcanEndOut", func() packets.Packet {
+	packets.Register(packets.VulcanEndOutID, "VulcanEndOut", func() packets.Packet {
 		return NewVulcanEndOutPacket()
 	})
 }

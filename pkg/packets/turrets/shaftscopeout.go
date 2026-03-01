@@ -33,7 +33,7 @@ func NewShaftScopeOutPacket() *ShaftScopeOutPacket {
 		"globalHitPoints",
 	}
 
-	var id int32 = 1632423559
+	var id int32 = packets.ShaftScopeOutID
 
 	return &ShaftScopeOutPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
@@ -41,7 +41,7 @@ func NewShaftScopeOutPacket() *ShaftScopeOutPacket {
 }
 
 func init() {
-	packets.Register(1632423559, "ShaftScopeOut", func() packets.Packet {
+	packets.Register(packets.ShaftScopeOutID, "ShaftScopeOut", func() packets.Packet {
 		return NewShaftScopeOutPacket()
 	})
 }
