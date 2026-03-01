@@ -31,7 +31,7 @@ func NewEmailPacket() *EmailPacket {
 }
 
 func init() {
-	packets.Register(613462801, "EmailPacket", func() packets.Packet {
+	packets.Register(613462801, "Email", func() packets.Packet {
 		return NewEmailPacket()
 	})
 }

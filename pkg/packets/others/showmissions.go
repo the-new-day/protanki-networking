@@ -31,7 +31,7 @@ func NewShowMissionsPacket() *ShowMissionsPacket {
 }
 
 func init() {
-	packets.Register(809822533, "ShowMissionsPacket", func() packets.Packet {
+	packets.Register(809822533, "ShowMissions", func() packets.Packet {
 		return NewShowMissionsPacket()
 	})
 }

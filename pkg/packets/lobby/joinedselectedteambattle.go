@@ -34,7 +34,7 @@ func NewJoinedSelectedTeamBattlePacket() *JoinedSelectedTeamBattlePacket {
 }
 
 func init() {
-	packets.Register(118447426, "JoinedSelectedTeamBattlePacket", func() packets.Packet {
+	packets.Register(118447426, "JoinedSelectedTeamBattle", func() packets.Packet {
 		return NewJoinedSelectedTeamBattlePacket()
 	})
 }

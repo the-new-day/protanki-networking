@@ -29,7 +29,7 @@ func NewReceiveLobbyChatPacket() *ReceiveLobbyChatPacket {
 }
 
 func init() {
-	packets.Register(-1263520410, "ReceiveLobbyChatPacket", func() packets.Packet {
+	packets.Register(-1263520410, "ReceiveLobbyChat", func() packets.Packet {
 		return NewReceiveLobbyChatPacket()
 	})
 }

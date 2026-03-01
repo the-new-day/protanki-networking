@@ -33,7 +33,7 @@ func NewCreateAccountPacket() *CreateAccountPacket {
 }
 
 func init() {
-	packets.Register(427083290, "CreateAccountPacket", func() packets.Packet {
+	packets.Register(427083290, "CreateAccount", func() packets.Packet {
 		return NewCreateAccountPacket()
 	})
 }

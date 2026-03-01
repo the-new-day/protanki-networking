@@ -28,7 +28,7 @@ func NewChangeMissionPacket() *ChangeMissionPacket {
 }
 
 func init() {
-	packets.Register(1642608662, "ChangeMissionPacket", func() packets.Packet {
+	packets.Register(1642608662, "ChangeMission", func() packets.Packet {
 		return NewChangeMissionPacket()
 	})
 }

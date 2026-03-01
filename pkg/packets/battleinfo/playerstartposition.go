@@ -30,7 +30,7 @@ func NewPlayerStartPositionPacket() *PlayerStartPositionPacket {
 }
 
 func init() {
-	packets.Register(-157204477, "PlayerStartPositionPacket", func() packets.Packet {
+	packets.Register(-157204477, "PlayerStartPosition", func() packets.Packet {
 		return NewPlayerStartPositionPacket()
 	})
 }

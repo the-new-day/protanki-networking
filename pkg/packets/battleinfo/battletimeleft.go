@@ -28,7 +28,7 @@ func NewBattleTimeLeftPacket() *BattleTimeLeftPacket {
 }
 
 func init() {
-	packets.Register(732434644, "BattleTimeLeftPacket", func() packets.Packet {
+	packets.Register(732434644, "BattleTimeLeft", func() packets.Packet {
 		return NewBattleTimeLeftPacket()
 	})
 }

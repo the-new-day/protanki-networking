@@ -31,7 +31,7 @@ func NewJoinedSelectedDmBattlePacket() *JoinedSelectedDmBattlePacket {
 }
 
 func init() {
-	packets.Register(-911626491, "JoinedSelectedDmBattlePacket", func() packets.Packet {
+	packets.Register(-911626491, "JoinedSelectedDmBattle", func() packets.Packet {
 		return NewJoinedSelectedDmBattlePacket()
 	})
 }

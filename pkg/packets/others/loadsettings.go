@@ -23,7 +23,7 @@ func NewLoadSettingsPacket() *LoadSettingsPacket {
 }
 
 func init() {
-	packets.Register(850220815, "LoadSettingsPacket", func() packets.Packet {
+	packets.Register(850220815, "LoadSettings", func() packets.Packet {
 		return NewLoadSettingsPacket()
 	})
 }

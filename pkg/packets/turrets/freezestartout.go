@@ -28,7 +28,7 @@ func NewFreezeStartOutPacket() *FreezeStartOutPacket {
 }
 
 func init() {
-	packets.Register(-75406982, "FreezeStartOutPacket", func() packets.Packet {
+	packets.Register(-75406982, "FreezeStartOut", func() packets.Packet {
 		return NewFreezeStartOutPacket()
 	})
 }

@@ -31,7 +31,7 @@ func NewBattleUserTeamStatsPacket() *BattleUserTeamStatsPacket {
 }
 
 func init() {
-	packets.Register(-497293992, "BattleUserTeamStatsPacket", func() packets.Packet {
+	packets.Register(-497293992, "BattleUserTeamStats", func() packets.Packet {
 		return NewBattleUserTeamStatsPacket()
 	})
 }

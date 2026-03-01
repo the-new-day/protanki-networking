@@ -32,7 +32,7 @@ func NewTurretControlPacket() *TurretControlPacket {
 }
 
 func init() {
-	packets.Register(-1749108178, "TurretControlPacket", func() packets.Packet {
+	packets.Register(-1749108178, "TurretControl", func() packets.Packet {
 		return NewTurretControlPacket()
 	})
 }

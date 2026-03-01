@@ -28,7 +28,7 @@ func NewFullyRespawnedPacket() *FullyRespawnedPacket {
 }
 
 func init() {
-	packets.Register(1868573511, "FullyRespawnedPacket", func() packets.Packet {
+	packets.Register(1868573511, "FullyRespawned", func() packets.Packet {
 		return NewFullyRespawnedPacket()
 	})
 }

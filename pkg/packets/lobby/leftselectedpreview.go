@@ -30,7 +30,7 @@ func NewLeftSelectedPreviewPacket() *LeftSelectedPreviewPacket {
 }
 
 func init() {
-	packets.Register(1924874982, "LeftSelectedPreviewPacket", func() packets.Packet {
+	packets.Register(1924874982, "LeftSelectedPreview", func() packets.Packet {
 		return NewLeftSelectedPreviewPacket()
 	})
 }

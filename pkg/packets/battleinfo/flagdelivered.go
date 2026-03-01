@@ -31,7 +31,7 @@ func NewFlagDeliveredPacket() *FlagDeliveredPacket {
 }
 
 func init() {
-	packets.Register(-1870108387, "FlagDeliveredPacket", func() packets.Packet {
+	packets.Register(-1870108387, "FlagDelivered", func() packets.Packet {
 		return NewFlagDeliveredPacket()
 	})
 }

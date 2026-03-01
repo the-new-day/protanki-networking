@@ -31,7 +31,7 @@ func NewBattleUserControlPacket() *BattleUserControlPacket {
 }
 
 func init() {
-	packets.Register(-301298508, "BattleUserControlPacket", func() packets.Packet {
+	packets.Register(-301298508, "BattleUserControl", func() packets.Packet {
 		return NewBattleUserControlPacket()
 	})
 }

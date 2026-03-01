@@ -33,7 +33,7 @@ func NewUpdateTeamBattlePreviewPacket() *UpdateTeamBattlePreviewPacket {
 }
 
 func init() {
-	packets.Register(1428217189, "UpdateTeamBattlePreviewPacket", func() packets.Packet {
+	packets.Register(1428217189, "UpdateTeamBattlePreview", func() packets.Packet {
 		return NewUpdateTeamBattlePreviewPacket()
 	})
 }

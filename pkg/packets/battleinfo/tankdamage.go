@@ -29,7 +29,7 @@ func NewTankDamagePacket() *TankDamagePacket {
 }
 
 func init() {
-	packets.Register(-1165230470, "TankDamagePacket", func() packets.Packet {
+	packets.Register(-1165230470, "TankDamage", func() packets.Packet {
 		return NewTankDamagePacket()
 	})
 }

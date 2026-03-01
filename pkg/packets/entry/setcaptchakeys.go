@@ -29,7 +29,7 @@ func NewSetCaptchaKeysPacket() *SetCaptchaKeysPacket {
 }
 
 func init() {
-	packets.Register(packets.SetCaptchaKeysID, "SetCaptchaKeysPacket", func() packets.Packet {
+	packets.Register(packets.SetCaptchaKeysID, "SetCaptchaKeys", func() packets.Packet {
 		return NewSetCaptchaKeysPacket()
 	})
 }

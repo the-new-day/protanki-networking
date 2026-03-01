@@ -28,7 +28,7 @@ func NewCheckNameAvailabilityPacket() *CheckNameAvailabilityPacket {
 }
 
 func init() {
-	packets.Register(1083705823, "CheckNameAvailabilityPacket", func() packets.Packet {
+	packets.Register(1083705823, "CheckNameAvailability", func() packets.Packet {
 		return NewCheckNameAvailabilityPacket()
 	})
 }

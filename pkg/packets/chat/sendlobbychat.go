@@ -30,7 +30,7 @@ func NewSendLobbyChatPacket() *SendLobbyChatPacket {
 }
 
 func init() {
-	packets.Register(705454610, "SendLobbyChatPacket", func() packets.Packet {
+	packets.Register(705454610, "SendLobbyChat", func() packets.Packet {
 		return NewSendLobbyChatPacket()
 	})
 }

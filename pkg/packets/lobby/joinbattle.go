@@ -28,7 +28,7 @@ func NewJoinBattlePacket() *JoinBattlePacket {
 }
 
 func init() {
-	packets.Register(-1284211503, "JoinBattlePacket", func() packets.Packet {
+	packets.Register(-1284211503, "JoinBattle", func() packets.Packet {
 		return NewJoinBattlePacket()
 	})
 }

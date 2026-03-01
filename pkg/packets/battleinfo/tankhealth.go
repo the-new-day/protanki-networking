@@ -31,7 +31,7 @@ func NewTankHealthPacket() *TankHealthPacket {
 }
 
 func init() {
-	packets.Register(-611961116, "TankHealthPacket", func() packets.Packet {
+	packets.Register(-611961116, "TankHealth", func() packets.Packet {
 		return NewTankHealthPacket()
 	})
 }

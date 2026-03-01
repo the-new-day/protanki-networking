@@ -29,7 +29,7 @@ func NewLoadNewbieRewardsPacket() *LoadNewbieRewardsPacket {
 }
 
 func init() {
-	packets.Register(602656160, "LoadbieRewardsPacket", func() packets.Packet {
+	packets.Register(602656160, "LoadbieRewards", func() packets.Packet {
 		return NewLoadNewbieRewardsPacket()
 	})
 }

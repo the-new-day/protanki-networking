@@ -23,7 +23,7 @@ func NewCompletedMissionPacket() *CompletedMissionPacket {
 }
 
 func init() {
-	packets.Register(1579425801, "CompletedMissionPacket", func() packets.Packet {
+	packets.Register(1579425801, "CompletedMission", func() packets.Packet {
 		return NewCompletedMissionPacket()
 	})
 }

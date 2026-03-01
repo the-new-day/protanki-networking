@@ -28,7 +28,7 @@ func NewWipeLobbyMessagesPacket() *WipeLobbyMessagesPacket {
 }
 
 func init() {
-	packets.Register(1993050216, "WipeLobbyMessagesPacket", func() packets.Packet {
+	packets.Register(1993050216, "WipeLobbyMessages", func() packets.Packet {
 		return NewWipeLobbyMessagesPacket()
 	})
 }

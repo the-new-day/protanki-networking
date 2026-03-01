@@ -31,7 +31,7 @@ func NewPremiumStatusPacket() *PremiumStatusPacket {
 }
 
 func init() {
-	packets.Register(-2069508071, "PremiumStatusPacket", func() packets.Packet {
+	packets.Register(-2069508071, "PremiumStatus", func() packets.Packet {
 		return NewPremiumStatusPacket()
 	})
 }

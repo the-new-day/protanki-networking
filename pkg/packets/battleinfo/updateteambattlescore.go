@@ -30,7 +30,7 @@ func NewUpdateTeamBattleScorePacket() *UpdateTeamBattleScorePacket {
 }
 
 func init() {
-	packets.Register(561771020, "UpdateTeamBattleScorePacket", func() packets.Packet {
+	packets.Register(561771020, "UpdateTeamBattleScore", func() packets.Packet {
 		return NewUpdateTeamBattleScorePacket()
 	})
 }

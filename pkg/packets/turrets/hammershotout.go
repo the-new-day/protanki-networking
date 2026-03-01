@@ -35,7 +35,7 @@ func NewHammerShotOutPacket() *HammerShotOutPacket {
 }
 
 func init() {
-	packets.Register(-541655881, "HammerShotOutPacket", func() packets.Packet {
+	packets.Register(-541655881, "HammerShotOut", func() packets.Packet {
 		return NewHammerShotOutPacket()
 	})
 }

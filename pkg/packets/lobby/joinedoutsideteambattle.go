@@ -33,7 +33,7 @@ func NewJoinedOutsideTeamBattlePacket() *JoinedOutsideTeamBattlePacket {
 }
 
 func init() {
-	packets.Register(-169305322, "JoinedOutsideTeamBattlePacket", func() packets.Packet {
+	packets.Register(-169305322, "JoinedOutsideTeamBattle", func() packets.Packet {
 		return NewJoinedOutsideTeamBattlePacket()
 	})
 }

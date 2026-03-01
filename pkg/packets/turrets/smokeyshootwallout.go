@@ -31,7 +31,7 @@ func NewSmokyShootWallOutPacket() *SmokyShootWallOutPacket {
 }
 
 func init() {
-	packets.Register(1470597926, "SmokyShootWallOutPacket", func() packets.Packet {
+	packets.Register(1470597926, "SmokyShootWallOut", func() packets.Packet {
 		return NewSmokyShootWallOutPacket()
 	})
 }

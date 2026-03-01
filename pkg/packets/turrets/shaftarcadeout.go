@@ -41,7 +41,7 @@ func NewShaftArcadeOutPacket() *ShaftArcadeOutPacket {
 }
 
 func init() {
-	packets.Register(-2030760866, "ShaftArcadeOutPacket", func() packets.Packet {
+	packets.Register(-2030760866, "ShaftArcadeOut", func() packets.Packet {
 		return NewShaftArcadeOutPacket()
 	})
 }

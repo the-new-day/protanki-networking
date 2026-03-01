@@ -28,7 +28,7 @@ func NewBonusBoxExistingLocationsPacket() *BonusBoxExistingLocationsPacket {
 }
 
 func init() {
-	packets.Register(870278784, "BonusBoxExistingLocationsPacket", func() packets.Packet {
+	packets.Register(870278784, "BonusBoxExistingLocations", func() packets.Packet {
 		return NewBonusBoxExistingLocationsPacket()
 	})
 }

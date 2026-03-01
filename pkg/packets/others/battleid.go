@@ -28,7 +28,7 @@ func NewLastBattleIdPacket() *LastBattleIdPacket {
 }
 
 func init() {
-	packets.Register(-602527073, "LastBattleIdPacket", func() packets.Packet {
+	packets.Register(-602527073, "LastBattleId", func() packets.Packet {
 		return NewLastBattleIdPacket()
 	})
 }

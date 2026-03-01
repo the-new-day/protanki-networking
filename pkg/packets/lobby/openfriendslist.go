@@ -23,7 +23,7 @@ func NewOpenFriendsListPacket() *OpenFriendsListPacket {
 }
 
 func init() {
-	packets.Register(1441234714, "OpenFriendsListPacket", func() packets.Packet {
+	packets.Register(1441234714, "OpenFriendsList", func() packets.Packet {
 		return NewOpenFriendsListPacket()
 	})
 }

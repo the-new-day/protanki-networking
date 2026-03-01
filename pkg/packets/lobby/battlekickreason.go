@@ -28,7 +28,7 @@ func NewBattleKickReasonPacket() *BattleKickReasonPacket {
 }
 
 func init() {
-	packets.Register(-322235316, "BattleKickReasonPacket", func() packets.Packet {
+	packets.Register(-322235316, "BattleKickReason", func() packets.Packet {
 		return NewBattleKickReasonPacket()
 	})
 }

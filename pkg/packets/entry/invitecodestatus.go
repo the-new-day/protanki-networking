@@ -28,7 +28,7 @@ func NewInviteCodeStatusPacket() *InviteCodeStatusPacket {
 }
 
 func init() {
-	packets.Register(444933603, "InviteCodeStatusPacket", func() packets.Packet {
+	packets.Register(444933603, "InviteCodeStatus", func() packets.Packet {
 		return NewInviteCodeStatusPacket()
 	})
 }

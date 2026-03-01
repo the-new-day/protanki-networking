@@ -28,7 +28,7 @@ func NewSendPromocodePacket() *SendPromocodePacket {
 }
 
 func init() {
-	packets.Register(-511004908, "SendPromocodePacket", func() packets.Packet {
+	packets.Register(-511004908, "SendPromocode", func() packets.Packet {
 		return NewSendPromocodePacket()
 	})
 }

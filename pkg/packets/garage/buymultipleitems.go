@@ -33,7 +33,7 @@ func NewBuyMultipleItemsPacket() *BuyMultipleItemsPacket {
 }
 
 func init() {
-	packets.Register(-1961983005, "BuyMultipleItemsPacket", func() packets.Packet {
+	packets.Register(-1961983005, "BuyMultipleItems", func() packets.Packet {
 		return NewBuyMultipleItemsPacket()
 	})
 }

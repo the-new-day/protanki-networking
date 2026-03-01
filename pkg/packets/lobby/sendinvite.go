@@ -30,7 +30,7 @@ func NewSendInvitePacket() *SendInvitePacket {
 }
 
 func init() {
-	packets.Register(-864265623, "SendInvitePacket", func() packets.Packet {
+	packets.Register(-864265623, "SendInvite", func() packets.Packet {
 		return NewSendInvitePacket()
 	})
 }

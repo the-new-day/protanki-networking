@@ -28,7 +28,7 @@ func NewRoundFinishPacket() *RoundFinishPacket {
 }
 
 func init() {
-	packets.Register(1534651002, "RoundFinishPacket", func() packets.Packet {
+	packets.Register(1534651002, "RoundFinish", func() packets.Packet {
 		return NewRoundFinishPacket()
 	})
 }

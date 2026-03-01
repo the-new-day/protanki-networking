@@ -37,7 +37,7 @@ func NewEffectAftermathPacket() *EffectAftermathPacket {
 }
 
 func init() {
-	packets.Register(-1639713644, "EffectAftermathPacket", func() packets.Packet {
+	packets.Register(-1639713644, "EffectAftermath", func() packets.Packet {
 		return NewEffectAftermathPacket()
 	})
 }

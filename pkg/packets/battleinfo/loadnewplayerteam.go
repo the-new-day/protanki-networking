@@ -35,7 +35,7 @@ func NewLoadNewPlayerTeamPacket() *LoadNewPlayerTeamPacket {
 }
 
 func init() {
-	packets.Register(2040021062, "LoadPlayerTeamPacket", func() packets.Packet {
+	packets.Register(2040021062, "LoadPlayerTeam", func() packets.Packet {
 		return NewLoadNewPlayerTeamPacket()
 	})
 }

@@ -28,7 +28,7 @@ func NewLoadMapLightsPacket() *LoadMapLightsPacket {
 }
 
 func init() {
-	packets.Register(-152638117, "LoadMapLightsPacket", func() packets.Packet {
+	packets.Register(-152638117, "LoadMapLights", func() packets.Packet {
 		return NewLoadMapLightsPacket()
 	})
 }

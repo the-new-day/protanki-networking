@@ -31,7 +31,7 @@ func NewAnswerCaptchaPacket() *AnswerCaptchaPacket {
 }
 
 func init() {
-	packets.Register(1271163230, "AnswerCaptchaPacket", func() packets.Packet {
+	packets.Register(1271163230, "AnswerCaptcha", func() packets.Packet {
 		return NewAnswerCaptchaPacket()
 	})
 }

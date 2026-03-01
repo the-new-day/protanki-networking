@@ -34,7 +34,7 @@ func NewMoveCommandPacket() *MoveCommandPacket {
 }
 
 func init() {
-	packets.Register(1516578027, "MoveCommandPacket", func() packets.Packet {
+	packets.Register(1516578027, "MoveCommand", func() packets.Packet {
 		return NewMoveCommandPacket()
 	})
 }

@@ -31,7 +31,7 @@ func NewSelfDestructedPacket() *SelfDestructedPacket {
 }
 
 func init() {
-	packets.Register(162656882, "SelfDestructedPacket", func() packets.Packet {
+	packets.Register(162656882, "SelfDestructed", func() packets.Packet {
 		return NewSelfDestructedPacket()
 	})
 }

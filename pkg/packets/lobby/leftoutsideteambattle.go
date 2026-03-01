@@ -30,7 +30,7 @@ func NewLeftOutsideTeamBattlePacket() *LeftOutsideTeamBattlePacket {
 }
 
 func init() {
-	packets.Register(1447204641, "LeftOutsideTeamBattlePacket", func() packets.Packet {
+	packets.Register(1447204641, "LeftOutsideTeamBattle", func() packets.Packet {
 		return NewLeftOutsideTeamBattlePacket()
 	})
 }

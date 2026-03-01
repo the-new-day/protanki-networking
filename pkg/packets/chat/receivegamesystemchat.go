@@ -28,7 +28,7 @@ func NewReceiveGameSystemChatPacket() *ReceiveGameSystemChatPacket {
 }
 
 func init() {
-	packets.Register(606668848, "ReceiveGameSystemChatPacket", func() packets.Packet {
+	packets.Register(606668848, "ReceiveGameSystemChat", func() packets.Packet {
 		return NewReceiveGameSystemChatPacket()
 	})
 }

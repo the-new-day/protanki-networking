@@ -34,7 +34,7 @@ func NewMultiShotTurretInPacket() *MultiShotTurretInPacket {
 }
 
 func init() {
-	packets.Register(-891286317, "MultiShotTurretInPacket", func() packets.Packet {
+	packets.Register(-891286317, "MultiShotTurretIn", func() packets.Packet {
 		return NewMultiShotTurretInPacket()
 	})
 }

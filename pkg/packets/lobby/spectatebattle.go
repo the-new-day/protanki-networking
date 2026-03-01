@@ -23,7 +23,7 @@ func NewSpectateBattlePacket() *SpectateBattlePacket {
 }
 
 func init() {
-	packets.Register(-1315002220, "SpectateBattlePacket", func() packets.Packet {
+	packets.Register(-1315002220, "SpectateBattle", func() packets.Packet {
 		return NewSpectateBattlePacket()
 	})
 }

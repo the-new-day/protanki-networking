@@ -23,7 +23,7 @@ func NewSelfDestructPacket() *SelfDestructPacket {
 }
 
 func init() {
-	packets.Register(988664577, "SelfDestructPacket", func() packets.Packet {
+	packets.Register(988664577, "SelfDestruct", func() packets.Packet {
 		return NewSelfDestructPacket()
 	})
 }

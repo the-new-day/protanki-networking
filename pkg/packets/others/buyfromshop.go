@@ -28,7 +28,7 @@ func NewChangeLocationPacket() *ChangeLocationPacket {
 }
 
 func init() {
-	packets.Register(921004371, "ChangeLocationPacket", func() packets.Packet {
+	packets.Register(921004371, "ChangeLocation", func() packets.Packet {
 		return NewChangeLocationPacket()
 	})
 }

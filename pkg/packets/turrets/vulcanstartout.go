@@ -28,7 +28,7 @@ func NewVulcanStartOutPacket() *VulcanStartOutPacket {
 }
 
 func init() {
-	packets.Register(-520655432, "VulcanStartOutPacket", func() packets.Packet {
+	packets.Register(-520655432, "VulcanStartOut", func() packets.Packet {
 		return NewVulcanStartOutPacket()
 	})
 }

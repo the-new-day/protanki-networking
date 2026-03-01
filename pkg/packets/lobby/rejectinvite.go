@@ -28,7 +28,7 @@ func NewRejectInvitePacket() *RejectInvitePacket {
 }
 
 func init() {
-	packets.Register(1152865919, "RejectInvitePacket", func() packets.Packet {
+	packets.Register(1152865919, "RejectInvite", func() packets.Packet {
 		return NewRejectInvitePacket()
 	})
 }

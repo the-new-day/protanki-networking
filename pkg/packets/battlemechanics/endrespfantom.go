@@ -23,7 +23,7 @@ func NewEndRespFantomPacket() *EndRespFantomPacket {
 }
 
 func init() {
-	packets.Register(1178028365, "EndRespFantomPacket", func() packets.Packet {
+	packets.Register(1178028365, "EndRespFantom", func() packets.Packet {
 		return NewEndRespFantomPacket()
 	})
 }

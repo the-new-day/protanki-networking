@@ -32,7 +32,7 @@ func NewBattleUserRewardsPacket() *BattleUserRewardsPacket {
 }
 
 func init() {
-	packets.Register(560336625, "BattleUserRewardsPacket", func() packets.Packet {
+	packets.Register(560336625, "BattleUserRewards", func() packets.Packet {
 		return NewBattleUserRewardsPacket()
 	})
 }

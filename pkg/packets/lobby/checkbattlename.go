@@ -28,7 +28,7 @@ func NewCheckBattleNamePacket() *CheckBattleNamePacket {
 }
 
 func init() {
-	packets.Register(566652736, "CheckBattleNamePacket", func() packets.Packet {
+	packets.Register(566652736, "CheckBattleName", func() packets.Packet {
 		return NewCheckBattleNamePacket()
 	})
 }

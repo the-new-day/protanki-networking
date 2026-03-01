@@ -28,7 +28,7 @@ func NewNotInBattleStatusPacket() *NotInBattleStatusPacket {
 }
 
 func init() {
-	packets.Register(1941694508, "NotInBattleStatusPacket", func() packets.Packet {
+	packets.Register(1941694508, "NotInBattleStatus", func() packets.Packet {
 		return NewNotInBattleStatusPacket()
 	})
 }

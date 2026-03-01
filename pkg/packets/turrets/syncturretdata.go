@@ -28,7 +28,7 @@ func NewSyncTurretDataPacket() *SyncTurretDataPacket {
 }
 
 func init() {
-	packets.Register(-2124388778, "SyncTurretDataPacket", func() packets.Packet {
+	packets.Register(-2124388778, "SyncTurretData", func() packets.Packet {
 		return NewSyncTurretDataPacket()
 	})
 }

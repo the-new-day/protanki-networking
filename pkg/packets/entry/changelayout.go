@@ -28,7 +28,7 @@ func NewChangeLayoutPacket() *ChangeLayoutPacket {
 }
 
 func init() {
-	packets.Register(1118835050, "ChangeLayoutPacket", func() packets.Packet {
+	packets.Register(1118835050, "ChangeLayout", func() packets.Packet {
 		return NewChangeLayoutPacket()
 	})
 }

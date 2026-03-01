@@ -33,7 +33,7 @@ func NewReceiveGameChatPacket() *ReceiveGameChatPacket {
 }
 
 func init() {
-	packets.Register(1259981343, "ReceiveGameChatPacket", func() packets.Packet {
+	packets.Register(1259981343, "ReceiveGameChat", func() packets.Packet {
 		return NewReceiveGameChatPacket()
 	})
 }

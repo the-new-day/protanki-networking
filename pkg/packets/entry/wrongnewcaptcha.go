@@ -31,7 +31,7 @@ func NewWrongNewCaptchaPacket() *WrongNewCaptchaPacket {
 }
 
 func init() {
-	packets.Register(-373510957, "WrongCaptchaPacket", func() packets.Packet {
+	packets.Register(-373510957, "WrongCaptcha", func() packets.Packet {
 		return NewWrongNewCaptchaPacket()
 	})
 }

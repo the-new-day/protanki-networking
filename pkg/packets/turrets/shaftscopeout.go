@@ -41,7 +41,7 @@ func NewShaftScopeOutPacket() *ShaftScopeOutPacket {
 }
 
 func init() {
-	packets.Register(1632423559, "ShaftScopeOutPacket", func() packets.Packet {
+	packets.Register(1632423559, "ShaftScopeOut", func() packets.Packet {
 		return NewShaftScopeOutPacket()
 	})
 }

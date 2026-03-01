@@ -42,7 +42,7 @@ func NewFlagsInfoPacket() *FlagsInfoPacket {
 }
 
 func init() {
-	packets.Register(789790814, "FlagsInfoPacket", func() packets.Packet {
+	packets.Register(789790814, "FlagsInfo", func() packets.Packet {
 		return NewFlagsInfoPacket()
 	})
 }

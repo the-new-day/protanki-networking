@@ -31,7 +31,7 @@ func NewFlagTakenPacket() *FlagTakenPacket {
 }
 
 func init() {
-	packets.Register(-1282406496, "FlagTakenPacket", func() packets.Packet {
+	packets.Register(-1282406496, "FlagTaken", func() packets.Packet {
 		return NewFlagTakenPacket()
 	})
 }

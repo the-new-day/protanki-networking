@@ -28,7 +28,7 @@ func NewServerRestartPacket() *ServerRestartPacket {
 }
 
 func init() {
-	packets.Register(-1712113407, "ServerRestartPacket", func() packets.Packet {
+	packets.Register(-1712113407, "ServerRestart", func() packets.Packet {
 		return NewServerRestartPacket()
 	})
 }

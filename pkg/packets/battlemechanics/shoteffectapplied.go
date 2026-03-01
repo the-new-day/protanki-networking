@@ -30,7 +30,7 @@ func NewShotEffectAppliedPacket() *ShotEffectAppliedPacket {
 }
 
 func init() {
-	packets.Register(546849203, "ShotEffectAppliedPacket", func() packets.Packet {
+	packets.Register(546849203, "ShotEffectApplied", func() packets.Packet {
 		return NewShotEffectAppliedPacket()
 	})
 }

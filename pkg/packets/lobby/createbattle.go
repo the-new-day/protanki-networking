@@ -82,7 +82,7 @@ func NewCreateBattlePacket() *CreateBattlePacket {
 }
 
 func init() {
-	packets.Register(-2135234426, "CreateBattlePacket", func() packets.Packet {
+	packets.Register(-2135234426, "CreateBattle", func() packets.Packet {
 		return NewCreateBattlePacket()
 	})
 }

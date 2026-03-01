@@ -36,7 +36,7 @@ func NewReferralDataPacket() *ReferralDataPacket {
 }
 
 func init() {
-	packets.Register(1587315905, "ReferralDataPacket", func() packets.Packet {
+	packets.Register(1587315905, "ReferralData", func() packets.Packet {
 		return NewReferralDataPacket()
 	})
 }

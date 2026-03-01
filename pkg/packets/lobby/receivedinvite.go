@@ -28,7 +28,7 @@ func NewReceivedInvitePacket() *ReceivedInvitePacket {
 }
 
 func init() {
-	packets.Register(810713262, "ReceivedInvitePacket", func() packets.Packet {
+	packets.Register(810713262, "ReceivedInvite", func() packets.Packet {
 		return NewReceivedInvitePacket()
 	})
 }

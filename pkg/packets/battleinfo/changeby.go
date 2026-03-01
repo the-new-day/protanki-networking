@@ -28,7 +28,7 @@ func NewChangeByPacket() *ChangeByPacket {
 }
 
 func init() {
-	packets.Register(-593513288, "ChangeByPacket", func() packets.Packet {
+	packets.Register(-593513288, "ChangeBy", func() packets.Packet {
 		return NewChangeByPacket()
 	})
 }

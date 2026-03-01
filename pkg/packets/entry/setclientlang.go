@@ -28,7 +28,7 @@ func NewSetClientLangPacket() *SetClientLangPacket {
 }
 
 func init() {
-	packets.Register(-1864333717, "SetClientLangPacket", func() packets.Packet {
+	packets.Register(-1864333717, "SetClientLang", func() packets.Packet {
 		return NewSetClientLangPacket()
 	})
 }

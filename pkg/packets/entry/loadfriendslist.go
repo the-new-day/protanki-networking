@@ -32,7 +32,7 @@ func NewLoadFriendsListPacket() *LoadFriendsListPacket {
 }
 
 func init() {
-	packets.Register(1422563374, "LoadFriendsListPacket", func() packets.Packet {
+	packets.Register(1422563374, "LoadFriendsList", func() packets.Packet {
 		return NewLoadFriendsListPacket()
 	})
 }

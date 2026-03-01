@@ -30,7 +30,7 @@ func NewBuyFromShopPacket() *BuyFromShopPacket {
 }
 
 func init() {
-	packets.Register(880756819, "BuyFromShopPacket", func() packets.Packet {
+	packets.Register(880756819, "BuyFromShop", func() packets.Packet {
 		return NewBuyFromShopPacket()
 	})
 }

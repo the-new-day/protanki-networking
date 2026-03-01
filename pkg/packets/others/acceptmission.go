@@ -28,7 +28,7 @@ func NewAcceptMissionPacket() *AcceptMissionPacket {
 }
 
 func init() {
-	packets.Register(-867767128, "AcceptMissionPacket", func() packets.Packet {
+	packets.Register(-867767128, "AcceptMission", func() packets.Packet {
 		return NewAcceptMissionPacket()
 	})
 }

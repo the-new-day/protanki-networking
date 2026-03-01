@@ -28,7 +28,7 @@ func NewLoadPurchasableItemsPacket() *LoadPurchasableItemsPacket {
 }
 
 func init() {
-	packets.Register(-300370823, "LoadPurchasableItemsPacket", func() packets.Packet {
+	packets.Register(-300370823, "LoadPurchasableItems", func() packets.Packet {
 		return NewLoadPurchasableItemsPacket()
 	})
 }

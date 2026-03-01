@@ -33,7 +33,7 @@ func NewUpdatePlayerDmBattlePreviewPacket() *UpdatePlayerDmBattlePreviewPacket {
 }
 
 func init() {
-	packets.Register(-1263036614, "UpdatePlayerDmBattlePreviewPacket", func() packets.Packet {
+	packets.Register(-1263036614, "UpdatePlayerDmBattlePreview", func() packets.Packet {
 		return NewUpdatePlayerDmBattlePreviewPacket()
 	})
 }

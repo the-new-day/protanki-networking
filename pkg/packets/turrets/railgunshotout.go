@@ -41,7 +41,7 @@ func NewRailgunShotOutPacket() *RailgunShotOutPacket {
 }
 
 func init() {
-	packets.Register(-484994657, "RailgunShotOutPacket", func() packets.Packet {
+	packets.Register(-484994657, "RailgunShotOut", func() packets.Packet {
 		return NewRailgunShotOutPacket()
 	})
 }

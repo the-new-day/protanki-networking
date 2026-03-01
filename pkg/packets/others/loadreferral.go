@@ -23,7 +23,7 @@ func NewLoadReferralPacket() *LoadReferralPacket {
 }
 
 func init() {
-	packets.Register(-169921234, "LoadReferralPacket", func() packets.Packet {
+	packets.Register(-169921234, "LoadReferral", func() packets.Packet {
 		return NewLoadReferralPacket()
 	})
 }

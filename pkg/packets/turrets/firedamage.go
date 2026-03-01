@@ -37,7 +37,7 @@ func NewFireDamagePacket() *FireDamagePacket {
 }
 
 func init() {
-	packets.Register(1395251766, "FireDamagePacket", func() packets.Packet {
+	packets.Register(1395251766, "FireDamage", func() packets.Packet {
 		return NewFireDamagePacket()
 	})
 }

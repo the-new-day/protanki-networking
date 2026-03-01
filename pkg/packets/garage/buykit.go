@@ -31,7 +31,7 @@ func NewBuyKitPacket() *BuyKitPacket {
 }
 
 func init() {
-	packets.Register(-523392052, "BuyKitPacket", func() packets.Packet {
+	packets.Register(-523392052, "BuyKit", func() packets.Packet {
 		return NewBuyKitPacket()
 	})
 }
