@@ -1,4 +1,4 @@
-package networking
+package utils
 
 // Address represents a network address
 type Address struct {

@@ -22,7 +22,7 @@ type Packet interface {
 	Unwrap(packetData *bytes.Buffer) (map[string]any, error)
 
 	// Wrap encodes all the objects into binary data for the packet payload.
-	// Does not affect inner state.
+	// Does not affect inner state of the packet, but may affect inner state of Protection.
 	Wrap(protection protection.Protection) (*bytes.Buffer, error)
 
 	Get(attribute string) any

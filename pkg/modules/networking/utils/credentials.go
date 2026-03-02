@@ -1,4 +1,4 @@
-package networking
+package utils
 
 type Credentials struct {
 	Username string
