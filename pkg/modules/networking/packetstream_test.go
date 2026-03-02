@@ -182,8 +182,7 @@ func TestPackets_ReadHeaderError(t *testing.T) {
 	reg := packets.NewPacketRegistry()
 
 	stream := NewPacketStream(mockConn, mockProt, reg)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 
 	ch := stream.Packets(ctx)
 	res := <-ch
@@ -221,8 +220,7 @@ func TestPackets_Success(t *testing.T) {
 
 	mockProt := &mockProtection{}
 	stream := NewPacketStream(mockConn, mockProt, reg)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 
 	ch := stream.Packets(ctx)
 	res := <-ch
@@ -265,8 +263,7 @@ func TestPackets_CompressedPacket(t *testing.T) {
 
 	mockProt := &mockProtection{}
 	stream := NewPacketStream(mockConn, mockProt, reg)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 
 	ch := stream.Packets(ctx)
 	res := <-ch
@@ -302,8 +299,7 @@ func TestPackets_UnknownPacket(t *testing.T) {
 
 	mockProt := &mockProtection{}
 	stream := NewPacketStream(mockConn, mockProt, reg)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 
 	ch := stream.Packets(ctx)
 	res := <-ch
@@ -342,14 +338,79 @@ func TestPackets_UnwrapError(t *testing.T) {
 
 	mockProt := &mockProtection{}
 	stream := NewPacketStream(mockConn, mockProt, reg)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 
 	ch := stream.Packets(ctx)
 	res := <-ch
 
 	assert.Error(t, res.Err)
 	assert.Nil(t, res.Packet)
+}
+
+func TestPackets_ContinuesAfterUnwrapError(t *testing.T) {
+	// First packet: unwrap fails
+	packetID1 := int32(1001)
+	packetData1 := []byte{1, 2, 3, 4}
+	packetLen1 := int32(packetHeaderLength + len(packetData1))
+
+	// Second packet: successful
+	packetID2 := int32(1002)
+	packetData2 := []byte{5, 6, 7, 8}
+	packetLen2 := int32(packetHeaderLength + len(packetData2))
+
+	reg := packets.NewPacketRegistry()
+	reg.Register(packetID1, "TestPacket1", func() packets.Packet {
+		return &mockPacket{id: packetID1, unwrapErr: errors.New("unwrap failed")}
+	})
+	reg.Register(packetID2, "TestPacket2", func() packets.Packet {
+		return &mockPacket{id: packetID2}
+	})
+
+	callCount := 0
+	mockConn := &mockConnection{
+		onRead: func(n int) ([]byte, error) {
+			callCount++
+			switch callCount {
+			case 1:
+				// First packet header (length)
+				return createTestHeader(packetLen1, packetID1, false)[0:4], nil
+			case 2:
+				// First packet header (packet ID)
+				return createTestHeader(packetLen1, packetID1, false)[4:8], nil
+			case 3:
+				// First packet data
+				return packetData1, nil
+			case 4:
+				// Second packet header (length)
+				return createTestHeader(packetLen2, packetID2, false)[0:4], nil
+			case 5:
+				// Second packet header (packet ID)
+				return createTestHeader(packetLen2, packetID2, false)[4:8], nil
+			case 6:
+				// Second packet data
+				return packetData2, nil
+			default:
+				return nil, io.EOF
+			}
+		},
+	}
+
+	mockProt := &mockProtection{}
+	stream := NewPacketStream(mockConn, mockProt, reg)
+	ctx := t.Context()
+
+	ch := stream.Packets(ctx)
+
+	// First result: unwrap error
+	res1 := <-ch
+	assert.Error(t, res1.Err)
+	assert.Nil(t, res1.Packet)
+
+	// Second result: should succeed despite the first error
+	res2 := <-ch
+	assert.NoError(t, res2.Err)
+	assert.NotNil(t, res2.Packet)
+	assert.Equal(t, packetID2, res2.Packet.ID())
 }
 
 func TestPackets_DecompressionError(t *testing.T) {
@@ -381,8 +442,7 @@ func TestPackets_DecompressionError(t *testing.T) {
 
 	mockProt := &mockProtection{}
 	stream := NewPacketStream(mockConn, mockProt, reg)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 
 	ch := stream.Packets(ctx)
 	res := <-ch
@@ -390,4 +450,70 @@ func TestPackets_DecompressionError(t *testing.T) {
 	assert.Error(t, res.Err)
 	assert.Contains(t, res.Err.Error(), "decompression failed")
 	assert.Nil(t, res.Packet)
+}
+
+func TestPackets_ContinuesAfterDecompressionError(t *testing.T) {
+	// First packet: compressed, causes decompression error
+	packetID1 := int32(1001)
+	packetLen1 := int32(packetHeaderLength + 10)
+
+	// Second packet: uncompressed, should succeed
+	packetID2 := int32(1002)
+	packetData2 := []byte{1, 2, 3, 4}
+	packetLen2 := int32(packetHeaderLength + len(packetData2))
+
+	reg := packets.NewPacketRegistry()
+	reg.Register(packetID1, "TestPacket1", func() packets.Packet {
+		return &mockPacket{id: packetID1}
+	})
+	reg.Register(packetID2, "TestPacket2", func() packets.Packet {
+		return &mockPacket{id: packetID2}
+	})
+
+	callCount := 0
+	mockConn := &mockConnection{
+		onRead: func(n int) ([]byte, error) {
+			callCount++
+			switch callCount {
+			case 1:
+				// First packet header (length, compressed)
+				return createTestHeader(packetLen1, packetID1, true)[0:4], nil
+			case 2:
+				// First packet header (packet ID)
+				return createTestHeader(packetLen1, packetID1, true)[4:8], nil
+			case 3:
+				// First packet data (invalid compressed data)
+				return []byte{0xFF, 0xFF, 0xFF, 0xFF}, nil
+			case 4:
+				// Second packet header (length, not compressed)
+				return createTestHeader(packetLen2, packetID2, false)[0:4], nil
+			case 5:
+				// Second packet header (packet ID)
+				return createTestHeader(packetLen2, packetID2, false)[4:8], nil
+			case 6:
+				// Second packet data
+				return packetData2, nil
+			default:
+				return nil, io.EOF
+			}
+		},
+	}
+
+	mockProt := &mockProtection{}
+	stream := NewPacketStream(mockConn, mockProt, reg)
+	ctx := t.Context()
+
+	ch := stream.Packets(ctx)
+
+	// First result: should be the decompression error
+	res1 := <-ch
+	assert.Error(t, res1.Err)
+	assert.Contains(t, res1.Err.Error(), "decompression failed")
+	assert.Nil(t, res1.Packet)
+
+	// Second result: should be successful despite the first error
+	res2 := <-ch
+	assert.NoError(t, res2.Err)
+	assert.NotNil(t, res2.Packet)
+	assert.Equal(t, packetID2, res2.Packet.ID())
 }
