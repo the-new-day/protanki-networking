@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/the-new-day/probogo/pkg/modules/networking/connection"
 	"github.com/the-new-day/probogo/pkg/modules/protection"
 	"github.com/the-new-day/probogo/pkg/packets"
 )
@@ -19,7 +20,7 @@ const packetHeaderLength = 8
 // It handles packet framing, encryption/decryption, compression/decompression,
 // and packet type resolution through a registry.
 type PacketStream struct {
-	conn           Connection
+	conn           connection.Connection
 	protection     protection.Protection
 	packetRegistry *packets.PacketRegistry
 }
@@ -27,7 +28,7 @@ type PacketStream struct {
 // NewPacketStream creates a new PacketStream that reads from and writes to the given connection.
 // The stream uses the provided protection for encryption/decryption and the registry
 // to resolve packet types by their IDs.
-func NewPacketStream(conn Connection, protection protection.Protection, packetRegistry *packets.PacketRegistry) *PacketStream {
+func NewPacketStream(conn connection.Connection, protection protection.Protection, packetRegistry *packets.PacketRegistry) *PacketStream {
 	return &PacketStream{conn, protection, packetRegistry}
 }
 
@@ -140,7 +141,7 @@ func (ps *PacketStream) Packets(ctx context.Context) <-chan PacketResult {
 //   - error: any read or parsing error
 func (ps *PacketStream) readPacketHeader() (int32, int32, bool, error) {
 	if ps.conn == nil {
-		return 0, 0, false, ErrNotConnected
+		return 0, 0, false, connection.ErrNotConnected
 	}
 
 	// read first 4 bytes: length and compression flag
