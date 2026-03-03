@@ -90,7 +90,7 @@ func (ph *PacketHandler) Run(ctx context.Context) {
 	}
 }
 
-// ActivateProtection call Activate(keys) on the underlying Protection instance.
+// ActivateProtection calls Activate(keys) on the underlying Protection instance.
 func (ph *PacketHandler) ActivateProtection(keys []byte) {
 	ph.stream.ActivateProtection(keys)
 }

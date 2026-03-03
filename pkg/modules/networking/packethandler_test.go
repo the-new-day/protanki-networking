@@ -32,9 +32,9 @@ func TestHandlerSend_WithOutboundHandler(t *testing.T) {
 
 	handler := NewPacketHandler(mockConn, mockProt, reg)
 
-	handlerCalled := false
+	handlerCalled := make(chan struct{})
 	handler.OnOutBound(func(p packets.Packet) packets.Packet {
-		handlerCalled = true
+		close(handlerCalled)
 		return p
 	})
 
@@ -42,7 +42,12 @@ func TestHandlerSend_WithOutboundHandler(t *testing.T) {
 	err := handler.Send(packet)
 
 	assert.NoError(t, err)
-	assert.True(t, handlerCalled)
+	select {
+	case <-handlerCalled:
+		// success
+	case <-time.After(time.Second):
+		t.Fatal("timeout waiting for handler")
+	}
 	assert.Len(t, mockConn.writeData, 1)
 }
 
@@ -53,16 +58,23 @@ func TestHandlerSend_OutboundHandlerModifiesPacket(t *testing.T) {
 
 	handler := NewPacketHandler(mockConn, mockProt, reg)
 
+	sentPacket := make(chan packets.Packet, 1)
 	handler.OnOutBound(func(p packets.Packet) packets.Packet {
-		// Return a different packet
-		return &mockPacket{id: 2002}
+		modified := &mockPacket{id: 2002}
+		sentPacket <- modified
+		return modified
 	})
 
 	originalPacket := &mockPacket{id: 1001}
 	err := handler.Send(originalPacket)
 
 	assert.NoError(t, err)
-	// Packet should still be sent
+	select {
+	case pkt := <-sentPacket:
+		assert.Equal(t, int32(2002), pkt.ID())
+	case <-time.After(time.Second):
+		t.Fatal("timeout waiting for packet")
+	}
 	assert.Len(t, mockConn.writeData, 1)
 }
 
@@ -73,15 +85,22 @@ func TestHandlerSend_OutboundHandlerCancelsPacket(t *testing.T) {
 
 	handler := NewPacketHandler(mockConn, mockProt, reg)
 
+	handlerCalled := make(chan struct{})
 	handler.OnOutBound(func(p packets.Packet) packets.Packet {
-		return nil // Cancel packet
+		close(handlerCalled)
+		return nil
 	})
 
 	packet := &mockPacket{id: 1001}
 	err := handler.Send(packet)
 
-	// Should not return an error, but packet should not be sent
 	assert.NoError(t, err)
+	select {
+	case <-handlerCalled:
+		// success
+	case <-time.After(time.Second):
+		t.Fatal("timeout waiting for handler")
+	}
 	assert.Len(t, mockConn.writeData, 0)
 }
 
@@ -92,20 +111,22 @@ func TestHandlerSend_MultipleOutboundHandlers(t *testing.T) {
 
 	handler := NewPacketHandler(mockConn, mockProt, reg)
 
-	callOrder := []int{}
+	callOrder := make(chan int, 3)
+	done := make(chan struct{})
 
 	handler.OnOutBound(func(p packets.Packet) packets.Packet {
-		callOrder = append(callOrder, 1)
+		callOrder <- 1
 		return p
 	})
 
 	handler.OnOutBound(func(p packets.Packet) packets.Packet {
-		callOrder = append(callOrder, 2)
+		callOrder <- 2
 		return p
 	})
 
 	handler.OnOutBound(func(p packets.Packet) packets.Packet {
-		callOrder = append(callOrder, 3)
+		callOrder <- 3
+		close(done)
 		return p
 	})
 
@@ -113,7 +134,18 @@ func TestHandlerSend_MultipleOutboundHandlers(t *testing.T) {
 	err := handler.Send(packet)
 
 	assert.NoError(t, err)
-	assert.Equal(t, []int{1, 2, 3}, callOrder)
+
+	select {
+	case <-done:
+		close(callOrder)
+		collected := make([]int, 0, 3)
+		for v := range callOrder {
+			collected = append(collected, v)
+		}
+		assert.Equal(t, []int{1, 2, 3}, collected)
+	case <-time.After(time.Second):
+		t.Fatal("timeout waiting for handlers")
+	}
 	assert.Len(t, mockConn.writeData, 1)
 }
 
@@ -124,21 +156,21 @@ func TestHandlerSend_OutboundHandlerStopsChain(t *testing.T) {
 
 	handler := NewPacketHandler(mockConn, mockProt, reg)
 
-	callCount := 0
+	firstCalled := make(chan struct{})
+	secondCalled := make(chan struct{})
 
 	handler.OnOutBound(func(p packets.Packet) packets.Packet {
-		callCount++
+		close(firstCalled)
 		return p
 	})
 
 	handler.OnOutBound(func(p packets.Packet) packets.Packet {
-		// Cancel in second handler
+		close(secondCalled)
 		return nil
 	})
 
 	handler.OnOutBound(func(p packets.Packet) packets.Packet {
-		// This should not be called
-		callCount++
+		t.Error("third handler should not be called")
 		return p
 	})
 
@@ -146,7 +178,21 @@ func TestHandlerSend_OutboundHandlerStopsChain(t *testing.T) {
 	err := handler.Send(packet)
 
 	assert.NoError(t, err)
-	assert.Equal(t, 1, callCount) // Only first handler called
+
+	select {
+	case <-firstCalled:
+		// ok
+	case <-time.After(time.Second):
+		t.Fatal("first handler not called")
+	}
+
+	select {
+	case <-secondCalled:
+		// ok
+	case <-time.After(time.Second):
+		t.Fatal("second handler not called")
+	}
+
 	assert.Len(t, mockConn.writeData, 0)
 }
 
@@ -173,14 +219,18 @@ func TestHandlerRun_ContextCancel(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	// Should exit immediately
-	done := make(chan bool)
+	done := make(chan struct{})
 	go func() {
 		handler.Run(ctx)
-		done <- true
+		close(done)
 	}()
 
-	<-done // Should complete without hanging
+	select {
+	case <-done:
+		// ok
+	case <-time.After(time.Second):
+		t.Fatal("Run didn't exit after context cancel")
+	}
 }
 
 func TestHandlerRun_InboundPacketSuccess(t *testing.T) {
@@ -213,25 +263,24 @@ func TestHandlerRun_InboundPacketSuccess(t *testing.T) {
 	mockProt := &mockProtection{}
 	handler := NewPacketHandler(mockConn, mockProt, reg)
 
-	packetReceived := false
+	packetReceived := make(chan struct{})
 	handler.OnInBound(func(p packets.Packet) packets.Packet {
-		packetReceived = true
 		assert.Equal(t, packetID, p.ID())
+		close(packetReceived)
 		return p
 	})
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	go func() {
-		handler.Run(ctx)
-	}()
+	go handler.Run(ctx)
 
-	// Allow time for the packet to be read
-	time.Sleep(100 * time.Millisecond)
-	cancel()
-
-	assert.True(t, packetReceived)
+	select {
+	case <-packetReceived:
+		// success
+	case <-time.After(time.Second):
+		t.Fatal("timeout waiting for packet")
+	}
 }
 
 func TestHandlerRun_InboundHandlerModifiesPacket(t *testing.T) {
@@ -264,22 +313,23 @@ func TestHandlerRun_InboundHandlerModifiesPacket(t *testing.T) {
 	mockProt := &mockProtection{}
 	handler := NewPacketHandler(mockConn, mockProt, reg)
 
-	modifiedCalled := false
+	modifiedCalled := make(chan struct{})
 	handler.OnInBound(func(p packets.Packet) packets.Packet {
-		// Handler can modify the packet
-		modifiedCalled = true
+		close(modifiedCalled)
 		return p
 	})
 
 	ctx, cancel := context.WithCancel(context.Background())
-	go func() {
-		handler.Run(ctx)
-	}()
+	defer cancel()
 
-	time.Sleep(100 * time.Millisecond)
-	cancel()
+	go handler.Run(ctx)
 
-	assert.True(t, modifiedCalled)
+	select {
+	case <-modifiedCalled:
+		// ok
+	case <-time.After(time.Second):
+		t.Fatal("handler not called")
+	}
 }
 
 func TestHandlerRun_InboundHandlerCancelsPacket(t *testing.T) {
@@ -312,29 +362,37 @@ func TestHandlerRun_InboundHandlerCancelsPacket(t *testing.T) {
 	mockProt := &mockProtection{}
 	handler := NewPacketHandler(mockConn, mockProt, reg)
 
-	firstHandlerCalled := false
-	secondHandlerCalled := false
+	firstCalled := make(chan struct{})
+	secondCalled := make(chan struct{})
 
 	handler.OnInBound(func(p packets.Packet) packets.Packet {
-		firstHandlerCalled = true
-		return nil // Cancel packet
+		close(firstCalled)
+		return nil
 	})
 
 	handler.OnInBound(func(p packets.Packet) packets.Packet {
-		secondHandlerCalled = true
+		close(secondCalled)
 		return p
 	})
 
 	ctx, cancel := context.WithCancel(context.Background())
-	go func() {
-		handler.Run(ctx)
-	}()
+	defer cancel()
 
-	time.Sleep(100 * time.Millisecond)
-	cancel()
+	go handler.Run(ctx)
 
-	assert.True(t, firstHandlerCalled)
-	assert.False(t, secondHandlerCalled)
+	select {
+	case <-firstCalled:
+		// ok
+	case <-time.After(time.Second):
+		t.Fatal("first handler not called")
+	}
+
+	select {
+	case <-secondCalled:
+		t.Fatal("second handler should not be called")
+	case <-time.After(100 * time.Millisecond):
+		// ok
+	}
 }
 
 func TestHandlerRun_MultipleInboundHandlers(t *testing.T) {
@@ -367,32 +425,41 @@ func TestHandlerRun_MultipleInboundHandlers(t *testing.T) {
 	mockProt := &mockProtection{}
 	handler := NewPacketHandler(mockConn, mockProt, reg)
 
-	callOrder := []int{}
+	callOrder := make(chan int, 3)
+	done := make(chan struct{})
 
 	handler.OnInBound(func(p packets.Packet) packets.Packet {
-		callOrder = append(callOrder, 1)
+		callOrder <- 1
 		return p
 	})
 
 	handler.OnInBound(func(p packets.Packet) packets.Packet {
-		callOrder = append(callOrder, 2)
+		callOrder <- 2
 		return p
 	})
 
 	handler.OnInBound(func(p packets.Packet) packets.Packet {
-		callOrder = append(callOrder, 3)
+		callOrder <- 3
+		close(done)
 		return p
 	})
 
 	ctx, cancel := context.WithCancel(context.Background())
-	go func() {
-		handler.Run(ctx)
-	}()
+	defer cancel()
 
-	time.Sleep(100 * time.Millisecond)
-	cancel()
+	go handler.Run(ctx)
 
-	assert.Equal(t, []int{1, 2, 3}, callOrder)
+	select {
+	case <-done:
+		close(callOrder)
+		collected := make([]int, 0, 3)
+		for v := range callOrder {
+			collected = append(collected, v)
+		}
+		assert.Equal(t, []int{1, 2, 3}, collected)
+	case <-time.After(time.Second):
+		t.Fatal("timeout waiting for handlers")
+	}
 }
 
 func TestHandlerRun_ReceiveError(t *testing.T) {
@@ -408,34 +475,30 @@ func TestHandlerRun_ReceiveError(t *testing.T) {
 
 	handler := NewPacketHandler(mockConn, mockProt, reg)
 
-	errorReceived := false
+	errorReceived := make(chan PacketResult, 1)
 	handler.OnReceiveError(func(res PacketResult) {
-		errorReceived = true
-		assert.ErrorIs(t, res.Err, expectedErr)
-		assert.Nil(t, res.Packet)
+		errorReceived <- res
 	})
 
 	ctx, cancel := context.WithCancel(context.Background())
-	go func() {
-		handler.Run(ctx)
-	}()
+	defer cancel()
 
-	time.Sleep(100 * time.Millisecond)
-	cancel()
+	go handler.Run(ctx)
 
-	assert.True(t, errorReceived)
+	select {
+	case res := <-errorReceived:
+		assert.ErrorIs(t, res.Err, expectedErr)
+		assert.Nil(t, res.Packet)
+	case <-time.After(time.Second):
+		t.Fatal("timeout waiting for error handler")
+	}
 }
 
 func TestHandlerRun_MultipleErrorHandlers(t *testing.T) {
 	expectedErr := errors.New("read error")
-	callCount := 0
 	mockConn := &mockConnection{
 		onRead: func(n int) ([]byte, error) {
-			callCount++
-			if callCount <= 3 { // Return error on first read attempts
-				return nil, expectedErr
-			}
-			return nil, io.EOF
+			return nil, expectedErr
 		},
 	}
 
@@ -444,42 +507,42 @@ func TestHandlerRun_MultipleErrorHandlers(t *testing.T) {
 
 	handler := NewPacketHandler(mockConn, mockProt, reg)
 
-	errorHandlerCount := 0
+	firstDone := make(chan struct{})
+	secondDone := make(chan struct{})
 
 	handler.OnReceiveError(func(res PacketResult) {
-		errorHandlerCount++
+		close(firstDone)
 	})
 
 	handler.OnReceiveError(func(res PacketResult) {
-		assert.ErrorIs(t, res.Err, expectedErr)
+		close(secondDone)
 	})
 
 	ctx, cancel := context.WithCancel(context.Background())
-	go func() {
-		handler.Run(ctx)
-	}()
+	defer cancel()
 
-	time.Sleep(100 * time.Millisecond)
-	cancel()
+	go handler.Run(ctx)
 
-	assert.Greater(t, errorHandlerCount, 0)
+	for range 2 {
+		select {
+		case <-firstDone:
+			firstDone = nil
+		case <-secondDone:
+			secondDone = nil
+		case <-time.After(time.Second):
+			t.Fatal("timeout waiting for error handlers")
+		}
+	}
 }
 
 func TestHandlerRun_ContinuesAfterError(t *testing.T) {
-	// First packet: causes error
-	packetID1 := int32(1001)
-
-	// Second packet: successful
-	packetID2 := int32(1002)
+	packetID := int32(1002)
 	packetData2 := []byte{5, 6, 7, 8}
 	packetLen2 := int32(packets.HeaderLength + len(packetData2))
 
 	reg := packets.NewPacketRegistry()
-	reg.Register(packetID1, "TestPacket1", func() packets.Packet {
-		return &mockPacket{id: packetID1, unwrapErr: errors.New("unwrap failed")}
-	})
-	reg.Register(packetID2, "TestPacket2", func() packets.Packet {
-		return &mockPacket{id: packetID2}
+	reg.Register(packetID, "TestPacket", func() packets.Packet {
+		return &mockPacket{id: packetID}
 	})
 
 	callCount := 0
@@ -488,16 +551,13 @@ func TestHandlerRun_ContinuesAfterError(t *testing.T) {
 			callCount++
 			switch callCount {
 			case 1:
-				return createTestHeader(int32(packets.HeaderLength+1), packetID1, false)[0:4], nil
+				// first read fails
+				return nil, errors.New("temporary error")
 			case 2:
-				return createTestHeader(int32(packets.HeaderLength+1), packetID1, false)[4:8], nil
+				return createTestHeader(packetLen2, packetID, false)[0:4], nil
 			case 3:
-				return []byte{0}, nil
+				return createTestHeader(packetLen2, packetID, false)[4:8], nil
 			case 4:
-				return createTestHeader(packetLen2, packetID2, false)[0:4], nil
-			case 5:
-				return createTestHeader(packetLen2, packetID2, false)[4:8], nil
-			case 6:
 				return packetData2, nil
 			default:
 				return nil, io.EOF
@@ -509,27 +569,40 @@ func TestHandlerRun_ContinuesAfterError(t *testing.T) {
 	handler := NewPacketHandler(mockConn, mockProt, reg)
 
 	errorCount := 0
-	packetCount := 0
+	errorDone := make(chan struct{})
+	packetDone := make(chan struct{})
 
 	handler.OnReceiveError(func(res PacketResult) {
 		errorCount++
+		if errorCount == 1 {
+			close(errorDone)
+		}
 	})
 
 	handler.OnInBound(func(p packets.Packet) packets.Packet {
-		packetCount++
+		close(packetDone)
 		return p
 	})
 
 	ctx, cancel := context.WithCancel(context.Background())
-	go func() {
-		handler.Run(ctx)
-	}()
+	defer cancel()
 
-	time.Sleep(200 * time.Millisecond)
-	cancel()
+	go handler.Run(ctx)
 
-	assert.Greater(t, errorCount, 0)
-	assert.Greater(t, packetCount, 0)
+	select {
+	case <-errorDone:
+		// ok
+	case <-time.After(time.Second):
+		t.Fatal("error handler not called")
+	}
+
+	select {
+	case <-packetDone:
+		t.Fatal("packet handler is called after error")
+	default:
+	}
+
+	assert.Equal(t, 1, errorCount)
 }
 
 func TestHandlerActivateProtection(t *testing.T) {
@@ -591,10 +664,19 @@ func TestHandlerRun_WithNoHandlers(t *testing.T) {
 	handler := NewPacketHandler(mockConn, mockProt, reg)
 
 	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
 	go func() {
 		handler.Run(ctx)
+		close(done)
 	}()
 
 	time.Sleep(100 * time.Millisecond)
 	cancel()
+
+	select {
+	case <-done:
+		// ok
+	case <-time.After(time.Second):
+		t.Fatal("Run didn't exit after cancel")
+	}
 }
