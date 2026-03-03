@@ -8,13 +8,12 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"sync"
 
 	"github.com/the-new-day/probogo/pkg/modules/networking/connection"
 	"github.com/the-new-day/probogo/pkg/modules/protection"
 	"github.com/the-new-day/probogo/pkg/packets"
 )
-
-const packetHeaderLength = 8
 
 // PacketStream transforms raw network data into game packets and vice versa.
 // It handles packet framing, encryption/decryption, compression/decompression,
@@ -23,13 +22,19 @@ type PacketStream struct {
 	conn           connection.Connection
 	protection     protection.Protection
 	packetRegistry *packets.PacketRegistry
+
+	mu sync.RWMutex
 }
 
 // NewPacketStream creates a new PacketStream that reads from and writes to the given connection.
 // The stream uses the provided protection for encryption/decryption and the registry
 // to resolve packet types by their IDs.
-func NewPacketStream(conn connection.Connection, protection protection.Protection, packetRegistry *packets.PacketRegistry) *PacketStream {
-	return &PacketStream{conn, protection, packetRegistry}
+func NewPacketStream(
+	conn connection.Connection,
+	protection protection.Protection,
+	packetRegistry *packets.PacketRegistry,
+) *PacketStream {
+	return &PacketStream{conn, protection, packetRegistry, sync.RWMutex{}}
 }
 
 // PacketResult represents either a successfully parsed packet or an error that occurred
@@ -48,16 +53,20 @@ type PacketResult struct {
 // It uses the stream's protection to encrypt the packet data before transmission.
 // Returns an error if encoding fails or the write operation fails.
 func (ps *PacketStream) Send(packet packets.Packet) error {
+	ps.mu.Lock()
+
 	payload, err := packet.Wrap(ps.protection)
 	if err != nil {
 		return err
 	}
 
+	ps.mu.Unlock()
+
 	_, err = ps.conn.Write(payload.Bytes())
 	return err
 }
 
-// Packets returns a channel that delivers parsed packets as they arrive.
+// Inbound returns a channel that delivers parsed packets as they arrive.
 // The method runs in a separate goroutine and continues until:
 //   - the context is cancelled
 //   - a fatal read error occurs (connection closed, etc.)
@@ -72,14 +81,14 @@ func (ps *PacketStream) Send(packet packets.Packet) error {
 //	ctx, cancel := context.WithCancel(context.Background())
 //	defer cancel()
 //
-//	for res := range stream.Packets(ctx) {
+//	for res := range stream.Inbound(ctx) {
 //		if res.Err != nil {
 //			log.Printf("packet error: %v", res.Err)
 //			continue
 //		}
 //		handlePacket(res.Packet)
 //	}
-func (ps *PacketStream) Packets(ctx context.Context) <-chan PacketResult {
+func (ps *PacketStream) Inbound(ctx context.Context) <-chan PacketResult {
 	ch := make(chan PacketResult)
 
 	go func() {
@@ -102,7 +111,7 @@ func (ps *PacketStream) Packets(ctx context.Context) <-chan PacketResult {
 				return
 			}
 
-			packetDataLen := packetLen - packetHeaderLength
+			packetDataLen := packetLen - packets.HeaderLength
 			var encryptedData []byte
 
 			if packetDataLen > 0 {
@@ -203,4 +212,9 @@ func (ps *PacketStream) fitPacket(packetID int32, data []byte) (packets.Packet, 
 	}
 
 	return packet, nil
+}
+
+// ActivateProtection call Activate(keys) on the underlying Protection instance.
+func (ps *PacketStream) ActivateProtection(keys []byte) {
+	ps.protection.Activate(keys)
 }

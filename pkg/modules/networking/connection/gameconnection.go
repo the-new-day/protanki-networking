@@ -102,51 +102,6 @@ func (c *GameConnection) Read(n int) ([]byte, error) {
 	return buf, nil
 }
 
-// ReadContext reads exactly n bytes with context support.
-func (c *GameConnection) ReadContext(ctx context.Context, n int) ([]byte, error) {
-	select {
-	case <-c.ctx.Done():
-		return nil, ErrShuttingDown
-	case <-ctx.Done():
-		return nil, ctx.Err()
-	default:
-	}
-
-	conn, err := c.getConn()
-	if err != nil {
-		return nil, err
-	}
-
-	type readResult struct {
-		data []byte
-		err  error
-	}
-
-	resultCh := make(chan readResult, 1)
-
-	go func() {
-		buf := make([]byte, n)
-		_, err := io.ReadFull(conn, buf)
-		resultCh <- readResult{buf, err}
-	}()
-
-	select {
-	case <-c.ctx.Done():
-		return nil, ErrShuttingDown
-	case <-ctx.Done():
-		return nil, ctx.Err()
-	case res := <-resultCh:
-		if res.err != nil {
-			// check if connection is still valid
-			if c.isConnectionBroken(res.err) {
-				c.closeConn()
-			}
-			return nil, res.err
-		}
-		return res.data, nil
-	}
-}
-
 // Write writes data to the connection with timeout.
 func (c *GameConnection) Write(data []byte) (int, error) {
 	select {
@@ -175,49 +130,6 @@ func (c *GameConnection) Write(data []byte) (int, error) {
 		}
 	}
 	return n, err
-}
-
-// WriteContext writes data with context support.
-func (c *GameConnection) WriteContext(ctx context.Context, data []byte) (int, error) {
-	select {
-	case <-c.ctx.Done():
-		return 0, ErrShuttingDown
-	case <-ctx.Done():
-		return 0, ctx.Err()
-	default:
-	}
-
-	conn, err := c.getConn()
-	if err != nil {
-		return 0, err
-	}
-
-	type writeResult struct {
-		n   int
-		err error
-	}
-
-	resultCh := make(chan writeResult, 1)
-
-	go func() {
-		n, err := conn.Write(data)
-		resultCh <- writeResult{n, err}
-	}()
-
-	select {
-	case <-c.ctx.Done():
-		return 0, ErrShuttingDown
-	case <-ctx.Done():
-		return 0, ctx.Err()
-	case res := <-resultCh:
-		if res.err != nil {
-			if c.isConnectionBroken(res.err) {
-				c.closeConn()
-			}
-			return res.n, res.err
-		}
-		return res.n, nil
-	}
 }
 
 // SetDeadline sets read and write deadlines.
@@ -282,11 +194,18 @@ func (c *GameConnection) Connect(ctx context.Context) error {
 		if err == nil {
 			// configure TCP connection
 			if tcpConn, ok := conn.(*net.TCPConn); ok {
-				// enable TCP_NODELAY for low latency
-				_ = tcpConn.SetNoDelay(true)
-				// enable keep-alive
-				_ = tcpConn.SetKeepAlive(true)
-				_ = tcpConn.SetKeepAlivePeriod(defaultKeepAlivePeriod)
+				err = tcpConn.SetNoDelay(true)
+				if err != nil {
+					return err
+				}
+				err = tcpConn.SetKeepAlive(true)
+				if err != nil {
+					return err
+				}
+				err = tcpConn.SetKeepAlivePeriod(defaultKeepAlivePeriod)
+				if err != nil {
+					return err
+				}
 			}
 
 			c.mu.Lock()
@@ -347,26 +266,6 @@ func (c *GameConnection) closeConn() error {
 	}
 
 	return nil
-}
-
-// isConnectionBroken checks if error indicates broken connection.
-func (c *GameConnection) isConnectionBroken(err error) bool {
-	if err == nil {
-		return false
-	}
-
-	var netErr net.Error
-	if errors.As(err, &netErr) {
-		return true
-	}
-
-	if errors.Is(err, io.EOF) ||
-		errors.Is(err, io.ErrUnexpectedEOF) ||
-		errors.Is(err, net.ErrClosed) {
-		return true
-	}
-
-	return false
 }
 
 // SetRetryDelay sets socket retry delay.

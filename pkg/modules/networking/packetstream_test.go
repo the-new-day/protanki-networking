@@ -55,12 +55,19 @@ func (m *mockConnection) SetDeadline(t time.Time) error      { return nil }
 func (m *mockConnection) SetReadDeadline(t time.Time) error  { return nil }
 func (m *mockConnection) SetWriteDeadline(t time.Time) error { return nil }
 
+// TODO: move all mocks to a separate package and reuse them (:hippo:)
+
 type mockProtection struct {
-	decryptFunc func([]byte) []byte
-	encryptFunc func([]byte) []byte
+	decryptFunc    func([]byte) []byte
+	encryptFunc    func([]byte) []byte
+	activateCalled bool
+	activateKeys   []byte
 }
 
-func (m *mockProtection) Activate(keys []byte) {}
+func (m *mockProtection) Activate(keys []byte) {
+	m.activateCalled = true
+	m.activateKeys = keys
+}
 
 func (m *mockProtection) Decrypt(data []byte) []byte {
 	if m.decryptFunc != nil {
@@ -152,7 +159,7 @@ func TestSend_WrapError(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func TestPackets_ContextCancel(t *testing.T) {
+func TestInbound_ContextCancel(t *testing.T) {
 	mockConn := &mockConnection{}
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
@@ -161,12 +168,12 @@ func TestPackets_ContextCancel(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	ch := stream.Packets(ctx)
+	ch := stream.Inbound(ctx)
 	_, ok := <-ch
 	assert.False(t, ok)
 }
 
-func TestPackets_ReadHeaderError(t *testing.T) {
+func TestInbound_ReadHeaderError(t *testing.T) {
 	expectedErr := errors.New("read error")
 	callCount := 0
 	mockConn := &mockConnection{
@@ -184,17 +191,17 @@ func TestPackets_ReadHeaderError(t *testing.T) {
 	stream := NewPacketStream(mockConn, mockProt, reg)
 	ctx := t.Context()
 
-	ch := stream.Packets(ctx)
+	ch := stream.Inbound(ctx)
 	res := <-ch
 
 	assert.ErrorIs(t, res.Err, expectedErr)
 	assert.Nil(t, res.Packet)
 }
 
-func TestPackets_Success(t *testing.T) {
+func TestInbound_Success(t *testing.T) {
 	packetID := int32(1001)
 	packetData := []byte{1, 2, 3, 4}
-	packetLen := int32(packetHeaderLength + len(packetData))
+	packetLen := int32(packets.HeaderLength + len(packetData))
 
 	reg := packets.NewPacketRegistry()
 	reg.Register(packetID, "TestPacket", func() packets.Packet {
@@ -222,7 +229,7 @@ func TestPackets_Success(t *testing.T) {
 	stream := NewPacketStream(mockConn, mockProt, reg)
 	ctx := t.Context()
 
-	ch := stream.Packets(ctx)
+	ch := stream.Inbound(ctx)
 	res := <-ch
 
 	assert.NoError(t, res.Err)
@@ -230,14 +237,14 @@ func TestPackets_Success(t *testing.T) {
 	assert.Equal(t, packetID, res.Packet.ID())
 }
 
-func TestPackets_CompressedPacket(t *testing.T) {
+func TestInbound_CompressedPacket(t *testing.T) {
 	packetID := int32(1001)
 	originalData := []byte("test data")
 	var compressedData bytes.Buffer
 	w, _ := flate.NewWriter(&compressedData, flate.DefaultCompression)
 	w.Write(originalData)
 	w.Close()
-	packetLen := int32(packetHeaderLength + compressedData.Len())
+	packetLen := int32(packets.HeaderLength + compressedData.Len())
 
 	reg := packets.NewPacketRegistry()
 	reg.Register(packetID, "TestPacket", func() packets.Packet {
@@ -265,7 +272,7 @@ func TestPackets_CompressedPacket(t *testing.T) {
 	stream := NewPacketStream(mockConn, mockProt, reg)
 	ctx := t.Context()
 
-	ch := stream.Packets(ctx)
+	ch := stream.Inbound(ctx)
 	res := <-ch
 
 	assert.NoError(t, res.Err)
@@ -273,10 +280,10 @@ func TestPackets_CompressedPacket(t *testing.T) {
 	assert.Equal(t, packetID, res.Packet.ID())
 }
 
-func TestPackets_UnknownPacket(t *testing.T) {
+func TestInbound_UnknownPacket(t *testing.T) {
 	unknownID := int32(9999)
 	packetData := []byte{1, 2, 3, 4}
-	packetLen := int32(packetHeaderLength + len(packetData))
+	packetLen := int32(packets.HeaderLength + len(packetData))
 
 	reg := packets.NewPacketRegistry() // empty registry
 
@@ -301,7 +308,7 @@ func TestPackets_UnknownPacket(t *testing.T) {
 	stream := NewPacketStream(mockConn, mockProt, reg)
 	ctx := t.Context()
 
-	ch := stream.Packets(ctx)
+	ch := stream.Inbound(ctx)
 	res := <-ch
 
 	assert.NoError(t, res.Err)
@@ -309,10 +316,10 @@ func TestPackets_UnknownPacket(t *testing.T) {
 	assert.True(t, ok, "expected UnknownPacket")
 }
 
-func TestPackets_UnwrapError(t *testing.T) {
+func TestInbound_UnwrapError(t *testing.T) {
 	packetID := int32(1001)
 	packetData := []byte{1, 2, 3, 4}
-	packetLen := int32(packetHeaderLength + len(packetData))
+	packetLen := int32(packets.HeaderLength + len(packetData))
 
 	reg := packets.NewPacketRegistry()
 	reg.Register(packetID, "TestPacket", func() packets.Packet {
@@ -340,23 +347,23 @@ func TestPackets_UnwrapError(t *testing.T) {
 	stream := NewPacketStream(mockConn, mockProt, reg)
 	ctx := t.Context()
 
-	ch := stream.Packets(ctx)
+	ch := stream.Inbound(ctx)
 	res := <-ch
 
 	assert.Error(t, res.Err)
 	assert.Nil(t, res.Packet)
 }
 
-func TestPackets_ContinuesAfterUnwrapError(t *testing.T) {
+func TestInbound_ContinuesAfterUnwrapError(t *testing.T) {
 	// First packet: unwrap fails
 	packetID1 := int32(1001)
 	packetData1 := []byte{1, 2, 3, 4}
-	packetLen1 := int32(packetHeaderLength + len(packetData1))
+	packetLen1 := int32(packets.HeaderLength + len(packetData1))
 
 	// Second packet: successful
 	packetID2 := int32(1002)
 	packetData2 := []byte{5, 6, 7, 8}
-	packetLen2 := int32(packetHeaderLength + len(packetData2))
+	packetLen2 := int32(packets.HeaderLength + len(packetData2))
 
 	reg := packets.NewPacketRegistry()
 	reg.Register(packetID1, "TestPacket1", func() packets.Packet {
@@ -399,7 +406,7 @@ func TestPackets_ContinuesAfterUnwrapError(t *testing.T) {
 	stream := NewPacketStream(mockConn, mockProt, reg)
 	ctx := t.Context()
 
-	ch := stream.Packets(ctx)
+	ch := stream.Inbound(ctx)
 
 	// First result: unwrap error
 	res1 := <-ch
@@ -413,9 +420,9 @@ func TestPackets_ContinuesAfterUnwrapError(t *testing.T) {
 	assert.Equal(t, packetID2, res2.Packet.ID())
 }
 
-func TestPackets_DecompressionError(t *testing.T) {
+func TestInbound_DecompressionError(t *testing.T) {
 	packetID := int32(1001)
-	packetLen := int32(packetHeaderLength + 10)
+	packetLen := int32(packets.HeaderLength + 10)
 
 	reg := packets.NewPacketRegistry()
 	reg.Register(packetID, "TestPacket", func() packets.Packet {
@@ -444,7 +451,7 @@ func TestPackets_DecompressionError(t *testing.T) {
 	stream := NewPacketStream(mockConn, mockProt, reg)
 	ctx := t.Context()
 
-	ch := stream.Packets(ctx)
+	ch := stream.Inbound(ctx)
 	res := <-ch
 
 	assert.Error(t, res.Err)
@@ -452,15 +459,15 @@ func TestPackets_DecompressionError(t *testing.T) {
 	assert.Nil(t, res.Packet)
 }
 
-func TestPackets_ContinuesAfterDecompressionError(t *testing.T) {
+func TestInbound_ContinuesAfterDecompressionError(t *testing.T) {
 	// First packet: compressed, causes decompression error
 	packetID1 := int32(1001)
-	packetLen1 := int32(packetHeaderLength + 10)
+	packetLen1 := int32(packets.HeaderLength + 10)
 
 	// Second packet: uncompressed, should succeed
 	packetID2 := int32(1002)
 	packetData2 := []byte{1, 2, 3, 4}
-	packetLen2 := int32(packetHeaderLength + len(packetData2))
+	packetLen2 := int32(packets.HeaderLength + len(packetData2))
 
 	reg := packets.NewPacketRegistry()
 	reg.Register(packetID1, "TestPacket1", func() packets.Packet {
@@ -503,7 +510,7 @@ func TestPackets_ContinuesAfterDecompressionError(t *testing.T) {
 	stream := NewPacketStream(mockConn, mockProt, reg)
 	ctx := t.Context()
 
-	ch := stream.Packets(ctx)
+	ch := stream.Inbound(ctx)
 
 	// First result: should be the decompression error
 	res1 := <-ch
