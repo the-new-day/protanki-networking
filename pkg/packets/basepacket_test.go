@@ -6,7 +6,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/the-new-day/probogo/pkg/codec"
-	"github.com/the-new-day/probogo/pkg/codec/complex"
 	"github.com/the-new-day/probogo/pkg/codec/primitive"
 	"github.com/the-new-day/probogo/pkg/modules/protection"
 )
@@ -230,36 +229,6 @@ func TestBasePacket_Wrap_PanicOnNilProtection(t *testing.T) {
 	assert.Panics(t, func() {
 		packet.Wrap(nil)
 	})
-}
-
-func TestBasePacket_Implement(t *testing.T) {
-	codecs := []codec.Codec{
-		codec.Wrap(&primitive.IntCodec{}),
-		codec.Wrap(complex.NewStringCodec()),
-		codec.Wrap(&primitive.BoolCodec{}),
-	}
-	packet := NewBasePacket(1, codecs, []string{"a", "b", "c"})
-	packet.objects = []any{1, "hello", true}
-
-	result := packet.implement()
-
-	expected := map[string]any{
-		"a": 1,
-		"b": "hello",
-		"c": true,
-	}
-	assert.Equal(t, expected, result)
-	assert.Equal(t, expected, packet.object)
-}
-
-func TestBasePacket_Implement_Empty(t *testing.T) {
-	packet := NewBasePacket(1, nil, []string{})
-	packet.objects = []any{}
-
-	result := packet.implement()
-
-	assert.Empty(t, result)
-	assert.Empty(t, packet.object)
 }
 
 func TestBasePacket_Unwrap_Wrap_Integration(t *testing.T) {

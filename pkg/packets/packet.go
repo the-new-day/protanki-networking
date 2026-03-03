@@ -25,7 +25,14 @@ type Packet interface {
 	// Does not affect inner state of the packet, but may affect inner state of Protection.
 	Wrap(protection protection.Protection) (*bytes.Buffer, error)
 
-	Get(attribute string) any
+	// Attr returns value of the given attrubute or an error if it doesn't exists
+	// or can't be unwrapped.
+	// It also works for attributes added by Set().
+	Attr(name string) (any, error)
+
+	// Set sets value for the attribute (it's possible to add new attribute, but it won't be wrapped).
+	// It does not perform type assertions, encryption/decryption etc.
+	Set(name string, value any)
 }
 
 // Base packet for concrete packets.
@@ -87,7 +94,7 @@ func (bp *BasePacket) Unwrap(packetData *bytes.Buffer) (map[string]any, error) {
 		bp.objects = append(bp.objects, decoded)
 	}
 
-	return bp.implement(), nil
+	return bp.populate(), nil
 }
 
 func (bp *BasePacket) Wrap(protection protection.Protection) (*bytes.Buffer, error) {
@@ -129,18 +136,21 @@ func (bp *BasePacket) Wrap(protection protection.Protection) (*bytes.Buffer, err
 	return packetData, nil
 }
 
-func (bp *BasePacket) Get(attribute string) any {
-	bp.implement()
-	value, ok := bp.object[attribute]
+func (bp *BasePacket) Attr(name string) (any, error) {
+	bp.populate()
+	value, ok := bp.object[name]
 	if !ok {
-		panic(fmt.Sprintf("BasePacket.Get: attribute %q not found. ID: %d", attribute, bp.ID()))
+		return nil, fmt.Errorf("BasePacket.Get: attribute %q not found. ID: %d", name, bp.ID())
 	}
-	return value
+	return value, nil
 }
 
-// Implements the packet object based on the attribute key list and the decoded object list.
-func (bp *BasePacket) implement() map[string]any {
-	clear(bp.object)
+func (bp *BasePacket) Set(name string, value any) {
+	bp.object[name] = value
+}
+
+// populate fills the packet object based on the attribute key list and the decoded object list.
+func (bp *BasePacket) populate() map[string]any {
 	for i, obj := range bp.objects {
 		bp.object[bp.attributes[i]] = obj
 	}

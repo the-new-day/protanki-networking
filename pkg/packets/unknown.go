@@ -50,6 +50,10 @@ func (p *UnknownPacket) Wrap(protection protection.Protection) (*bytes.Buffer, e
 	return final, nil
 }
 
-func (p *UnknownPacket) Get(_ string) any {
+func (p *UnknownPacket) Attr(_ string) (any, error) {
 	panic("UnknownPacket.Get is not allowed")
+}
+
+func (p *UnknownPacket) Set(_ string, _ any) {
+	panic("UnknownPacket.Set is not allowed")
 }
