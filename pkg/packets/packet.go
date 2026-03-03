@@ -25,10 +25,9 @@ type Packet interface {
 	// Does not affect inner state of the packet, but may affect inner state of Protection.
 	Wrap(protection protection.Protection) (*bytes.Buffer, error)
 
-	// Attr returns value of the given attrubute or an error if it doesn't exists
-	// or can't be unwrapped.
+	// Attr returns value of the given attrubute or panics if it doesn't exists.
 	// It also works for attributes added by Set().
-	Attr(name string) (any, error)
+	Attr(name string) any
 
 	// Set sets value for the attribute (it's possible to add new attribute, but it won't be wrapped).
 	// It does not perform type assertions, encryption/decryption etc.
@@ -136,13 +135,13 @@ func (bp *BasePacket) Wrap(protection protection.Protection) (*bytes.Buffer, err
 	return packetData, nil
 }
 
-func (bp *BasePacket) Attr(name string) (any, error) {
+func (bp *BasePacket) Attr(name string) any {
 	bp.populate()
 	value, ok := bp.object[name]
 	if !ok {
-		return nil, fmt.Errorf("BasePacket.Get: attribute %q not found. ID: %d", name, bp.ID())
+		panic(fmt.Sprintf("BasePacket.Get: attribute %q not found. ID: %d", name, bp.ID()))
 	}
-	return value, nil
+	return value
 }
 
 func (bp *BasePacket) Set(name string, value any) {

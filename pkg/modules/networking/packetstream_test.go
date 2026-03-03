@@ -92,7 +92,7 @@ type mockPacket struct {
 
 func (m *mockPacket) ID() int32 { return m.id }
 
-func (m *mockPacket) Attr(attribute string) (any, error) { return 0, nil }
+func (m *mockPacket) Attr(attribute string) any { return 0 }
 
 func (m *mockPacket) Set(name string, value any) {}
 
