@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/the-new-day/probogo/pkg/modules/networking/dial"
-	"github.com/the-new-day/probogo/pkg/modules/networking/utils"
 )
 
 const (
@@ -30,7 +29,7 @@ var (
 // GameConnection manages connection with the game server
 // and allows sending and receiving data.
 type GameConnection struct {
-	endpoint *utils.Address
+	endpoint string
 	dialer   dial.Dialer
 
 	mu   sync.RWMutex
@@ -46,7 +45,7 @@ type GameConnection struct {
 }
 
 // NewGameConnection creates new GameConnection object with unconnected state.
-func NewGameConnection(endpoint *utils.Address, dialer dial.Dialer) *GameConnection {
+func NewGameConnection(endpoint string, dialer dial.Dialer) *GameConnection {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &GameConnection{
@@ -188,8 +187,7 @@ func (c *GameConnection) Connect(ctx context.Context) error {
 		var conn net.Conn
 		var err error
 
-		targetAddr := fmt.Sprintf("%s:%d", c.endpoint.Host, c.endpoint.Port)
-		conn, err = c.dialer.Dial(connectCtx, targetAddr)
+		conn, err = c.dialer.Dial(connectCtx, c.endpoint)
 
 		if err == nil {
 			// configure TCP connection
