@@ -132,7 +132,7 @@ func TestSend_Success(t *testing.T) {
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
 
-	stream := NewPacketStream(mockConn, mockProt, reg)
+	stream := NewPacketStream(mockConn, mockProt, reg, emptyOnActivateProtection)
 	err := stream.Send(&mockPacket{id: 1001})
 
 	assert.NoError(t, err)
@@ -145,7 +145,7 @@ func TestSend_WriteError(t *testing.T) {
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
 
-	stream := NewPacketStream(mockConn, mockProt, reg)
+	stream := NewPacketStream(mockConn, mockProt, reg, emptyOnActivateProtection)
 	err := stream.Send(&mockPacket{id: 1001})
 
 	assert.ErrorIs(t, err, expectedErr)
@@ -156,7 +156,7 @@ func TestSend_WrapError(t *testing.T) {
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
 
-	stream := NewPacketStream(mockConn, mockProt, reg)
+	stream := NewPacketStream(mockConn, mockProt, reg, emptyOnActivateProtection)
 	err := stream.Send(&mockPacket{id: 1001, wrapErr: errors.New("wrap failed")})
 
 	assert.Error(t, err)
@@ -167,7 +167,7 @@ func TestInbound_ContextCancel(t *testing.T) {
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
 
-	stream := NewPacketStream(mockConn, mockProt, reg)
+	stream := NewPacketStream(mockConn, mockProt, reg, emptyOnActivateProtection)
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
@@ -191,7 +191,7 @@ func TestInbound_ReadHeaderError(t *testing.T) {
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
 
-	stream := NewPacketStream(mockConn, mockProt, reg)
+	stream := NewPacketStream(mockConn, mockProt, reg, emptyOnActivateProtection)
 	ctx := t.Context()
 
 	ch := stream.Inbound(ctx)
@@ -229,7 +229,7 @@ func TestInbound_Success(t *testing.T) {
 	}
 
 	mockProt := &mockProtection{}
-	stream := NewPacketStream(mockConn, mockProt, reg)
+	stream := NewPacketStream(mockConn, mockProt, reg, emptyOnActivateProtection)
 	ctx := t.Context()
 
 	ch := stream.Inbound(ctx)
@@ -272,7 +272,7 @@ func TestInbound_CompressedPacket(t *testing.T) {
 	}
 
 	mockProt := &mockProtection{}
-	stream := NewPacketStream(mockConn, mockProt, reg)
+	stream := NewPacketStream(mockConn, mockProt, reg, emptyOnActivateProtection)
 	ctx := t.Context()
 
 	ch := stream.Inbound(ctx)
@@ -308,7 +308,7 @@ func TestInbound_UnknownPacket(t *testing.T) {
 	}
 
 	mockProt := &mockProtection{}
-	stream := NewPacketStream(mockConn, mockProt, reg)
+	stream := NewPacketStream(mockConn, mockProt, reg, emptyOnActivateProtection)
 	ctx := t.Context()
 
 	ch := stream.Inbound(ctx)
@@ -347,7 +347,7 @@ func TestInbound_UnwrapError(t *testing.T) {
 	}
 
 	mockProt := &mockProtection{}
-	stream := NewPacketStream(mockConn, mockProt, reg)
+	stream := NewPacketStream(mockConn, mockProt, reg, emptyOnActivateProtection)
 	ctx := t.Context()
 
 	ch := stream.Inbound(ctx)
@@ -406,7 +406,7 @@ func TestInbound_ContinuesAfterUnwrapError(t *testing.T) {
 	}
 
 	mockProt := &mockProtection{}
-	stream := NewPacketStream(mockConn, mockProt, reg)
+	stream := NewPacketStream(mockConn, mockProt, reg, emptyOnActivateProtection)
 	ctx := t.Context()
 
 	ch := stream.Inbound(ctx)
@@ -451,7 +451,7 @@ func TestInbound_DecompressionError(t *testing.T) {
 	}
 
 	mockProt := &mockProtection{}
-	stream := NewPacketStream(mockConn, mockProt, reg)
+	stream := NewPacketStream(mockConn, mockProt, reg, emptyOnActivateProtection)
 	ctx := t.Context()
 
 	ch := stream.Inbound(ctx)
@@ -510,7 +510,7 @@ func TestInbound_ContinuesAfterDecompressionError(t *testing.T) {
 	}
 
 	mockProt := &mockProtection{}
-	stream := NewPacketStream(mockConn, mockProt, reg)
+	stream := NewPacketStream(mockConn, mockProt, reg, emptyOnActivateProtection)
 	ctx := t.Context()
 
 	ch := stream.Inbound(ctx)

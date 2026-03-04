@@ -1,6 +1,8 @@
 package network
 
 import (
+	"bytes"
+
 	"github.com/the-new-day/probogo/pkg/codec"
 	"github.com/the-new-day/probogo/pkg/codec/multiple"
 	"github.com/the-new-day/probogo/pkg/codec/primitive"
@@ -26,6 +28,19 @@ func NewActivateProtectionPacket() *ActivateProtectionPacket {
 	return &ActivateProtectionPacket{
 		BasePacket: *packets.NewBasePacket(id, codecs, attributes),
 	}
+}
+
+// NewActivateProtectionPacketWithKeys creates an instance of ActivateProtectionPacket
+// and unwraps it with the provided keys.
+func NewActivateProtectionPacketWithKeys(keys []byte) *ActivateProtectionPacket {
+	buf := &bytes.Buffer{}
+
+	vectorCodec := multiple.NewVectorCodec(&primitive.ByteCodec{}, false)
+	vectorCodec.Encode(keys, buf)
+
+	packet := NewActivateProtectionPacket()
+	packet.Unwrap(buf)
+	return packet
 }
 
 func init() {

@@ -1,6 +1,10 @@
 package packets
 
-import "fmt"
+import (
+	"fmt"
+	"maps"
+	"slices"
+)
 
 // Attr returns value of the attribute with the given name,
 // converted to the type T. Calls Packet.Attr for retrieving the value.
@@ -19,6 +23,17 @@ func Attr[T any](name string, packet Packet) T {
 	return value
 }
 
-// func ToBytes(packet Packet) []byte {
-// 	buf := make([]byte, 8+packet.Len())
-// }
+// Clone returns copy of a packet.
+// It uses slices.Clone and maps.Clone for each slices and map fields,
+// so the behaviour for them is the same.
+func Clone(packet *BasePacket) Packet {
+	return &BasePacket{
+		id:               packet.ID(),
+		codecs:           slices.Clone(packet.codecs),
+		attributes:       slices.Clone(packet.attributes),
+		encryptedRawData: slices.Clone(packet.encryptedRawData),
+		rawData:          slices.Clone(packet.rawData),
+		objects:          slices.Clone(packet.objects),
+		object:           maps.Clone(packet.object),
+	}
+}

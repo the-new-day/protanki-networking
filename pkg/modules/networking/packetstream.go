@@ -23,6 +23,8 @@ type PacketStream struct {
 	protection     protection.Protection
 	packetRegistry *packets.PacketRegistry
 
+	onActivateProtection func([]byte)
+
 	mu sync.RWMutex
 }
 
@@ -33,8 +35,15 @@ func NewPacketStream(
 	conn connection.Connection,
 	protection protection.Protection,
 	packetRegistry *packets.PacketRegistry,
+	onActivateProtection func([]byte),
 ) *PacketStream {
-	return &PacketStream{conn, protection, packetRegistry, sync.RWMutex{}}
+	return &PacketStream{
+		conn:                 conn,
+		protection:           protection,
+		packetRegistry:       packetRegistry,
+		onActivateProtection: onActivateProtection,
+		mu:                   sync.RWMutex{},
+	}
 }
 
 // PacketResult represents either a successfully parsed packet or an error that occurred
@@ -48,17 +57,25 @@ type PacketResult struct {
 	// If non-nil, the Packet field should be ignored.
 	Err error
 
-	RawData []byte
+	ID int32
+
+	Length int32
+
+	// RawHex is the raw bytes representing the packet payload (decrypted).
+	RawHex []byte
 }
 
 // Send encodes and sends a packet through the underlying connection.
 // It uses the stream's protection to encrypt the packet data before transmission.
 // Returns an error if encoding fails or the write operation fails.
 func (ps *PacketStream) Send(packet packets.Packet) error {
-	ps.mu.Lock()
-	defer ps.mu.Unlock()
+	var payload *bytes.Buffer
+	var err error
 
-	payload, err := packet.Wrap(ps.protection)
+	ps.mu.Lock()
+	payload, err = packet.Wrap(ps.protection)
+	ps.mu.Unlock()
+
 	if err != nil {
 		return err
 	}
@@ -67,9 +84,23 @@ func (ps *PacketStream) Send(packet packets.Packet) error {
 	return err
 }
 
-// func (ps *PacketStream) SendRaw(packet packets.Packet) error {
-// 	packets.ToBytes(packet)
-// }
+// SendRaw sends raw data without encryption.
+// Subscribers are not notified.
+func (ps *PacketStream) SendRaw(data []byte) error {
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+	_, err := ps.conn.Write(data)
+	return err
+}
+
+// SendRaw encrypts and sends raw data.
+// Subscribers are not notified.
+func (ps *PacketStream) SendRawEncrypted(data []byte) error {
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+	_, err := ps.conn.Write(ps.protection.Encrypt(data))
+	return err
+}
 
 // Inbound returns a channel that delivers parsed packets as they arrive.
 // The method runs in a separate goroutine and continues until:
@@ -77,8 +108,6 @@ func (ps *PacketStream) Send(packet packets.Packet) error {
 //   - a fatal read error occurs (connection closed, etc.)
 //   - the underlying connection returns an unrecoverable error
 //
-// Non-fatal errors (like decompression failures) are sent as PacketResult with Err set,
-// and the stream continues processing subsequent packets.
 // The channel is closed when the stream stops.
 //
 // Example usage:
@@ -109,6 +138,8 @@ func (ps *PacketStream) Inbound(ctx context.Context) <-chan PacketResult {
 			result := PacketResult{}
 
 			packetLen, packetID, isCompressed, err := ps.readPacketHeader()
+			result.Length = packetLen
+			result.ID = packetID
 
 			if err != nil {
 				result.Err = err
@@ -122,23 +153,31 @@ func (ps *PacketStream) Inbound(ctx context.Context) <-chan PacketResult {
 			if packetDataLen > 0 {
 				encryptedData, err = ps.conn.Read(int(packetDataLen))
 				if err != nil {
-					result.RawData = encryptedData
 					result.Err = err
 					ch <- result
 					return
 				}
 			}
 
-			result.RawData = encryptedData
+			ps.mu.Lock()
+			decryptedData := ps.protection.Decrypt(encryptedData)
+			ps.mu.Unlock()
 
-			packet, err := ps.processPacket(packetID, encryptedData, isCompressed)
+			result.RawHex = decryptedData
+
+			packet, err := ps.processPacket(packetID, decryptedData, isCompressed)
+
 			if err != nil {
 				result.Err = err
 				ch <- result
 				continue
 			}
 
-			packet.SetEncryptedRawData(encryptedData) // TODO: remove after debug (?)
+			if packetID == packets.ActivateProtectionID {
+				keys := packets.Attr[[]byte]("keys", packet)
+				ps.onActivateProtection(keys)
+			}
+
 			result.Packet = packet
 			ch <- result
 		}
@@ -183,23 +222,21 @@ func (ps *PacketStream) readPacketHeader() (int32, int32, bool, error) {
 	return packetLen, packetID, isCompressed, nil
 }
 
-// processPacket decrypts, decompresses (if needed), and creates a packet object.
+// processPacket decompresses (if needed) and creates a packet object.
 // Returns the parsed packet or an error if any processing step fails.
-func (ps *PacketStream) processPacket(packetID int32, encryptedData []byte, isCompressed bool) (packets.Packet, error) {
-	decrypted := ps.protection.Decrypt(encryptedData)
-
+func (ps *PacketStream) processPacket(packetID int32, decryptedData []byte, isCompressed bool) (packets.Packet, error) {
 	if isCompressed {
-		r := flate.NewReader(bytes.NewReader(decrypted))
+		r := flate.NewReader(bytes.NewReader(decryptedData))
 		defer r.Close()
 
 		var err error
-		decrypted, err = io.ReadAll(r)
+		decryptedData, err = io.ReadAll(r)
 		if err != nil {
 			return nil, fmt.Errorf("decompression failed: %w", err)
 		}
 	}
 
-	packet, err := ps.fitPacket(packetID, decrypted)
+	packet, err := ps.fitPacket(packetID, decryptedData)
 	if err != nil {
 		return nil, err
 	}
@@ -223,7 +260,6 @@ func (ps *PacketStream) fitPacket(packetID int32, data []byte) (packets.Packet, 
 	return packet, nil
 }
 
-// ActivateProtection call Activate(keys) on the underlying Protection instance.
 func (ps *PacketStream) ActivateProtection(keys []byte) {
 	ps.protection.Activate(keys)
 }

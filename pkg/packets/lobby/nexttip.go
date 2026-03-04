@@ -5,7 +5,7 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// Next tip (no attributes)
+// Client asks for the next tip on the loading screen (no attributes)
 type NextTipPacket struct {
 	packets.BasePacket
 }

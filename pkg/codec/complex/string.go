@@ -22,12 +22,9 @@ func NewStringCodec() *StringCodec {
 // Remaining Bytes - String value
 
 func (c *StringCodec) Decode(buf *bytes.Buffer) (string, error) {
-	rawData := make([]byte, buf.Len())
-	copy(rawData, buf.Bytes())
-
 	isEmpty, err := c.BoolCodec.Decode(buf)
 	if err != nil {
-		return "", fmt.Errorf("StringCodec: failed to decode empty flag: %w | RawData: % x", err, rawData)
+		return "", fmt.Errorf("StringCodec: failed to decode empty flag: %w", err)
 	}
 	if isEmpty {
 		return "", nil
@@ -35,16 +32,16 @@ func (c *StringCodec) Decode(buf *bytes.Buffer) (string, error) {
 
 	length, err := c.IntCodec.Decode(buf)
 	if err != nil {
-		return "", fmt.Errorf("StringCodec: failed to decode length: %w | RawData: % x", err, rawData)
+		return "", fmt.Errorf("StringCodec: failed to decode length: %w", err)
 	}
 
 	if length < 0 {
-		return "", fmt.Errorf("StringCodec: invalid negative length: %d | RawData: % x", length, rawData)
+		return "", fmt.Errorf("StringCodec: invalid negative length: %d", length)
 	}
 
 	stringBytes, err := utils.ReadBytes(int(length), buf)
 	if err != nil {
-		return "", fmt.Errorf("StringCodec: failed to read %d bytes of content: %w | RawData: % x", length, err, rawData)
+		return "", fmt.Errorf("StringCodec: failed to read %d bytes of content: %w", length, err)
 	}
 
 	return string(stringBytes), nil

@@ -11,12 +11,14 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
+var emptyOnActivateProtection = func([]byte) {}
+
 func TestHandlerSend_Success(t *testing.T) {
 	mockConn := &mockConnection{}
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
 
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 	packet := &mockPacket{id: 1001}
 
 	err := handler.Send(packet)
@@ -30,7 +32,7 @@ func TestHandlerSend_WithOutboundHandler(t *testing.T) {
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
 
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 
 	handlerCalled := make(chan struct{})
 	handler.OnOutBound(func(p packets.Packet) packets.Packet {
@@ -56,7 +58,7 @@ func TestHandlerSend_OutboundHandlerModifiesPacket(t *testing.T) {
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
 
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 
 	sentPacket := make(chan packets.Packet, 1)
 	handler.OnOutBound(func(p packets.Packet) packets.Packet {
@@ -83,7 +85,7 @@ func TestHandlerSend_OutboundHandlerCancelsPacket(t *testing.T) {
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
 
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 
 	handlerCalled := make(chan struct{})
 	handler.OnOutBound(func(p packets.Packet) packets.Packet {
@@ -109,7 +111,7 @@ func TestHandlerSend_MultipleOutboundHandlers(t *testing.T) {
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
 
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 
 	callOrder := make(chan int, 3)
 	done := make(chan struct{})
@@ -154,7 +156,7 @@ func TestHandlerSend_OutboundHandlerStopsChain(t *testing.T) {
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
 
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 
 	firstCalled := make(chan struct{})
 	secondCalled := make(chan struct{})
@@ -202,7 +204,7 @@ func TestHandlerSend_PacketStreamError(t *testing.T) {
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
 
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 	packet := &mockPacket{id: 1001}
 
 	err := handler.Send(packet)
@@ -215,7 +217,7 @@ func TestHandlerRun_ContextCancel(t *testing.T) {
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
 
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
@@ -261,7 +263,7 @@ func TestHandlerRun_InboundPacketSuccess(t *testing.T) {
 	}
 
 	mockProt := &mockProtection{}
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 
 	packetReceived := make(chan struct{})
 	handler.OnInBound(func(p packets.Packet) packets.Packet {
@@ -311,7 +313,7 @@ func TestHandlerRun_InboundHandlerModifiesPacket(t *testing.T) {
 	}
 
 	mockProt := &mockProtection{}
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 
 	modifiedCalled := make(chan struct{})
 	handler.OnInBound(func(p packets.Packet) packets.Packet {
@@ -360,7 +362,7 @@ func TestHandlerRun_InboundHandlerCancelsPacket(t *testing.T) {
 	}
 
 	mockProt := &mockProtection{}
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 
 	firstCalled := make(chan struct{})
 	secondCalled := make(chan struct{})
@@ -423,7 +425,7 @@ func TestHandlerRun_MultipleInboundHandlers(t *testing.T) {
 	}
 
 	mockProt := &mockProtection{}
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 
 	callOrder := make(chan int, 3)
 	done := make(chan struct{})
@@ -473,7 +475,7 @@ func TestHandlerRun_ReceiveError(t *testing.T) {
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
 
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 
 	errorReceived := make(chan PacketResult, 1)
 	handler.OnError(func(res PacketResult) {
@@ -505,7 +507,7 @@ func TestHandlerRun_MultipleErrorHandlers(t *testing.T) {
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
 
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 
 	firstDone := make(chan struct{})
 	secondDone := make(chan struct{})
@@ -566,7 +568,7 @@ func TestHandlerRun_ContinuesAfterError(t *testing.T) {
 	}
 
 	mockProt := &mockProtection{}
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 
 	errorCount := 0
 	errorDone := make(chan struct{})
@@ -605,26 +607,12 @@ func TestHandlerRun_ContinuesAfterError(t *testing.T) {
 	assert.Equal(t, 1, errorCount)
 }
 
-func TestHandlerActivateProtection(t *testing.T) {
-	mockConn := &mockConnection{}
-	mockProt := &mockProtection{}
-	reg := packets.NewPacketRegistry()
-
-	handler := NewPacketHandler(mockConn, mockProt, reg)
-	keys := []byte{1, 2, 3, 4}
-
-	handler.ActivateProtection(keys)
-
-	assert.True(t, mockProt.activateCalled)
-	assert.Equal(t, keys, mockProt.activateKeys)
-}
-
 func TestHandlerSend_WithNoHandlers(t *testing.T) {
 	mockConn := &mockConnection{}
 	mockProt := &mockProtection{}
 	reg := packets.NewPacketRegistry()
 
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 	packet := &mockPacket{id: 1001}
 
 	err := handler.Send(packet)
@@ -661,7 +649,7 @@ func TestHandlerRun_WithNoHandlers(t *testing.T) {
 	}
 
 	mockProt := &mockProtection{}
-	handler := NewPacketHandler(mockConn, mockProt, reg)
+	handler := NewPacketHandler(mockConn, mockProt, reg, emptyOnActivateProtection)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	done := make(chan struct{})

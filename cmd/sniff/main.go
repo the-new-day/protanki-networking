@@ -11,7 +11,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/the-new-day/probogo/pkg/modules/networking"
 	"github.com/the-new-day/probogo/pkg/modules/networking/connection"
 	"github.com/the-new-day/probogo/pkg/modules/networking/dial"
 	"github.com/the-new-day/probogo/pkg/modules/protection"
@@ -111,8 +110,8 @@ func (lp *LauncherProxy) handleClient(clientRaw net.Conn, connID int) {
 	}
 	defer serverConn.Close()
 
-	serverProt := protection.NewXorProtection(true)
-	clientProt := protection.NewXorProtection(false)
+	serverProt := protection.NewXorProtection(false)
+	clientProt := protection.NewXorProtection(true)
 
 	gameProxy := proxy.NewProxy(
 		serverConn,
@@ -121,10 +120,6 @@ func (lp *LauncherProxy) handleClient(clientRaw net.Conn, connID int) {
 		clientProt,
 		lp.packetRegistry,
 	)
-
-	gameProxy.OnError(func(pr networking.PacketResult) {
-		log.Printf("Client %d error: %v", connID, pr.Err)
-	})
 
 	log.Printf("Client %d connected", connID)
 	gameProxy.Run(context.Background())

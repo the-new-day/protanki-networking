@@ -24,12 +24,25 @@ func (c *JsonCodec) Decode(buf *bytes.Buffer) (map[string]any, error) {
 		return map[string]any{}, nil
 	}
 
-	var result map[string]any
-	if err := json.Unmarshal([]byte(jsonStr), &result); err != nil {
+	var data any
+	if err := json.Unmarshal([]byte(jsonStr), &data); err != nil {
 		return nil, fmt.Errorf("JsonCodec: failed to parse: %w", err)
 	}
 
-	return result, nil
+	// Handle both objects and arrays
+	switch v := data.(type) {
+	case map[string]any:
+		return v, nil
+	case []any:
+		// Convert array to map with stringified indices
+		result := make(map[string]any)
+		for i, item := range v {
+			result[fmt.Sprintf("%d", i)] = item
+		}
+		return result, nil
+	default:
+		return nil, fmt.Errorf("JsonCodec: expected object or array, got %T", v)
+	}
 }
 
 func (c *JsonCodec) Encode(value map[string]any, buf *bytes.Buffer) (int, error) {

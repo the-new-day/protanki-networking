@@ -37,12 +37,7 @@ type Packet interface {
 	// It does not perform type assertions, encryption/decryption etc.
 	Set(name string, value any)
 
-	// EncryptedRawData returns raw bytes that contain (probably encrypted) with packet data from the server.
-	EncryptedRawData() []byte
-
-	SetEncryptedRawData([]byte)
-
-	// RawData returns packet representation in bytes (decrypted).
+	// RawData returns packet data representation in bytes (decrypted) (without length and ID).
 	// Fills during Unwrap, before that can be empty.
 	RawData() []byte
 }
@@ -181,18 +176,8 @@ func (bp *BasePacket) ID() int32 {
 	return bp.id
 }
 
-func (bp *BasePacket) EncryptedRawData() []byte {
-	return bp.rawData
-}
-
 func (bp *BasePacket) RawData() []byte {
 	return bp.rawData
-}
-
-func (bp *BasePacket) SetEncryptedRawData(data []byte) {
-	buf := make([]byte, len(data))
-	copy(buf, data)
-	bp.rawData = buf
 }
 
 func (bp *BasePacket) Len() int {
