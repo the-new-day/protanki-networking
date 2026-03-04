@@ -47,6 +47,8 @@ type PacketResult struct {
 	// Err describes an error that occurred while reading or processing the packet.
 	// If non-nil, the Packet field should be ignored.
 	Err error
+
+	RawData []byte
 }
 
 // Send encodes and sends a packet through the underlying connection.
@@ -54,17 +56,20 @@ type PacketResult struct {
 // Returns an error if encoding fails or the write operation fails.
 func (ps *PacketStream) Send(packet packets.Packet) error {
 	ps.mu.Lock()
+	defer ps.mu.Unlock()
 
 	payload, err := packet.Wrap(ps.protection)
 	if err != nil {
 		return err
 	}
 
-	ps.mu.Unlock()
-
 	_, err = ps.conn.Write(payload.Bytes())
 	return err
 }
+
+// func (ps *PacketStream) SendRaw(packet packets.Packet) error {
+// 	packets.ToBytes(packet)
+// }
 
 // Inbound returns a channel that delivers parsed packets as they arrive.
 // The method runs in a separate goroutine and continues until:
@@ -117,11 +122,14 @@ func (ps *PacketStream) Inbound(ctx context.Context) <-chan PacketResult {
 			if packetDataLen > 0 {
 				encryptedData, err = ps.conn.Read(int(packetDataLen))
 				if err != nil {
+					result.RawData = encryptedData
 					result.Err = err
 					ch <- result
 					return
 				}
 			}
+
+			result.RawData = encryptedData
 
 			packet, err := ps.processPacket(packetID, encryptedData, isCompressed)
 			if err != nil {
@@ -130,6 +138,7 @@ func (ps *PacketStream) Inbound(ctx context.Context) <-chan PacketResult {
 				continue
 			}
 
+			packet.SetEncryptedRawData(encryptedData) // TODO: remove after debug (?)
 			result.Packet = packet
 			ch <- result
 		}
@@ -154,14 +163,14 @@ func (ps *PacketStream) readPacketHeader() (int32, int32, bool, error) {
 	}
 
 	// read first 4 bytes: length and compression flag
-	headerBytes, err := ps.conn.Read(4)
+	lengthBytes, err := ps.conn.Read(4)
 	if err != nil {
 		return 0, 0, false, err
 	}
 
-	header := binary.BigEndian.Uint32(headerBytes)
-	isCompressed := (header>>24)&0x40 != 0
-	packetLen := int32(header & 0x00FFFFFF) // nullifies the compression bit
+	length := binary.BigEndian.Uint32(lengthBytes)
+	isCompressed := (length>>24)&0x40 != 0
+	packetLen := int32(length & 0x00FFFFFF) // nullifies the compression bit
 
 	// read next 4 bytes: packet ID
 	idBytes, err := ps.conn.Read(4)

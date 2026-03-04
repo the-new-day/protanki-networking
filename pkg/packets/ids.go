@@ -76,6 +76,7 @@ const (
 	LoadAllBattlesID                = 552006706
 	LoadBattleInfoID                = 546722394
 	LoadBonusBoxResourcesID         = 228171466
+	LoadExternalEntranceID          = -1715719586
 	LoadFriendsListID               = 1422563374
 	LoadGarageID                    = -479046431
 	LoadLobbyID                     = 1452181070
@@ -106,6 +107,7 @@ const (
 	MultiShotTurretOutID            = -1889502569
 	NameAvailableID                 = -706679202
 	NameUnavailableID               = 442888643
+	NextTipID                       = -1376947245
 	NotInBattleStatusID             = 1941694508
 	OnlineStatusID                  = 2041598093
 	OpenFriendsListID               = 1441234714

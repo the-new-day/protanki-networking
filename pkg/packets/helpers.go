@@ -18,3 +18,7 @@ func Attr[T any](name string, packet Packet) T {
 	}
 	return value
 }
+
+// func ToBytes(packet Packet) []byte {
+// 	buf := make([]byte, 8+packet.Len())
+// }

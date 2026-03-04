@@ -4,22 +4,22 @@ import (
 	"bytes"
 	"encoding/binary"
 
+	"github.com/the-new-day/probogo/pkg/codec"
 	"github.com/the-new-day/probogo/pkg/modules/protection"
 )
 
 // UnknownPacket denotes a package that was not registered
 // in the package registry when it was discovered.
 type UnknownPacket struct {
-	id   int32
+	*BasePacket
 	data []byte
 }
 
 func NewUnknownPacket(id int32, data []byte) *UnknownPacket {
-	return &UnknownPacket{id, data}
-}
-
-func (p *UnknownPacket) ID() int32 {
-	return p.id
+	return &UnknownPacket{
+		BasePacket: NewBasePacket(id, []codec.Codec{}, []string{}),
+		data:       data,
+	}
 }
 
 // Unwrap returns the raw packet data in a map with a single key "data".

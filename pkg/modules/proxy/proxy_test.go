@@ -12,7 +12,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/the-new-day/probogo/pkg/modules/protection"
 	"github.com/the-new-day/probogo/pkg/packets"
-	"github.com/the-new-day/probogo/pkg/packets/network"
 )
 
 type mockConnection struct {
@@ -82,6 +81,7 @@ func (m *mockProtection) Encrypt(data []byte) []byte {
 }
 
 type mockPacket struct {
+	packets.BasePacket
 	id    int32
 	attrs map[string]any
 }
@@ -138,66 +138,6 @@ func TestNewProxy(t *testing.T) {
 	assert.NotNil(t, proxy)
 	assert.NotNil(t, proxy.serverHandler)
 	assert.NotNil(t, proxy.clientHandler)
-	assert.Equal(t, []byte{}, proxy.clientProtectionKeys)
-}
-
-func TestSetClientProtectionKeys(t *testing.T) {
-	serverConn := &mockConnection{}
-	serverProt := &mockProtection{}
-	clientConn := &mockConnection{}
-	clientProt := &mockProtection{}
-	reg := packets.NewPacketRegistry()
-
-	proxy := NewProxy(serverConn, serverProt, clientConn, clientProt, reg)
-
-	keys := []byte{1, 2, 3, 4}
-	proxy.SetClientProtectionKeys(keys)
-
-	assert.Equal(t, keys, proxy.clientProtectionKeys)
-}
-
-func TestSetClientProtectionKeys_CopiesData(t *testing.T) {
-	serverConn := &mockConnection{}
-	serverProt := &mockProtection{}
-	clientConn := &mockConnection{}
-	clientProt := &mockProtection{}
-	reg := packets.NewPacketRegistry()
-
-	proxy := NewProxy(serverConn, serverProt, clientConn, clientProt, reg)
-
-	keys := []byte{1, 2, 3, 4}
-	proxy.SetClientProtectionKeys(keys)
-
-	// Modify original
-	keys[0] = 99
-
-	// Proxy's copy should not be modified
-	assert.Equal(t, byte(1), proxy.clientProtectionKeys[0])
-}
-
-func TestRun_ActivatesClientProtection(t *testing.T) {
-	serverConn := &mockConnection{}
-	serverProt := &mockProtection{}
-	clientConn := &mockConnection{}
-	clientProt := &mockProtection{}
-	reg := packets.NewPacketRegistry()
-
-	proxy := NewProxy(serverConn, serverProt, clientConn, clientProt, reg)
-
-	keys := []byte{5, 6, 7, 8}
-	proxy.SetClientProtectionKeys(keys)
-
-	ctx, cancel := context.WithCancel(context.Background())
-	go func() {
-		proxy.Run(ctx)
-	}()
-
-	time.Sleep(50 * time.Millisecond)
-	cancel()
-
-	// Client protection should have been activated with the set keys
-	assert.True(t, clientProt.activateCalled)
-	assert.Equal(t, keys, clientProt.activateKeys)
 }
 
 func TestRun_StartsServerHandler(t *testing.T) {
@@ -254,39 +194,6 @@ func TestRun_StartsServerHandler(t *testing.T) {
 	received := packetReceived
 	mu.Unlock()
 	assert.True(t, received)
-}
-
-func TestHandleActivateProtection_InterceptsPacket(t *testing.T) {
-	serverConn := &mockConnection{}
-	serverProt := &mockProtection{}
-	clientConn := &mockConnection{}
-	clientProt := &mockProtection{}
-	reg := packets.NewPacketRegistry()
-
-	proxy := NewProxy(serverConn, serverProt, clientConn, clientProt, reg)
-
-	// Set fake client protection keys
-	fakeKeys := []byte{99, 98, 97, 96}
-	proxy.SetClientProtectionKeys(fakeKeys)
-
-	// Create a real ActivateProtectionPacket with real keys
-	packet := network.NewActivateProtectionPacket()
-	realKeys := []byte{1, 2, 3, 4}
-	packet.Set("keys", realKeys)
-
-	// Handle the packet
-	result := proxy.handleActivateProtection(packet)
-
-	assert.NotNil(t, result)
-	assert.Equal(t, packet, result)
-
-	// Server protection should be activated with real keys
-	assert.True(t, serverProt.activateCalled)
-	assert.Equal(t, realKeys, serverProt.activateKeys)
-
-	// Client should get fake keys
-	modifiedKeys := packets.Attr[[]byte]("keys", packet)
-	assert.Equal(t, fakeKeys, modifiedKeys)
 }
 
 func TestHandleActivateProtection_IgnoresOtherPackets(t *testing.T) {

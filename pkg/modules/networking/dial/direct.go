@@ -11,7 +11,7 @@ type DirectDialer struct {
 	timeout time.Duration
 }
 
-func NewDirectStrategy(timeout time.Duration) *DirectDialer {
+func NewDirectDialer(timeout time.Duration) *DirectDialer {
 	return &DirectDialer{timeout: timeout}
 }
 

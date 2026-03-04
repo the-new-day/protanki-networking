@@ -51,9 +51,9 @@ func (ph *PacketHandler) OnOutBound(handler func(packets.Packet) packets.Packet)
 	ph.outboundHandlers = append(ph.outboundHandlers, handler)
 }
 
-// OnReceiveError adds a handler (subscriber) for error events.
+// OnError adds a handler (subscriber) for error events.
 // All handlers are notified in the order of adding.
-func (ph *PacketHandler) OnReceiveError(handler func(PacketResult)) {
+func (ph *PacketHandler) OnError(handler func(PacketResult)) {
 	ph.receiveErrorHandlers = append(ph.receiveErrorHandlers, handler)
 }
 

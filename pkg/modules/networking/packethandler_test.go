@@ -476,7 +476,7 @@ func TestHandlerRun_ReceiveError(t *testing.T) {
 	handler := NewPacketHandler(mockConn, mockProt, reg)
 
 	errorReceived := make(chan PacketResult, 1)
-	handler.OnReceiveError(func(res PacketResult) {
+	handler.OnError(func(res PacketResult) {
 		errorReceived <- res
 	})
 
@@ -510,11 +510,11 @@ func TestHandlerRun_MultipleErrorHandlers(t *testing.T) {
 	firstDone := make(chan struct{})
 	secondDone := make(chan struct{})
 
-	handler.OnReceiveError(func(res PacketResult) {
+	handler.OnError(func(res PacketResult) {
 		close(firstDone)
 	})
 
-	handler.OnReceiveError(func(res PacketResult) {
+	handler.OnError(func(res PacketResult) {
 		close(secondDone)
 	})
 
@@ -572,7 +572,7 @@ func TestHandlerRun_ContinuesAfterError(t *testing.T) {
 	errorDone := make(chan struct{})
 	packetDone := make(chan struct{})
 
-	handler.OnReceiveError(func(res PacketResult) {
+	handler.OnError(func(res PacketResult) {
 		errorCount++
 		if errorCount == 1 {
 			close(errorDone)

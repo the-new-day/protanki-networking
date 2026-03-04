@@ -2,6 +2,7 @@ package proxy
 
 import (
 	"context"
+	"log"
 
 	"github.com/the-new-day/probogo/pkg/modules/networking"
 	"github.com/the-new-day/probogo/pkg/modules/networking/connection"
@@ -15,8 +16,6 @@ import (
 type Proxy struct {
 	serverHandler *networking.PacketHandler
 	clientHandler *networking.PacketHandler
-
-	clientProtectionKeys []byte
 }
 
 func NewProxy(
@@ -27,12 +26,28 @@ func NewProxy(
 	packetRegistry *packets.PacketRegistry,
 ) *Proxy {
 	p := &Proxy{
-		serverHandler:        networking.NewPacketHandler(serverConn, serverProtection, packetRegistry),
-		clientHandler:        networking.NewPacketHandler(clientConn, clientProtection, packetRegistry),
-		clientProtectionKeys: []byte{},
+		serverHandler: networking.NewPacketHandler(serverConn, serverProtection, packetRegistry),
+		clientHandler: networking.NewPacketHandler(clientConn, clientProtection, packetRegistry),
 	}
 
 	p.serverHandler.OnInBound(p.handleActivateProtection) // always being called first
+
+	// TODO: remove logs
+	p.OnClientToServer(func(packet packets.Packet) packets.Packet {
+		template := "[CLIENT]: [ID: %d | Name: %s | Len: %d | RawData: % x]"
+		log.Printf(template, packet.ID(), packets.GetName(packet.ID()), 8+len(packet.EncryptedRawData()), packet.EncryptedRawData())
+
+		p.serverHandler.Send(packet)
+		return packet
+	})
+
+	p.OnServerToClient(func(packet packets.Packet) packets.Packet {
+		template := "[SERVER]: [ID: %d | Name: %s | Len: %d | RawData: % x]"
+		log.Printf(template, packet.ID(), packets.GetName(packet.ID()), 8+len(packet.EncryptedRawData()), packet.EncryptedRawData())
+
+		p.clientHandler.Send(packet)
+		return packet
+	})
 	return p
 }
 
@@ -44,29 +59,31 @@ func (p *Proxy) OnClientToServer(handler func(packets.Packet) packets.Packet) {
 	p.clientHandler.OnInBound(handler)
 }
 
-func (p *Proxy) Run(ctx context.Context) {
-	p.clientHandler.ActivateProtection(p.clientProtectionKeys)
-
-	go p.clientHandler.Run(ctx)
-	go p.serverHandler.Run(ctx)
+func (p *Proxy) OnError(handler func(networking.PacketResult)) {
+	p.serverHandler.OnError(handler)
+	p.clientHandler.OnError(handler)
 }
 
-// SetClientProtectionKeys sets protection keys used to activate protection during Run().
-// Default: empty set of keys.
-// It should be called before Run().
-func (p *Proxy) SetClientProtectionKeys(keys []byte) {
-	buf := make([]byte, len(keys))
-	copy(buf, keys)
-	p.clientProtectionKeys = buf
+func (p *Proxy) Run(ctx context.Context) {
+	go p.serverHandler.Run(ctx)
+	go p.clientHandler.Run(ctx)
+	<-ctx.Done()
 }
 
 // handleActivateProtection is a handler for the ActivateProtection packet.
-// It activates server protection with provided keys and sets "fake" client protection keys.
+// It activates server protection with provided keys and sends protection keys to the client.
 func (p *Proxy) handleActivateProtection(packet packets.Packet) packets.Packet {
 	if activateProt, ok := packet.(*network.ActivateProtectionPacket); ok {
+		template := "[SERVER]: [ID: %d | Name: %s | Len: %d | RawData: % x]"
+		log.Printf(template, packet.ID(), packets.GetName(packet.ID()), 8+len(packet.EncryptedRawData()), packet.EncryptedRawData())
+
 		keys := packets.Attr[[]byte]("keys", activateProt)
 		p.serverHandler.ActivateProtection(keys)
-		activateProt.Set("keys", p.clientProtectionKeys) // sending "fake" keys to the client
+
+		p.clientHandler.Send(activateProt)
+		p.clientHandler.ActivateProtection(keys)
+
+		return nil // TODO: add listeners, it can't be passed further (messes up the state of Protection)
 	}
 
 	return packet

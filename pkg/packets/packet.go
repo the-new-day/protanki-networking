@@ -17,6 +17,10 @@ type Packet interface {
 	// ID returns packet ID, usually set during initialization.
 	ID() int32
 
+	// Len returns packet length in bytes, including header.
+	// Fills during Unwrap, bufore that it can be zero.
+	Len() int
+
 	// Unwrap decodes the binary data into individual objects.
 	// May store decoded objects for future use.
 	Unwrap(packetData *bytes.Buffer) (map[string]any, error)
@@ -32,6 +36,15 @@ type Packet interface {
 	// Set sets value for the attribute (it's possible to add new attribute, but it won't be wrapped).
 	// It does not perform type assertions, encryption/decryption etc.
 	Set(name string, value any)
+
+	// EncryptedRawData returns raw bytes that contain (probably encrypted) with packet data from the server.
+	EncryptedRawData() []byte
+
+	SetEncryptedRawData([]byte)
+
+	// RawData returns packet representation in bytes (decrypted).
+	// Fills during Unwrap, before that can be empty.
+	RawData() []byte
 }
 
 // Base packet for concrete packets.
@@ -59,8 +72,12 @@ type BasePacket struct {
 	codecs     []codec.Codec
 	attributes []string
 
+	encryptedRawData []byte
+	rawData          []byte
+
 	objects []any
-	object  map[string]any
+
+	object map[string]any
 }
 
 func NewBasePacket(id int32, codecs []codec.Codec, attributes []string) *BasePacket {
@@ -85,14 +102,18 @@ func NewBasePacket(id int32, codecs []codec.Codec, attributes []string) *BasePac
 }
 
 func (bp *BasePacket) Unwrap(packetData *bytes.Buffer) (map[string]any, error) {
+	buf := make([]byte, packetData.Len())
+	copy(buf, packetData.Bytes())
+
 	for _, c := range bp.codecs {
 		decoded, err := c.Decode(packetData)
 		if err != nil {
-			return nil, fmt.Errorf("BasePacket.Unwrap: failed to unwrap: %w", err)
+			return nil, fmt.Errorf("BasePacket.Unwrap: packet ID: %d | failed to unwrap: %w", bp.id, err)
 		}
 		bp.objects = append(bp.objects, decoded)
 	}
 
+	bp.rawData = buf
 	return bp.populate(), nil
 }
 
@@ -158,4 +179,22 @@ func (bp *BasePacket) populate() map[string]any {
 
 func (bp *BasePacket) ID() int32 {
 	return bp.id
+}
+
+func (bp *BasePacket) EncryptedRawData() []byte {
+	return bp.rawData
+}
+
+func (bp *BasePacket) RawData() []byte {
+	return bp.rawData
+}
+
+func (bp *BasePacket) SetEncryptedRawData(data []byte) {
+	buf := make([]byte, len(data))
+	copy(buf, data)
+	bp.rawData = buf
+}
+
+func (bp *BasePacket) Len() int {
+	return len(bp.rawData)
 }

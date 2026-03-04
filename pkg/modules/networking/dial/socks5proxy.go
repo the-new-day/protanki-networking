@@ -17,7 +17,7 @@ type Socks5ProxyDialer struct {
 	timeout   time.Duration
 }
 
-func NewSocks5Strategy(proxyAddr string, username, password string, timeout time.Duration) *Socks5ProxyDialer {
+func NewSocks5Dialer(proxyAddr string, username, password string, timeout time.Duration) *Socks5ProxyDialer {
 	var auth *proxy.Auth
 	if username != "" {
 		auth = &proxy.Auth{

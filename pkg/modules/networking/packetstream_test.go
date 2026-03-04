@@ -84,6 +84,7 @@ func (m *mockProtection) Encrypt(data []byte) []byte {
 }
 
 type mockPacket struct {
+	packets.BasePacket
 	id           int32
 	wrapErr      error
 	unwrapErr    error
