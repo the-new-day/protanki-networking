@@ -49,11 +49,11 @@ func NewProxy(
 	p.serverHandler.OnInBound(p.notifyActivateProtection) // always being called first, cancels the packet
 
 	p.clientHandler.OnInBoundFinal(func(packet packets.Packet) {
-		p.serverHandler.Send(packet)
+		p.SendToServer(packet)
 	})
 
 	p.serverHandler.OnInBoundFinal(func(packet packets.Packet) {
-		p.clientHandler.Send(packet)
+		p.SendToClient(packet)
 	})
 
 	p.clientHandler.OnError(func(pr networking.PacketResult) {
@@ -125,6 +125,16 @@ func (p *Proxy) Run(ctx context.Context) {
 
 	<-ctx.Done()
 	wg.Wait()
+}
+
+// SendToClient sends packet to the client.
+func (p *Proxy) SendToClient(packet packets.Packet) error {
+	return p.clientHandler.Send(packet)
+}
+
+// SendToServer sends packet to the server.
+func (p *Proxy) SendToServer(packet packets.Packet) error {
+	return p.serverHandler.Send(packet)
 }
 
 // notifyActivateProtection reads ActivateProtection packet,
