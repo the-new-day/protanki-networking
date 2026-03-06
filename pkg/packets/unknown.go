@@ -2,24 +2,24 @@ package packets
 
 import (
 	"bytes"
-	"encoding/binary"
 
+	"github.com/the-new-day/probogo/pkg/codec"
+	"github.com/the-new-day/probogo/pkg/codec/primitive"
 	"github.com/the-new-day/probogo/pkg/modules/protection"
 )
 
 // UnknownPacket denotes a package that was not registered
 // in the package registry when it was discovered.
 type UnknownPacket struct {
-	id   int32
+	*BasePacket
 	data []byte
 }
 
 func NewUnknownPacket(id int32, data []byte) *UnknownPacket {
-	return &UnknownPacket{id, data}
-}
-
-func (p *UnknownPacket) ID() int32 {
-	return p.id
+	return &UnknownPacket{
+		BasePacket: NewBasePacket(id, []codec.Codec{}, []string{}),
+		data:       data,
+	}
 }
 
 // Unwrap returns the raw packet data in a map with a single key "data".
@@ -32,28 +32,28 @@ func (p *UnknownPacket) Unwrap(_ *bytes.Buffer) (map[string]any, error) {
 //
 // [4 bytes length (8 + len(data))] [4 bytes ID] [len(data) bytes data].
 func (p *UnknownPacket) Wrap(protection protection.Protection) (*bytes.Buffer, error) {
-	payload := &bytes.Buffer{}
-	payload.Write(p.data)
-	encrypted := protection.Encrypt(payload.Bytes())
+	data := p.data
+	packetLen := 8 + len(data)
+
+	if p.BasePacket.shouldCompress {
+		var err error
+		data, err = Compress(data)
+		if err != nil {
+			return nil, err
+		}
+
+		packetLen = 8 + len(data)
+		packetLen |= 0x40000000 // setting the compression bit
+	}
+
+	encrypted := protection.Encrypt(data)
 
 	final := &bytes.Buffer{}
+	intCodec := &primitive.IntCodec{}
 
-	lenBuf := make([]byte, 4)
-	binary.BigEndian.PutUint32(lenBuf, uint32(8+len(encrypted)))
-	final.Write(lenBuf)
-
-	idBuf := make([]byte, 4)
-	binary.BigEndian.PutUint32(idBuf, uint32(p.id))
-	final.Write(idBuf)
+	intCodec.Encode(int32(packetLen), final)
+	intCodec.Encode(p.id, final)
 
 	final.Write(encrypted)
 	return final, nil
-}
-
-func (p *UnknownPacket) Attr(_ string) any {
-	panic("UnknownPacket.Get is not allowed")
-}
-
-func (p *UnknownPacket) Set(_ string, _ any) {
-	panic("UnknownPacket.Set is not allowed")
 }

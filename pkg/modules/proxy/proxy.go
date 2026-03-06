@@ -1,8 +1,11 @@
 package proxy
 
 import (
+	"bytes"
 	"context"
+	"sync"
 
+	"github.com/the-new-day/probogo/pkg/codec/primitive"
 	"github.com/the-new-day/probogo/pkg/modules/networking"
 	"github.com/the-new-day/probogo/pkg/modules/networking/connection"
 	"github.com/the-new-day/probogo/pkg/modules/protection"
@@ -10,15 +13,27 @@ import (
 	"github.com/the-new-day/probogo/pkg/packets/network"
 )
 
-// Proxy is a universal MITM proxy for game-client communications.
-// It allows intercepting and modifying packets.
-type Proxy struct {
-	serverHandler *networking.PacketHandler
-	clientHandler *networking.PacketHandler
+var emptyOnActivateProtection = func(keys []byte) {}
 
-	clientProtectionKeys []byte
+// Proxy is a universal MITM proxy for game-client communications.
+// It allows intercepting and modifying packets,
+// and transfers (possibly modified) packets between the server and the client.
+//
+// It accepts two instances of Protection: one with flipDirection = true, another with flipDirection = false.
+// One Protection imitates Protection of the server, another imitates client Protection.
+// Packets from the server are intercepted and decrypted using "client" Protection,
+// then they are encrypted again with the "server" Protection.
+type Proxy struct {
+	serverHandler *PacketHandler
+	clientHandler *PacketHandler
+
+	onActivateProtection []func(packet packets.Packet)
 }
 
+// NewProxy creates new Proxy instance.
+// It also registers InBound subscriber for handling ActivateProtection packet,
+// which sets up the protection keys for the server and client communication
+// and prevents it from being passed to other packets (they are not allowed modify it).
 func NewProxy(
 	serverConn connection.Connection,
 	serverProtection protection.Protection,
@@ -26,48 +41,131 @@ func NewProxy(
 	clientProtection protection.Protection,
 	packetRegistry *packets.PacketRegistry,
 ) *Proxy {
-	p := &Proxy{
-		serverHandler:        networking.NewPacketHandler(serverConn, serverProtection, packetRegistry),
-		clientHandler:        networking.NewPacketHandler(clientConn, clientProtection, packetRegistry),
-		clientProtectionKeys: []byte{},
-	}
+	p := &Proxy{}
 
-	p.serverHandler.OnInBound(p.handleActivateProtection) // always being called first
+	p.serverHandler = NewPacketHandler(serverConn, serverProtection, packetRegistry, p.activateProtection)
+	p.clientHandler = NewPacketHandler(clientConn, clientProtection, packetRegistry, emptyOnActivateProtection)
+
+	p.serverHandler.OnInBound(p.notifyActivateProtection) // always being called first, cancels the packet
+
+	p.clientHandler.OnInBoundFinal(func(packet packets.Packet) {
+		p.serverHandler.Send(packet)
+	})
+
+	p.serverHandler.OnInBoundFinal(func(packet packets.Packet) {
+		p.clientHandler.Send(packet)
+	})
+
+	p.clientHandler.OnError(func(pr networking.PacketResult) {
+		handleError(p.clientHandler, pr)
+	})
+
+	p.serverHandler.OnError(func(pr networking.PacketResult) {
+		handleError(p.serverHandler, pr)
+	})
 	return p
 }
 
+// OnServerToClient adds a subscriber for packets coming from the server.
+// Subscribers can modify the packet by returning the edited version,
+// and can cancel if from delivering by returning nil
+// (notifying will also stop, but all handlers that already received the packet won't be notified that the packet is canceled).
+//
+// ActivateProtection packet won't be passed to any handler registered here.
+// Use OnActivateProtection for listening (modifying is not allowed).
+// All subscribers are notified in the order of adding.
 func (p *Proxy) OnServerToClient(handler func(packets.Packet) packets.Packet) {
 	p.serverHandler.OnInBound(handler)
 }
 
+// OnClientToServer adds a subscriber for packets coming from the client.
+// Subscribers can modify the packet by returning the edited version,
+// and can cancel if from delivering by returning nil
+// (notifying will also stop, but all handlers that already received the packet won't be notified that the packet is canceled).
+// All subscribers are notified in the order of adding.
 func (p *Proxy) OnClientToServer(handler func(packets.Packet) packets.Packet) {
 	p.clientHandler.OnInBound(handler)
 }
 
+// OnClientError adds a subscriber for errors happened during communication with the client.
+// All subscribers are notified in the order of adding.
+func (p *Proxy) OnClientError(handler func(networking.PacketResult)) {
+	p.clientHandler.OnError(handler)
+}
+
+// OnServerError adds a subscriber for errors happened during communication with the server.
+// All subscribers are notified in the order of adding.
+func (p *Proxy) OnServerError(handler func(networking.PacketResult)) {
+	p.serverHandler.OnError(handler)
+}
+
+// OnActivateProtection adds a subscriber for ActivateProtection packet coming from the server.
+// Subscribers can't modify the packet (they receive only a copy of the packet).
+// All subscribers are notified in the order of adding.
+func (p *Proxy) OnActivateProtection(listener func(packets.Packet)) {
+	p.onActivateProtection = append(p.onActivateProtection, listener)
+}
+
+// Run starts the proxy. It runs both client and server communications.
+// It is a blocking operation, it can be stopped using the ctx.
 func (p *Proxy) Run(ctx context.Context) {
-	p.clientHandler.ActivateProtection(p.clientProtectionKeys)
+	var wg sync.WaitGroup
 
-	go p.clientHandler.Run(ctx)
-	go p.serverHandler.Run(ctx)
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		p.serverHandler.Run(ctx)
+	}()
+
+	go func() {
+		defer wg.Done()
+		p.clientHandler.Run(ctx)
+	}()
+
+	<-ctx.Done()
+	wg.Wait()
 }
 
-// SetClientProtectionKeys sets protection keys used to activate protection during Run().
-// Default: empty set of keys.
-// It should be called before Run().
-func (p *Proxy) SetClientProtectionKeys(keys []byte) {
-	buf := make([]byte, len(keys))
-	copy(buf, keys)
-	p.clientProtectionKeys = buf
-}
-
-// handleActivateProtection is a handler for the ActivateProtection packet.
-// It activates server protection with provided keys and sets "fake" client protection keys.
-func (p *Proxy) handleActivateProtection(packet packets.Packet) packets.Packet {
+// notifyActivateProtection reads ActivateProtection packet,
+// notifies all onActivateProtection subscribers and returns nil (cancels the packet).
+// The protection gets activated by activateProtection() callback for PacketStream.
+func (p *Proxy) notifyActivateProtection(packet packets.Packet) packets.Packet {
 	if activateProt, ok := packet.(*network.ActivateProtectionPacket); ok {
-		keys := packets.Attr[[]byte]("keys", activateProt)
-		p.serverHandler.ActivateProtection(keys)
-		activateProt.Set("keys", p.clientProtectionKeys) // sending "fake" keys to the client
+		for _, listener := range p.onActivateProtection {
+			listener(packets.Clone(&activateProt.BasePacket))
+		}
+		return nil
 	}
 
 	return packet
+}
+
+// activateProtection activates client and server handlers' protection.
+// It also sends ActivateProtection directly to the real client (using clientHandler).
+func (p *Proxy) activateProtection(keys []byte) {
+	packet := network.NewActivateProtectionPacketWithKeys(keys)
+	data, _ := packet.Wrap(&protection.EmptyProtection{})
+
+	p.clientHandler.SendRaw(data.Bytes()) // writing directly to avoid changing the state of protection
+
+	p.clientHandler.ActivateProtection(keys)
+	p.serverHandler.ActivateProtection(keys)
+}
+
+// handleError sends packet to the handler.
+// If the packet was compressed, sets the compression bit.
+func handleError(packetHandler *PacketHandler, pr networking.PacketResult) {
+	buf := &bytes.Buffer{}
+	intCodec := &primitive.IntCodec{}
+
+	if pr.WasCompressed {
+		pr.Length |= 0x40000000
+	}
+
+	intCodec.Encode(pr.Length, buf)
+	intCodec.Encode(pr.ID, buf)
+	packetHandler.SendRaw(buf.Bytes())
+
+	packetHandler.SendRawEncrypted(pr.Data)
 }

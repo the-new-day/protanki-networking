@@ -11,6 +11,6 @@ type DoubleIntCodec struct {
 
 func NewDoubleIntCodec(attr1 string, attr2 string) *DoubleIntCodec {
 	return &DoubleIntCodec{
-		MultiCodec: *multiple.NewMultiCodec([]string{attr1, attr2}, &primitive.IntCodec{}, true),
+		MultiCodec: *multiple.NewMultiCodec([]string{attr1, attr2}, &primitive.IntCodec{}, false),
 	}
 }

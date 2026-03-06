@@ -63,3 +63,17 @@ func TestNoMutation(t *testing.T) {
 
 	assert.Equal(t, snapshot, originalData, "Encrypt mutated the original slice")
 }
+
+func TestActivate_ResetsState(t *testing.T) {
+	keys := []byte{0xFF}
+	data := []byte{1, 2, 3, 4, 5}
+	p := NewXorProtection(false)
+
+	p.Activate(keys)
+	encryptedFirst := p.Encrypt(data)
+
+	p.Activate(keys)
+	encryptedSecond := p.Encrypt(data)
+
+	assert.Equal(t, encryptedFirst, encryptedSecond, "Activate should reset the state of Protection")
+}

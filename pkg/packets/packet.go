@@ -17,6 +17,10 @@ type Packet interface {
 	// ID returns packet ID, usually set during initialization.
 	ID() int32
 
+	// Len returns packet length in bytes, including header.
+	// Fills during Unwrap, bufore that it can be zero.
+	Len() int
+
 	// Unwrap decodes the binary data into individual objects.
 	// May store decoded objects for future use.
 	Unwrap(packetData *bytes.Buffer) (map[string]any, error)
@@ -32,6 +36,14 @@ type Packet interface {
 	// Set sets value for the attribute (it's possible to add new attribute, but it won't be wrapped).
 	// It does not perform type assertions, encryption/decryption etc.
 	Set(name string, value any)
+
+	// Data returns packet data representation in bytes (decrypted) (without length and ID).
+	// Fills during Unwrap, before that can be empty.
+	Data() []byte
+
+	// SetCompress sets whether the data should be compressed in Wrap().
+	// If true, the data gets compressed and the compression bit gets set.
+	SetCompress(shouldCompress bool)
 }
 
 // Base packet for concrete packets.
@@ -59,8 +71,12 @@ type BasePacket struct {
 	codecs     []codec.Codec
 	attributes []string
 
+	rawData []byte
+
 	objects []any
 	object  map[string]any
+
+	shouldCompress bool
 }
 
 func NewBasePacket(id int32, codecs []codec.Codec, attributes []string) *BasePacket {
@@ -85,14 +101,18 @@ func NewBasePacket(id int32, codecs []codec.Codec, attributes []string) *BasePac
 }
 
 func (bp *BasePacket) Unwrap(packetData *bytes.Buffer) (map[string]any, error) {
+	buf := make([]byte, packetData.Len())
+	copy(buf, packetData.Bytes())
+
 	for _, c := range bp.codecs {
 		decoded, err := c.Decode(packetData)
 		if err != nil {
-			return nil, fmt.Errorf("BasePacket.Unwrap: failed to unwrap: %w", err)
+			return nil, fmt.Errorf("BasePacket.Unwrap: packet ID: %d | failed to unwrap: %w", bp.id, err)
 		}
 		bp.objects = append(bp.objects, decoded)
 	}
 
+	bp.rawData = buf
 	return bp.populate(), nil
 }
 
@@ -102,22 +122,34 @@ func (bp *BasePacket) Wrap(protection protection.Protection) (*bytes.Buffer, err
 	}
 
 	packetData := &bytes.Buffer{}
-	dataLen := HeaderLength
 
 	for i, c := range bp.codecs {
-		n, err := c.Encode(bp.objects[i], packetData)
+		_, err := c.Encode(bp.objects[i], packetData)
 		if err != nil {
 			return nil, fmt.Errorf("BasePacket.Wrap: failed to encode packed data: %w", err)
 		}
-		dataLen += n
 	}
 
-	encryptedData := protection.Encrypt(packetData.Bytes())
+	encryptedData := packetData.Bytes()
+	packetLen := 8 + len(encryptedData)
+
+	if bp.shouldCompress {
+		var err error
+		encryptedData, err = Compress(encryptedData)
+		if err != nil {
+			return nil, err
+		}
+
+		packetLen = 8 + len(encryptedData)
+		packetLen |= 0x40000000 // setting the compression bit
+	}
+
+	encryptedData = protection.Encrypt(encryptedData)
 
 	packetData = &bytes.Buffer{}
 	intCodec := primitive.IntCodec{}
 
-	_, err := intCodec.Encode(int32(dataLen), packetData)
+	_, err := intCodec.Encode(int32(packetLen), packetData)
 	if err != nil {
 		return nil, fmt.Errorf("BasePacket.Wrap: failed to encode data length: %w", err)
 	}
@@ -158,4 +190,16 @@ func (bp *BasePacket) populate() map[string]any {
 
 func (bp *BasePacket) ID() int32 {
 	return bp.id
+}
+
+func (bp *BasePacket) Data() []byte {
+	return bp.rawData
+}
+
+func (bp *BasePacket) Len() int {
+	return len(bp.rawData)
+}
+
+func (bp *BasePacket) SetCompress(shouldCompress bool) {
+	bp.shouldCompress = shouldCompress
 }

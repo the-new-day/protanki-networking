@@ -10,7 +10,7 @@ type UserStatusCodec struct {
 }
 
 func NewUserStatusCodec() *UserStatusCodec {
-	customCodec := NewCustomCodec(false)
+	customCodec := NewCustomCodec(true)
 
 	AddField(customCodec, "modLevel", &primitive.IntCodec{})
 	AddField(customCodec, "ip", complex.NewStringCodec())

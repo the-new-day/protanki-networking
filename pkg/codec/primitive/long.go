@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 
-	"github.com/the-new-day/probogo/internal/utils"
+	"github.com/the-new-day/probogo/pkg/utils"
 )
 
 type LongCodec struct{}

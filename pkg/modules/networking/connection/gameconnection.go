@@ -114,7 +114,6 @@ func (c *GameConnection) Write(data []byte) (int, error) {
 		return 0, err
 	}
 
-	// set write timeout
 	if c.writeTimeout > 0 {
 		if err := conn.SetWriteDeadline(time.Now().Add(c.writeTimeout)); err != nil {
 			return 0, fmt.Errorf("failed to set write deadline: %w", err)

@@ -17,13 +17,28 @@ type XorProtection struct {
 //
 // flipDirection - whether to flip the encryption/decryption roles
 func NewXorProtection(flipDirection bool) *XorProtection {
-	return &XorProtection{
+	p := &XorProtection{
 		flipDirection: flipDirection,
 	}
+	p.reset()
+	return p
+}
+
+func (p *XorProtection) reset() {
+	p.active = false
+	p.base = 0
+	for i := range vectorLength {
+		p.decryptionVector[i] = 0
+		p.encryptionVector[i] = 0
+	}
+	p.decryptionIndex = 0
+	p.encryptionIndex = 0
 }
 
 // Activates protection using a list of keys.
 func (p *XorProtection) Activate(keys []byte) {
+	p.reset()
+
 	for _, key := range keys {
 		p.base ^= key
 	}
@@ -46,7 +61,7 @@ func (p *XorProtection) Encrypt(rawData []byte) []byte {
 	result := make([]byte, len(rawData))
 	copy(result, rawData)
 
-	if !p.active || len(rawData) == 0 {
+	if !p.active {
 		return result
 	}
 
@@ -63,7 +78,7 @@ func (p *XorProtection) Decrypt(encryptedData []byte) []byte {
 	result := make([]byte, len(encryptedData))
 	copy(result, encryptedData)
 
-	if !p.active || len(encryptedData) == 0 {
+	if !p.active {
 		return result
 	}
 

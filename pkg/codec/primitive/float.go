@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"math"
 
-	"github.com/the-new-day/probogo/internal/utils"
+	"github.com/the-new-day/probogo/pkg/utils"
 )
 
 type FloatCodec struct{}

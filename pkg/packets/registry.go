@@ -1,6 +1,9 @@
 package packets
 
-import "fmt"
+import (
+	"fmt"
+	"maps"
+)
 
 // Global packet registry.
 var registry = NewPacketRegistry()
@@ -77,4 +80,9 @@ func (pr *PacketRegistry) GetName(id int32) string {
 		return ""
 	}
 	return stored.name
+}
+
+// GlobalPacketRegistry returns a copy of global packet registry.
+func GlobalPacketRegistry() *PacketRegistry {
+	return &PacketRegistry{maps.Clone(registry.packets)}
 }
