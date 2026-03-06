@@ -2,9 +2,9 @@ package packets
 
 import (
 	"bytes"
-	"encoding/binary"
 
 	"github.com/the-new-day/probogo/pkg/codec"
+	"github.com/the-new-day/probogo/pkg/codec/primitive"
 	"github.com/the-new-day/probogo/pkg/modules/protection"
 )
 
@@ -32,19 +32,27 @@ func (p *UnknownPacket) Unwrap(_ *bytes.Buffer) (map[string]any, error) {
 //
 // [4 bytes length (8 + len(data))] [4 bytes ID] [len(data) bytes data].
 func (p *UnknownPacket) Wrap(protection protection.Protection) (*bytes.Buffer, error) {
-	payload := &bytes.Buffer{}
-	payload.Write(p.data)
-	encrypted := protection.Encrypt(payload.Bytes())
+	data := p.data
+	packetLen := 8 + len(data)
+
+	if p.BasePacket.shouldCompress {
+		var err error
+		data, err = Compress(data)
+		if err != nil {
+			return nil, err
+		}
+
+		packetLen = 8 + len(data)
+		packetLen |= 0x40000000 // setting the compression bit
+	}
+
+	encrypted := protection.Encrypt(data)
 
 	final := &bytes.Buffer{}
+	intCodec := &primitive.IntCodec{}
 
-	lenBuf := make([]byte, 4)
-	binary.BigEndian.PutUint32(lenBuf, uint32(8+len(encrypted)))
-	final.Write(lenBuf)
-
-	idBuf := make([]byte, 4)
-	binary.BigEndian.PutUint32(idBuf, uint32(p.id))
-	final.Write(idBuf)
+	intCodec.Encode(int32(packetLen), final)
+	intCodec.Encode(p.id, final)
 
 	final.Write(encrypted)
 	return final, nil

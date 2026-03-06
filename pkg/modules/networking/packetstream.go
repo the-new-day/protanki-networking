@@ -3,11 +3,9 @@ package networking
 
 import (
 	"bytes"
-	"compress/flate"
 	"context"
 	"encoding/binary"
 	"fmt"
-	"io"
 	"sync"
 
 	"github.com/the-new-day/probogo/pkg/modules/networking/connection"
@@ -57,12 +55,20 @@ type PacketResult struct {
 	// If non-nil, the Packet field should be ignored.
 	Err error
 
+	// ID is the packet ID read from the connection.
 	ID int32
 
+	// Length is the packet length read from the connection (without compression bit).
 	Length int32
 
-	// RawHex is the raw bytes representing the packet payload (decrypted).
+	// Data is the raw bytes representing the packet data (without ID and length) (decrypted).
+	Data []byte
+
+	// RawHex is the raw bytes received from the connection (not decrypted, not decompressed).
+	// Includes length and ID.
 	RawHex []byte
+
+	WasCompressed bool
 }
 
 // Send encodes and sends a packet through the underlying connection.
@@ -85,20 +91,21 @@ func (ps *PacketStream) Send(packet packets.Packet) error {
 }
 
 // SendRaw sends raw data without encryption.
-// Subscribers are not notified.
 func (ps *PacketStream) SendRaw(data []byte) error {
 	ps.mu.Lock()
 	defer ps.mu.Unlock()
+
 	_, err := ps.conn.Write(data)
 	return err
 }
 
-// SendRaw encrypts and sends raw data.
-// Subscribers are not notified.
+// SendRawEncrypted encrypts and sends raw data.
 func (ps *PacketStream) SendRawEncrypted(data []byte) error {
 	ps.mu.Lock()
 	defer ps.mu.Unlock()
-	_, err := ps.conn.Write(ps.protection.Encrypt(data))
+
+	data = ps.protection.Encrypt(data)
+	_, err := ps.conn.Write(data)
 	return err
 }
 
@@ -137,9 +144,11 @@ func (ps *PacketStream) Inbound(ctx context.Context) <-chan PacketResult {
 
 			result := PacketResult{}
 
-			packetLen, packetID, isCompressed, err := ps.readPacketHeader()
+			rawHex, packetLen, packetID, isCompressed, err := ps.readPacketHeader()
 			result.Length = packetLen
 			result.ID = packetID
+			result.RawHex = rawHex
+			result.WasCompressed = isCompressed
 
 			if err != nil {
 				result.Err = err
@@ -157,13 +166,14 @@ func (ps *PacketStream) Inbound(ctx context.Context) <-chan PacketResult {
 					ch <- result
 					return
 				}
+				result.RawHex = append(result.RawHex, encryptedData...)
 			}
 
 			ps.mu.Lock()
 			decryptedData := ps.protection.Decrypt(encryptedData)
 			ps.mu.Unlock()
 
-			result.RawHex = decryptedData
+			result.Data = decryptedData
 
 			packet, err := ps.processPacket(packetID, decryptedData, isCompressed)
 
@@ -171,6 +181,10 @@ func (ps *PacketStream) Inbound(ctx context.Context) <-chan PacketResult {
 				result.Err = err
 				ch <- result
 				continue
+			}
+
+			if isCompressed {
+				packet.SetCompress(true)
 			}
 
 			if packetID == packets.ActivateProtectionID {
@@ -192,19 +206,22 @@ func (ps *PacketStream) Inbound(ctx context.Context) <-chan PacketResult {
 //   - bytes 4-7: packet ID
 //
 // Returns:
+//   - rawHex: raw bytes for the header
 //   - packetLen: total packet length including header
 //   - packetID: unique packet identifier
 //   - isCompressed: whether the payload is compressed with zlib
 //   - error: any read or parsing error
-func (ps *PacketStream) readPacketHeader() (int32, int32, bool, error) {
+func (ps *PacketStream) readPacketHeader() ([]byte, int32, int32, bool, error) {
+	rawHex := []byte{}
+
 	if ps.conn == nil {
-		return 0, 0, false, connection.ErrNotConnected
+		return rawHex, 0, 0, false, connection.ErrNotConnected
 	}
 
 	// read first 4 bytes: length and compression flag
 	lengthBytes, err := ps.conn.Read(4)
 	if err != nil {
-		return 0, 0, false, err
+		return rawHex, 0, 0, false, err
 	}
 
 	length := binary.BigEndian.Uint32(lengthBytes)
@@ -214,23 +231,22 @@ func (ps *PacketStream) readPacketHeader() (int32, int32, bool, error) {
 	// read next 4 bytes: packet ID
 	idBytes, err := ps.conn.Read(4)
 	if err != nil {
-		return 0, 0, false, err
+		return rawHex, 0, 0, false, err
 	}
 
 	packetID := int32(binary.BigEndian.Uint32(idBytes))
 
-	return packetLen, packetID, isCompressed, nil
+	rawHex = append(rawHex, lengthBytes...)
+	rawHex = append(rawHex, idBytes...)
+	return rawHex, packetLen, packetID, isCompressed, nil
 }
 
 // processPacket decompresses (if needed) and creates a packet object.
 // Returns the parsed packet or an error if any processing step fails.
 func (ps *PacketStream) processPacket(packetID int32, decryptedData []byte, isCompressed bool) (packets.Packet, error) {
 	if isCompressed {
-		r := flate.NewReader(bytes.NewReader(decryptedData))
-		defer r.Close()
-
 		var err error
-		decryptedData, err = io.ReadAll(r)
+		decryptedData, err = packets.Decompress(decryptedData)
 		if err != nil {
 			return nil, fmt.Errorf("decompression failed: %w", err)
 		}

@@ -37,9 +37,12 @@ type Packet interface {
 	// It does not perform type assertions, encryption/decryption etc.
 	Set(name string, value any)
 
-	// RawData returns packet data representation in bytes (decrypted) (without length and ID).
+	// Data returns packet data representation in bytes (decrypted) (without length and ID).
 	// Fills during Unwrap, before that can be empty.
-	RawData() []byte
+	Data() []byte
+
+	// SetCompress sets the
+	SetCompress(shouldCompress bool)
 }
 
 // Base packet for concrete packets.
@@ -67,12 +70,12 @@ type BasePacket struct {
 	codecs     []codec.Codec
 	attributes []string
 
-	encryptedRawData []byte
-	rawData          []byte
+	rawData []byte
 
 	objects []any
+	object  map[string]any
 
-	object map[string]any
+	shouldCompress bool
 }
 
 func NewBasePacket(id int32, codecs []codec.Codec, attributes []string) *BasePacket {
@@ -118,22 +121,34 @@ func (bp *BasePacket) Wrap(protection protection.Protection) (*bytes.Buffer, err
 	}
 
 	packetData := &bytes.Buffer{}
-	dataLen := HeaderLength
 
 	for i, c := range bp.codecs {
-		n, err := c.Encode(bp.objects[i], packetData)
+		_, err := c.Encode(bp.objects[i], packetData)
 		if err != nil {
 			return nil, fmt.Errorf("BasePacket.Wrap: failed to encode packed data: %w", err)
 		}
-		dataLen += n
 	}
 
-	encryptedData := protection.Encrypt(packetData.Bytes())
+	encryptedData := packetData.Bytes()
+	packetLen := 8 + len(encryptedData)
+
+	if bp.shouldCompress {
+		var err error
+		encryptedData, err = Compress(encryptedData)
+		if err != nil {
+			return nil, err
+		}
+
+		packetLen = 8 + len(encryptedData)
+		packetLen |= 0x40000000 // setting the compression bit
+	}
+
+	encryptedData = protection.Encrypt(encryptedData)
 
 	packetData = &bytes.Buffer{}
 	intCodec := primitive.IntCodec{}
 
-	_, err := intCodec.Encode(int32(dataLen), packetData)
+	_, err := intCodec.Encode(int32(packetLen), packetData)
 	if err != nil {
 		return nil, fmt.Errorf("BasePacket.Wrap: failed to encode data length: %w", err)
 	}
@@ -176,10 +191,14 @@ func (bp *BasePacket) ID() int32 {
 	return bp.id
 }
 
-func (bp *BasePacket) RawData() []byte {
+func (bp *BasePacket) Data() []byte {
 	return bp.rawData
 }
 
 func (bp *BasePacket) Len() int {
 	return len(bp.rawData)
+}
+
+func (bp *BasePacket) SetCompress(shouldCompress bool) {
+	bp.shouldCompress = shouldCompress
 }

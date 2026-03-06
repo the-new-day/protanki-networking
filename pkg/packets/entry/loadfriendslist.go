@@ -14,6 +14,10 @@ type LoadFriendsListPacket struct {
 func NewLoadFriendsListPacket() *LoadFriendsListPacket {
 	codecs := []codec.Codec{
 		codec.Wrap(complex.NewVectorStringCodec()),
+		codec.Wrap(complex.NewVectorStringCodec()),
+		codec.Wrap(complex.NewVectorStringCodec()),
+		codec.Wrap(complex.NewVectorStringCodec()),
+		codec.Wrap(complex.NewVectorStringCodec()),
 	}
 
 	attributes := []string{

@@ -50,49 +50,55 @@ func NewProxy(
 	// TODO: make those execute the last
 
 	p.OnClientToServer(func(packet packets.Packet) packets.Packet {
-		template := "[CLIENT]: [ID: %d | Name: %s | Len: %d | RawData: % x]"
-		log.Printf(template, packet.ID(), packets.GetName(packet.ID()), 8+len(packet.RawData()), packet.RawData())
+		template := "[CLIENT]: [ID: %d | Name: %s | Len: %d | RawData: %s]"
+		log.Printf(template, packet.ID(), packets.GetName(packet.ID()), 8+packet.Len(), packets.ShortView(packet.Data(), 10))
 
 		p.serverHandler.Send(packet)
 		return packet
 	})
 
 	p.OnServerToClient(func(packet packets.Packet) packets.Packet {
-		template := "[SERVER]: [ID: %d | Name: %s | Len: %d | RawData: % x]"
-		log.Printf(template, packet.ID(), packets.GetName(packet.ID()), 8+len(packet.RawData()), packet.RawData())
+		template := "[SERVER]: [ID: %d | Name: %s | Len: %d | RawData: %s]"
+		log.Printf(template, packet.ID(), packets.GetName(packet.ID()), 8+packet.Len(), packets.ShortView(packet.Data(), 10))
 
 		p.clientHandler.Send(packet)
 		return packet
 	})
 
 	p.OnClientError(func(pr networking.PacketResult) {
-		log.Printf("[ERROR | CLIENT]: ID: %d | Len: %d | Packet: % x | %v", pr.ID, pr.Length, pr.RawHex, pr.Err)
+		template := "[ERROR | CLIENT]: ID: %d | Len: %d | RawHex: %s | Data: %s | %v"
+		log.Printf(template, pr.ID, pr.Length, packets.ShortView(pr.RawHex, 10), packets.ShortView(pr.Data, 10), pr.Err)
+
 		buf := &bytes.Buffer{}
 		intCodec := &primitive.IntCodec{}
 
-		intCodec.Encode(pr.Length, buf)
-		p.serverHandler.SendRaw(buf.Bytes())
-		buf.Reset()
+		if pr.WasCompressed {
+			pr.Length |= 0x40000000
+		}
 
+		intCodec.Encode(pr.Length, buf)
 		intCodec.Encode(pr.ID, buf)
 		p.serverHandler.SendRaw(buf.Bytes())
 
-		p.serverHandler.SendRawEncrypted(pr.RawHex)
+		p.serverHandler.SendRawEncrypted(pr.Data)
 	})
 
 	p.OnServerError(func(pr networking.PacketResult) {
-		log.Printf("[ERROR | SERVER]: ID: %d | Len: %d | Packet: % x | %v", pr.ID, pr.Length, pr.RawHex, pr.Err)
+		template := "[ERROR | SERVER]: ID: %d | Len: %d | RawHex: %s | Data: %s | %v"
+		log.Printf(template, pr.ID, pr.Length, packets.ShortView(pr.RawHex, 10), packets.ShortView(pr.Data, 10), pr.Err)
+
 		buf := &bytes.Buffer{}
 		intCodec := &primitive.IntCodec{}
 
-		intCodec.Encode(pr.Length, buf)
-		p.clientHandler.SendRaw(buf.Bytes())
-		buf.Reset()
+		if pr.WasCompressed {
+			pr.Length |= 0x40000000
+		}
 
+		intCodec.Encode(pr.Length, buf)
 		intCodec.Encode(pr.ID, buf)
 		p.clientHandler.SendRaw(buf.Bytes())
 
-		p.clientHandler.SendRawEncrypted(pr.RawHex)
+		p.clientHandler.SendRawEncrypted(pr.Data)
 	})
 	return p
 }
@@ -149,7 +155,7 @@ func (p *Proxy) Run(ctx context.Context) {
 func (p *Proxy) handleActivateProtection(packet packets.Packet) packets.Packet {
 	if activateProt, ok := packet.(*network.ActivateProtectionPacket); ok {
 		template := "[ActivateProtection]: [ID: %d | Len: %d | RawData: % x]"
-		log.Printf(template, packet.ID(), 8+len(packet.RawData()), packet.RawData())
+		log.Printf(template, packet.ID(), 8+len(packet.Data()), packet.Data())
 
 		for _, listener := range p.onActivateProtection {
 			listener(packets.Clone(&activateProt.BasePacket))
