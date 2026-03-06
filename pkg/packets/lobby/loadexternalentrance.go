@@ -2,24 +2,23 @@ package lobby
 
 import (
 	"github.com/the-new-day/probogo/pkg/codec"
-	"github.com/the-new-day/probogo/pkg/codec/complex"
+	"github.com/the-new-day/probogo/pkg/codec/custom"
+	"github.com/the-new-day/probogo/pkg/codec/multiple"
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
-// Load battle info
+// Loads external entrance data, containing a vector of social network entrance params.
 type LoadExternalEntrancePacket struct {
 	packets.BasePacket
 }
 
 func NewLoadExternalEntrancePacket() *LoadExternalEntrancePacket {
 	codecs := []codec.Codec{
-		codec.Wrap(complex.NewStringCodec()),
-		codec.Wrap(complex.NewStringCodec()),
+		codec.Wrap(multiple.NewVectorCodec(custom.NewExternalEntranceParamsCodec(), false)),
 	}
 
 	attributes := []string{
-		"authUrl",
-		"SnId",
+		"params",
 	}
 
 	var id int32 = packets.LoadExternalEntranceID

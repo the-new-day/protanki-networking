@@ -41,7 +41,8 @@ type Packet interface {
 	// Fills during Unwrap, before that can be empty.
 	Data() []byte
 
-	// SetCompress sets the
+	// SetCompress sets whether the data should be compressed in Wrap().
+	// If true, the data gets compressed and the compression bit gets set.
 	SetCompress(shouldCompress bool)
 }
 

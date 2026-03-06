@@ -85,7 +85,7 @@ func TestDoubleIntCodec(t *testing.T) {
 
 			n, err := codec.Encode(data, buf)
 			assert.NoError(t, err)
-			assert.Equal(t, 1+4+4, n) // boolshortern(1) + first(4) + second(4)
+			assert.Equal(t, 4+4, n) // first(4) + second(4)
 
 			result, err := codec.Decode(buf)
 			assert.NoError(t, err)
@@ -99,20 +99,18 @@ func TestDoubleIntCodec_Empty(t *testing.T) {
 	codec := NewDoubleIntCodec("first", "second")
 	buf := &bytes.Buffer{}
 
-	// Encode empty (should still write boolshortern flag = false because not empty)
+	// Encode empty
 	data := map[string]int32{
 		"first":  int32(0),
 		"second": int32(0),
 	}
 	n, err := codec.Encode(data, buf)
 	assert.NoError(t, err)
-	assert.Equal(t, 1+4+4, n) // boolshortern(1) + first(4) + second(4)
+	assert.Equal(t, 4+4, n) // first(4) + second(4)
 
-	// Empty map should have boolshortern = true
 	buf.Reset()
 	n, err = codec.Encode(map[string]int32{}, buf)
-	assert.NoError(t, err)
-	assert.Equal(t, 1, n) // only boolshortern flag
+	assert.Error(t, err)
 }
 
 func TestVector3DCodec(t *testing.T) {

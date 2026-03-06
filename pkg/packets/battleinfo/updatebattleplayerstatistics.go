@@ -3,7 +3,6 @@ package battleinfo
 import (
 	"github.com/the-new-day/probogo/pkg/codec"
 	"github.com/the-new-day/probogo/pkg/codec/custom"
-	"github.com/the-new-day/probogo/pkg/codec/multiple"
 	"github.com/the-new-day/probogo/pkg/packets"
 )
 
@@ -14,7 +13,7 @@ type UpdateBattlePlayerStatisticsPacket struct {
 
 func NewUpdateBattlePlayerStatisticsPacket() *UpdateBattlePlayerStatisticsPacket {
 	codecs := []codec.Codec{
-		codec.Wrap(multiple.NewVectorCodec(custom.NewBattleUserStatsCodec(), false)),
+		codec.Wrap(custom.NewBattleUserStatsCodec()),
 	}
 
 	attributes := []string{
