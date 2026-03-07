@@ -1,7 +1,7 @@
 package complex
 
 import (
-	"github.com/the-new-day/probogo/pkg/codec/multiple"
+	"github.com/the-new-day/protanki-networking/pkg/codec/multiple"
 )
 
 type VectorStringCodec struct {

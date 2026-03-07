@@ -1,9 +1,9 @@
 package turrets
 
 import (
-	"github.com/the-new-day/probogo/pkg/codec"
-	"github.com/the-new-day/probogo/pkg/codec/complex"
-	"github.com/the-new-day/probogo/pkg/packets"
+	"github.com/the-new-day/protanki-networking/pkg/codec"
+	"github.com/the-new-day/protanki-networking/pkg/codec/complex"
+	"github.com/the-new-day/protanki-networking/pkg/packets"
 )
 
 // Syncs turret data to the client

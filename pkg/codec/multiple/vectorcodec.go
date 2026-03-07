@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/the-new-day/probogo/pkg/codec"
-	"github.com/the-new-day/probogo/pkg/codec/primitive"
+	"github.com/the-new-day/protanki-networking/pkg/codec"
+	"github.com/the-new-day/protanki-networking/pkg/codec/primitive"
 )
 
 // VectorCodec encodes/decodes a slice of elements of type T.

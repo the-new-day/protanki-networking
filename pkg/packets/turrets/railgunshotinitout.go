@@ -1,9 +1,9 @@
 package turrets
 
 import (
-	"github.com/the-new-day/probogo/pkg/codec"
-	"github.com/the-new-day/probogo/pkg/codec/primitive"
-	"github.com/the-new-day/probogo/pkg/packets"
+	"github.com/the-new-day/protanki-networking/pkg/codec"
+	"github.com/the-new-day/protanki-networking/pkg/codec/primitive"
+	"github.com/the-new-day/protanki-networking/pkg/packets"
 )
 
 // Sends server details about a railgun shot that has just started to release

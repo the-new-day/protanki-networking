@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/the-new-day/probogo/pkg/codec"
+	"github.com/the-new-day/protanki-networking/pkg/codec"
 )
 
 func TestBoolCodec(t *testing.T) {

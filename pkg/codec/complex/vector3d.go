@@ -1,8 +1,8 @@
 package complex
 
 import (
-	"github.com/the-new-day/probogo/pkg/codec/multiple"
-	"github.com/the-new-day/probogo/pkg/codec/primitive"
+	"github.com/the-new-day/protanki-networking/pkg/codec/multiple"
+	"github.com/the-new-day/protanki-networking/pkg/codec/primitive"
 )
 
 type Vector3DCodec struct {

@@ -1,4 +1,4 @@
-module github.com/the-new-day/probogo
+module github.com/the-new-day/protanki-networking
 
 go 1.25.6
 

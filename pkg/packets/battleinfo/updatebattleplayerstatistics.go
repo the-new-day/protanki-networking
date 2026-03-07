@@ -1,9 +1,9 @@
 package battleinfo
 
 import (
-	"github.com/the-new-day/probogo/pkg/codec"
-	"github.com/the-new-day/probogo/pkg/codec/custom"
-	"github.com/the-new-day/probogo/pkg/packets"
+	"github.com/the-new-day/protanki-networking/pkg/codec"
+	"github.com/the-new-day/protanki-networking/pkg/codec/custom"
+	"github.com/the-new-day/protanki-networking/pkg/packets"
 )
 
 // Updates the in-battle statistics of a player.

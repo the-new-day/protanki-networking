@@ -1,10 +1,10 @@
 package battlemechanics
 
 import (
-	"github.com/the-new-day/probogo/pkg/codec"
-	"github.com/the-new-day/probogo/pkg/codec/custom"
-	"github.com/the-new-day/probogo/pkg/codec/primitive"
-	"github.com/the-new-day/probogo/pkg/packets"
+	"github.com/the-new-day/protanki-networking/pkg/codec"
+	"github.com/the-new-day/protanki-networking/pkg/codec/custom"
+	"github.com/the-new-day/protanki-networking/pkg/codec/primitive"
+	"github.com/the-new-day/protanki-networking/pkg/packets"
 )
 
 // Sends current turret rotation data to the server

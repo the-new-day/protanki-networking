@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/the-new-day/probogo/pkg/modules/networking/dial"
+	"github.com/the-new-day/protanki-networking/pkg/modules/networking/dial"
 )
 
 const (
@@ -26,9 +26,9 @@ var (
 	ErrShuttingDown = errors.New("networking: connection is shutting down")
 )
 
-// GameConnection manages connection with the game server
+// ServerConnection manages connection with the game server
 // and allows sending and receiving data.
-type GameConnection struct {
+type ServerConnection struct {
 	endpoint string
 	dialer   dial.Dialer
 
@@ -44,11 +44,11 @@ type GameConnection struct {
 	writeTimeout time.Duration
 }
 
-// NewGameConnection creates new GameConnection object with unconnected state.
-func NewGameConnection(endpoint string, dialer dial.Dialer) *GameConnection {
+// NewServerConnection creates new GameConnection object with unconnected state.
+func NewServerConnection(endpoint string, dialer dial.Dialer) *ServerConnection {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	return &GameConnection{
+	return &ServerConnection{
 		endpoint: endpoint,
 		dialer:   dialer,
 
@@ -62,14 +62,14 @@ func NewGameConnection(endpoint string, dialer dial.Dialer) *GameConnection {
 	}
 }
 
-func (c *GameConnection) IsConnected() bool {
+func (c *ServerConnection) IsConnected() bool {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return c.conn != nil
 }
 
 // Read reads exactly n bytes from the connection with timeout.
-func (c *GameConnection) Read(n int) ([]byte, error) {
+func (c *ServerConnection) Read(n int) ([]byte, error) {
 	// Check if connection is shutting down
 	select {
 	case <-c.ctx.Done():
@@ -102,7 +102,7 @@ func (c *GameConnection) Read(n int) ([]byte, error) {
 }
 
 // Write writes data to the connection with timeout.
-func (c *GameConnection) Write(data []byte) (int, error) {
+func (c *ServerConnection) Write(data []byte) (int, error) {
 	select {
 	case <-c.ctx.Done():
 		return 0, ErrShuttingDown
@@ -131,7 +131,7 @@ func (c *GameConnection) Write(data []byte) (int, error) {
 }
 
 // SetDeadline sets read and write deadlines.
-func (c *GameConnection) SetDeadline(t time.Time) error {
+func (c *ServerConnection) SetDeadline(t time.Time) error {
 	conn, err := c.getConn()
 	if err != nil {
 		return err
@@ -140,7 +140,7 @@ func (c *GameConnection) SetDeadline(t time.Time) error {
 }
 
 // SetReadDeadline sets read deadline.
-func (c *GameConnection) SetReadDeadline(t time.Time) error {
+func (c *ServerConnection) SetReadDeadline(t time.Time) error {
 	conn, err := c.getConn()
 	if err != nil {
 		return err
@@ -149,7 +149,7 @@ func (c *GameConnection) SetReadDeadline(t time.Time) error {
 }
 
 // SetWriteDeadline sets write deadline.
-func (c *GameConnection) SetWriteDeadline(t time.Time) error {
+func (c *ServerConnection) SetWriteDeadline(t time.Time) error {
 	conn, err := c.getConn()
 	if err != nil {
 		return err
@@ -158,7 +158,7 @@ func (c *GameConnection) SetWriteDeadline(t time.Time) error {
 }
 
 // Close gracefully shuts down the connection.
-func (c *GameConnection) Close() error {
+func (c *ServerConnection) Close() error {
 	c.cancel() // signal shutdown to all operations
 	return c.closeConn()
 }
@@ -166,7 +166,7 @@ func (c *GameConnection) Close() error {
 // Connect establishes connection to endpoint with retry and backoff.
 // Returns nil on success, otherwise an error.
 // ctx allows to stop trying to connect.
-func (c *GameConnection) Connect(ctx context.Context) error {
+func (c *ServerConnection) Connect(ctx context.Context) error {
 	connectCtx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
@@ -232,7 +232,7 @@ func (c *GameConnection) Connect(ctx context.Context) error {
 }
 
 // getConn safely returns the current connection or error.
-func (c *GameConnection) getConn() (net.Conn, error) {
+func (c *ServerConnection) getConn() (net.Conn, error) {
 	c.mu.RLock()
 	conn := c.conn
 	c.mu.RUnlock()
@@ -252,7 +252,7 @@ func (c *GameConnection) getConn() (net.Conn, error) {
 }
 
 // closeConn safely closes and removes the current connection.
-func (c *GameConnection) closeConn() error {
+func (c *ServerConnection) closeConn() error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -266,21 +266,21 @@ func (c *GameConnection) closeConn() error {
 }
 
 // SetRetryDelay sets socket retry delay.
-func (c *GameConnection) SetRetryDelay(delay time.Duration) {
+func (c *ServerConnection) SetRetryDelay(delay time.Duration) {
 	if delay > 0 {
 		c.retryDelay = delay
 	}
 }
 
 // SetMaxRetries sets socket max retries.
-func (c *GameConnection) SetMaxRetries(maxRetries int) {
+func (c *ServerConnection) SetMaxRetries(maxRetries int) {
 	if maxRetries > 0 {
 		c.maxRetries = maxRetries
 	}
 }
 
 // SetTimeouts sets read and write timeouts.
-func (c *GameConnection) SetTimeouts(read, write time.Duration) {
+func (c *ServerConnection) SetTimeouts(read, write time.Duration) {
 	c.readTimeout = read
 	c.writeTimeout = write
 }

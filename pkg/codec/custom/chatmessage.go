@@ -1,8 +1,8 @@
 package custom
 
 import (
-	"github.com/the-new-day/probogo/pkg/codec/complex"
-	"github.com/the-new-day/probogo/pkg/codec/primitive"
+	"github.com/the-new-day/protanki-networking/pkg/codec/complex"
+	"github.com/the-new-day/protanki-networking/pkg/codec/primitive"
 )
 
 type ChatMessageCodec struct {
@@ -15,7 +15,7 @@ func NewChatMessageCodec() *ChatMessageCodec {
 	AddField(customCodec, "authorStatus", NewUserStatusCodec())
 	AddField(customCodec, "systemMessage", &primitive.BoolCodec{})
 	AddField(customCodec, "targetStatus", NewUserStatusCodec())
-	AddField(customCodec, "message", complex.NewStringCodec())
+	AddField(customCodec, "text", complex.NewStringCodec())
 	AddField(customCodec, "warning", &primitive.BoolCodec{})
 
 	return &ChatMessageCodec{CustomCodec: *customCodec}

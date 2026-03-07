@@ -3,10 +3,10 @@ package proxy
 import (
 	"context"
 
-	"github.com/the-new-day/probogo/pkg/modules/networking"
-	"github.com/the-new-day/probogo/pkg/modules/networking/connection"
-	"github.com/the-new-day/probogo/pkg/modules/protection"
-	"github.com/the-new-day/probogo/pkg/packets"
+	"github.com/the-new-day/protanki-networking/pkg/modules/networking"
+	"github.com/the-new-day/protanki-networking/pkg/modules/networking/connection"
+	"github.com/the-new-day/protanki-networking/pkg/modules/protection"
+	"github.com/the-new-day/protanki-networking/pkg/packets"
 )
 
 // PacketHandler is a wrapper for PacketStream that allows subscribing
@@ -61,14 +61,14 @@ func (ph *PacketHandler) OnOutBound(handler func(packets.Packet) packets.Packet)
 }
 
 // OnOutBoundFinal adds a final handler (subscriber) for outbound packets (coming to the connection).
-// Final handlers are called after regular outbound handlers, and they can't modify of cancel packets.
+// Final handlers are called after regular outbound handlers, and they can't modify or cancel packets.
 // All handlers are notified in the order of adding.
 func (ph *PacketHandler) OnOutBoundFinal(handler func(packets.Packet)) {
 	ph.outboundFinalHandlers = append(ph.outboundFinalHandlers, handler)
 }
 
 // OnInBoundFinal adds a final handler (subscriber) for inbound packets (coming from the connection).
-// Final handlers are called after regular inbound handlers, and they can't modify of cancel packets.
+// Final handlers are called after regular inbound handlers, and they can't modify or cancel packets.
 // All handlers are notified in the order of adding.
 func (ph *PacketHandler) OnInBoundFinal(handler func(packets.Packet)) {
 	ph.inboundFinalHandlers = append(ph.inboundFinalHandlers, handler)

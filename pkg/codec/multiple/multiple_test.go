@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/the-new-day/probogo/pkg/codec/primitive"
+	"github.com/the-new-day/protanki-networking/pkg/codec/primitive"
 )
 
 // mockTypedCodec implements codec.TypedCodec for testing

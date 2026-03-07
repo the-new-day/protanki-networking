@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/the-new-day/probogo/pkg/codec/primitive"
-	"github.com/the-new-day/probogo/pkg/utils"
+	"github.com/the-new-day/protanki-networking/pkg/codec/primitive"
+	"github.com/the-new-day/protanki-networking/pkg/utils"
 )
 
 type StringCodec struct {

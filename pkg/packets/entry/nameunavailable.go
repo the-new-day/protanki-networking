@@ -1,9 +1,9 @@
 package entry
 
 import (
-	"github.com/the-new-day/probogo/pkg/codec"
-	"github.com/the-new-day/probogo/pkg/codec/complex"
-	"github.com/the-new-day/probogo/pkg/packets"
+	"github.com/the-new-day/protanki-networking/pkg/codec"
+	"github.com/the-new-day/protanki-networking/pkg/codec/complex"
+	"github.com/the-new-day/protanki-networking/pkg/packets"
 )
 
 // Said name is unavailable for registration with a list of alternative suggested usernames

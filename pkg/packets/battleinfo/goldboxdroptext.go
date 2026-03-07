@@ -1,10 +1,10 @@
 package battleinfo
 
 import (
-	"github.com/the-new-day/probogo/pkg/codec"
-	"github.com/the-new-day/probogo/pkg/codec/complex"
-	"github.com/the-new-day/probogo/pkg/codec/primitive"
-	"github.com/the-new-day/probogo/pkg/packets"
+	"github.com/the-new-day/protanki-networking/pkg/codec"
+	"github.com/the-new-day/protanki-networking/pkg/codec/complex"
+	"github.com/the-new-day/protanki-networking/pkg/codec/primitive"
+	"github.com/the-new-day/protanki-networking/pkg/packets"
 )
 
 // Announces that a gold box will drop soon

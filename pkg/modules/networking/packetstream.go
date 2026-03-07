@@ -7,9 +7,22 @@ import (
 	"encoding/binary"
 	"sync"
 
-	"github.com/the-new-day/probogo/pkg/modules/networking/connection"
-	"github.com/the-new-day/probogo/pkg/modules/protection"
-	"github.com/the-new-day/probogo/pkg/packets"
+	"github.com/the-new-day/protanki-networking/pkg/modules/networking/connection"
+	"github.com/the-new-day/protanki-networking/pkg/modules/protection"
+	"github.com/the-new-day/protanki-networking/pkg/packets"
+
+	// Register packets in the global registry
+	_ "github.com/the-new-day/protanki-networking/pkg/packets/battleinfo"
+	_ "github.com/the-new-day/protanki-networking/pkg/packets/battlemechanics"
+	_ "github.com/the-new-day/protanki-networking/pkg/packets/chat"
+	_ "github.com/the-new-day/protanki-networking/pkg/packets/entry"
+	_ "github.com/the-new-day/protanki-networking/pkg/packets/garage"
+	_ "github.com/the-new-day/protanki-networking/pkg/packets/lobby"
+	_ "github.com/the-new-day/protanki-networking/pkg/packets/network"
+	_ "github.com/the-new-day/protanki-networking/pkg/packets/others"
+	_ "github.com/the-new-day/protanki-networking/pkg/packets/shop"
+	_ "github.com/the-new-day/protanki-networking/pkg/packets/status"
+	_ "github.com/the-new-day/protanki-networking/pkg/packets/turrets"
 )
 
 // PacketStream transforms raw network data into game packets and vice versa.

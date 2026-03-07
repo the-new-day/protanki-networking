@@ -3,9 +3,9 @@ package packets
 import (
 	"bytes"
 
-	"github.com/the-new-day/probogo/pkg/codec"
-	"github.com/the-new-day/probogo/pkg/codec/primitive"
-	"github.com/the-new-day/probogo/pkg/modules/protection"
+	"github.com/the-new-day/protanki-networking/pkg/codec"
+	"github.com/the-new-day/protanki-networking/pkg/codec/primitive"
+	"github.com/the-new-day/protanki-networking/pkg/modules/protection"
 )
 
 // UnknownPacket denotes a package that was not registered

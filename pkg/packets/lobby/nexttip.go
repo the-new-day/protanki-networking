@@ -1,8 +1,8 @@
 package lobby
 
 import (
-	"github.com/the-new-day/probogo/pkg/codec"
-	"github.com/the-new-day/probogo/pkg/packets"
+	"github.com/the-new-day/protanki-networking/pkg/codec"
+	"github.com/the-new-day/protanki-networking/pkg/packets"
 )
 
 // Client asks for the next tip on the loading screen (no attributes)

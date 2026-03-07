@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/the-new-day/probogo/pkg/modules/protection"
-	"github.com/the-new-day/probogo/pkg/packets"
+	"github.com/the-new-day/protanki-networking/pkg/modules/protection"
+	"github.com/the-new-day/protanki-networking/pkg/packets"
 )
 
 var emptyOnActivateProtection = func(keys []byte) {}

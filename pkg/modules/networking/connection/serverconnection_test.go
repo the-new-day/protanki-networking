@@ -11,7 +11,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/the-new-day/probogo/pkg/modules/networking/dial"
+	"github.com/the-new-day/protanki-networking/pkg/modules/networking/dial"
 )
 
 // --- Mocks ---
@@ -82,8 +82,8 @@ func (m *mockDialer) Dial(ctx context.Context, addr string) (net.Conn, error) {
 
 // --- Helper Functions ---
 
-func newTestGameConnection(dialer dial.Dialer) *GameConnection {
-	return NewGameConnection("1.2.3.4:1234", dialer)
+func newTestGameConnection(dialer dial.Dialer) *ServerConnection {
+	return NewServerConnection("1.2.3.4:1234", dialer)
 }
 
 // --- Tests ---

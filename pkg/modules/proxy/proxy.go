@@ -5,12 +5,12 @@ import (
 	"context"
 	"sync"
 
-	"github.com/the-new-day/probogo/pkg/codec/primitive"
-	"github.com/the-new-day/probogo/pkg/modules/networking"
-	"github.com/the-new-day/probogo/pkg/modules/networking/connection"
-	"github.com/the-new-day/probogo/pkg/modules/protection"
-	"github.com/the-new-day/probogo/pkg/packets"
-	"github.com/the-new-day/probogo/pkg/packets/network"
+	"github.com/the-new-day/protanki-networking/pkg/codec/primitive"
+	"github.com/the-new-day/protanki-networking/pkg/modules/networking"
+	"github.com/the-new-day/protanki-networking/pkg/modules/networking/connection"
+	"github.com/the-new-day/protanki-networking/pkg/modules/protection"
+	"github.com/the-new-day/protanki-networking/pkg/packets"
+	"github.com/the-new-day/protanki-networking/pkg/packets/network"
 )
 
 var emptyOnActivateProtection = func(keys []byte) {}
@@ -23,6 +23,8 @@ var emptyOnActivateProtection = func(keys []byte) {}
 // One Protection imitates Protection of the server, another imitates client Protection.
 // Packets from the server are intercepted and decrypted using "client" Protection,
 // then they are encrypted again with the "server" Protection.
+//
+// This allows reading, modifying, or imitating packets.
 type Proxy struct {
 	serverHandler *PacketHandler
 	clientHandler *PacketHandler
@@ -128,11 +130,13 @@ func (p *Proxy) Run(ctx context.Context) {
 }
 
 // SendToClient sends packet to the client.
+// Subscribers are not notified.
 func (p *Proxy) SendToClient(packet packets.Packet) error {
 	return p.clientHandler.Send(packet)
 }
 
 // SendToServer sends packet to the server.
+// Subscribers are not notified.
 func (p *Proxy) SendToServer(packet packets.Packet) error {
 	return p.serverHandler.Send(packet)
 }

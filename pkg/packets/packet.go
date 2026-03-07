@@ -3,10 +3,11 @@ package packets
 import (
 	"bytes"
 	"fmt"
+	"maps"
 
-	"github.com/the-new-day/probogo/pkg/codec"
-	"github.com/the-new-day/probogo/pkg/codec/primitive"
-	"github.com/the-new-day/probogo/pkg/modules/protection"
+	"github.com/the-new-day/protanki-networking/pkg/codec"
+	"github.com/the-new-day/protanki-networking/pkg/codec/primitive"
+	"github.com/the-new-day/protanki-networking/pkg/modules/protection"
 )
 
 // Packet header length in bytes.
@@ -33,13 +34,17 @@ type Packet interface {
 	// It also works for attributes added by Set().
 	Attr(name string) any
 
-	// Set sets value for the attribute (it's possible to add new attribute, but it won't be wrapped).
+	// Set sets value for the attribute
+	// (it's possible to add new attribute, but it won't be wrapped, and will be erased in Wrap).
 	// It does not perform type assertions, encryption/decryption etc.
 	Set(name string, value any)
 
 	// Data returns packet data representation in bytes (decrypted) (without length and ID).
 	// Fills during Unwrap, before that can be empty.
 	Data() []byte
+
+	// Object returns unwrapped values in a copy of a map (fills during Unwrap).
+	Object() map[string]any
 
 	// SetCompress sets whether the data should be compressed in Wrap().
 	// If true, the data gets compressed and the compression bit gets set.
@@ -70,6 +75,7 @@ type BasePacket struct {
 	id         int32
 	codecs     []codec.Codec
 	attributes []string
+	attrOrder  map[string]int
 
 	rawData []byte
 
@@ -91,11 +97,17 @@ func NewBasePacket(id int32, codecs []codec.Codec, attributes []string) *BasePac
 	copy(attrs, attributes)
 	copy(cdcs, codecs)
 
+	attrOrder := make(map[string]int)
+	for i, attr := range attributes {
+		attrOrder[attr] = i
+	}
+
 	return &BasePacket{
 		id:         id,
 		codecs:     cdcs,
+		attrOrder:  attrOrder,
 		attributes: attrs,
-		objects:    make([]any, 0),
+		objects:    make([]any, len(codecs)),
 		object:     make(map[string]any),
 	}
 }
@@ -104,12 +116,12 @@ func (bp *BasePacket) Unwrap(packetData *bytes.Buffer) (map[string]any, error) {
 	buf := make([]byte, packetData.Len())
 	copy(buf, packetData.Bytes())
 
-	for _, c := range bp.codecs {
+	for i, c := range bp.codecs {
 		decoded, err := c.Decode(packetData)
 		if err != nil {
 			return nil, fmt.Errorf("BasePacket.Unwrap: packet ID: %d | failed to unwrap: %w", bp.id, err)
 		}
-		bp.objects = append(bp.objects, decoded)
+		bp.objects[i] = decoded
 	}
 
 	bp.rawData = buf
@@ -177,6 +189,9 @@ func (bp *BasePacket) Attr(name string) any {
 }
 
 func (bp *BasePacket) Set(name string, value any) {
+	if pos, ok := bp.attrOrder[name]; ok {
+		bp.objects[pos] = value
+	}
 	bp.object[name] = value
 }
 
@@ -186,6 +201,10 @@ func (bp *BasePacket) populate() map[string]any {
 		bp.object[bp.attributes[i]] = obj
 	}
 	return bp.object
+}
+
+func (bp *BasePacket) depopulate() {
+
 }
 
 func (bp *BasePacket) ID() int32 {
@@ -202,4 +221,8 @@ func (bp *BasePacket) Len() int {
 
 func (bp *BasePacket) SetCompress(shouldCompress bool) {
 	bp.shouldCompress = shouldCompress
+}
+
+func (bp *BasePacket) Object() map[string]any {
+	return maps.Clone(bp.object)
 }

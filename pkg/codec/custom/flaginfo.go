@@ -1,7 +1,7 @@
 package custom
 
 import (
-	"github.com/the-new-day/probogo/pkg/codec/complex"
+	"github.com/the-new-day/protanki-networking/pkg/codec/complex"
 )
 
 type FlagInfoCodec struct {

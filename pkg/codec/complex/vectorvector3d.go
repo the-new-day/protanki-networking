@@ -1,6 +1,6 @@
 package complex
 
-import "github.com/the-new-day/probogo/pkg/codec/multiple"
+import "github.com/the-new-day/protanki-networking/pkg/codec/multiple"
 
 type VectorVector3DCodec struct {
 	multiple.VectorCodec[map[string]float32]
