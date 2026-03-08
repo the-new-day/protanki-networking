@@ -119,7 +119,6 @@ func (p *ProxyLauncher) handleClient(ctx context.Context, client *connection.Cli
 	}
 
 	gameProxy.Run(ctx)
-	log.Printf("Client %d disconnected", id)
 }
 
 func (p *ProxyLauncher) runHTTP(ctx context.Context) error {

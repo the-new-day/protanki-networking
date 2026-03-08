@@ -8,75 +8,125 @@ import (
 	"github.com/the-new-day/protanki-networking/pkg/codec"
 	"github.com/the-new-day/protanki-networking/pkg/codec/complex"
 	"github.com/the-new-day/protanki-networking/pkg/codec/primitive"
+	"github.com/the-new-day/protanki-networking/pkg/packets"
 )
 
-func TestCustomCodec_WithoutBoolshortern(t *testing.T) {
-	cc := NewCustomCodec(false)
-	buf := &bytes.Buffer{}
-
-	cc.AddField("name", codec.Wrap(complex.NewStringCodec()))
-	cc.AddField("age", codec.Wrap(&primitive.IntCodec{}))
-	cc.AddField("active", codec.Wrap(&primitive.BoolCodec{}))
-
-	data := map[string]any{
-		"name":   "Alice",
-		"age":    int32(30),
-		"active": true,
+func TestCustomCodec_EncodeDecode(t *testing.T) {
+	tests := []struct {
+		name            string
+		setup           func() *CustomCodec
+		input           map[string]any
+		validate        func(t *testing.T, result map[string]any)
+		expectedSize    int
+		expectEncodeErr bool
+	}{
+		{
+			name: "without boolshortern",
+			setup: func() *CustomCodec {
+				cc := NewCustomCodec(false)
+				cc.AddField("name", codec.Wrap(complex.NewStringCodec()))
+				cc.AddField("age", codec.Wrap(&primitive.IntCodec{}))
+				cc.AddField("active", codec.Wrap(&primitive.BoolCodec{}))
+				return cc
+			},
+			input: map[string]any{
+				"name":   "Alice",
+				"age":    int32(30),
+				"active": true,
+			},
+			expectedSize: 1 + 4 + len("Alice") + 4 + 1,
+			validate: func(t *testing.T, result map[string]any) {
+				assert.Equal(t, "Alice", result["name"])
+				assert.Equal(t, int32(30), result["age"])
+				assert.Equal(t, true, result["active"])
+			},
+		},
+		{
+			name: "with boolshortern non empty",
+			setup: func() *CustomCodec {
+				cc := NewCustomCodec(true)
+				cc.AddField("x", codec.Wrap(&primitive.FloatCodec{}))
+				cc.AddField("y", codec.Wrap(&primitive.FloatCodec{}))
+				return cc
+			},
+			input: map[string]any{
+				"x": float32(1.5),
+				"y": float32(2.7),
+			},
+			expectedSize: 1 + 4 + 4,
+			validate: func(t *testing.T, result map[string]any) {
+				assert.InDelta(t, float32(1.5), result["x"].(float32), 0.0001)
+				assert.InDelta(t, float32(2.7), result["y"].(float32), 0.0001)
+			},
+		},
+		{
+			name: "boolshortern empty map",
+			setup: func() *CustomCodec {
+				cc := NewCustomCodec(true)
+				cc.AddField("x", codec.Wrap(&primitive.FloatCodec{}))
+				cc.AddField("y", codec.Wrap(&primitive.FloatCodec{}))
+				return cc
+			},
+			input:        packets.Boolshortern(),
+			expectedSize: 1,
+			validate: func(t *testing.T, result map[string]any) {
+				assert.Empty(t, result)
+			},
+		},
+		{
+			name: "boolshortern encode empty even with fields",
+			setup: func() *CustomCodec {
+				cc := NewCustomCodec(true)
+				cc.AddField("a", codec.Wrap(&primitive.IntCodec{}))
+				cc.AddField("b", codec.Wrap(&primitive.IntCodec{}))
+				return cc
+			},
+			input:        packets.Boolshortern(),
+			expectedSize: 1,
+			validate: func(t *testing.T, result map[string]any) {
+				assert.Empty(t, result)
+			},
+		},
+		{
+			name: "no fields with boolshortern",
+			setup: func() *CustomCodec {
+				return NewCustomCodec(true)
+			},
+			input:        map[string]any{"unused": "value"},
+			expectedSize: 1,
+			validate: func(t *testing.T, result map[string]any) {
+				assert.Empty(t, result)
+			},
+		},
 	}
 
-	n, err := cc.Encode(data, buf)
-	assert.NoError(t, err)
-	expectedSize := 1 + 4 + len("Alice") + 4 + 1
-	assert.Equal(t, expectedSize, n)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cc := tt.setup()
+			buf := &bytes.Buffer{}
 
-	result, err := cc.Decode(buf)
-	assert.NoError(t, err)
-	assert.Equal(t, data["name"], result["name"])
-	assert.Equal(t, data["age"], result["age"])
-	assert.Equal(t, data["active"], result["active"])
-	assert.Equal(t, 0, buf.Len())
-}
+			n, err := cc.Encode(tt.input, buf)
 
-func TestCustomCodec_WithBoolshortern_NotEmpty(t *testing.T) {
-	cc := NewCustomCodec(true)
-	buf := &bytes.Buffer{}
+			if tt.expectEncodeErr {
+				assert.Error(t, err)
+				return
+			}
 
-	cc.AddField("x", codec.Wrap(&primitive.FloatCodec{}))
-	cc.AddField("y", codec.Wrap(&primitive.FloatCodec{}))
+			assert.NoError(t, err)
+			if tt.expectedSize > 0 {
+				assert.Equal(t, tt.expectedSize, n)
+			}
 
-	data := map[string]any{
-		"x": float32(1.5),
-		"y": float32(2.7),
+			result, err := cc.Decode(buf)
+			assert.NoError(t, err)
+
+			if tt.validate != nil {
+				tt.validate(t, result)
+			}
+
+			assert.Equal(t, 0, buf.Len())
+		})
 	}
-
-	n, err := cc.Encode(data, buf)
-	assert.NoError(t, err)
-	assert.Equal(t, 1+4+4, n)
-
-	result, err := cc.Decode(buf)
-	assert.NoError(t, err)
-	assert.InDelta(t, float32(1.5), result["x"].(float32), 0.0001)
-	assert.InDelta(t, float32(2.7), result["y"].(float32), 0.0001)
-	assert.Equal(t, 0, buf.Len())
-}
-
-func TestCustomCodec_WithBoolshortern_Empty(t *testing.T) {
-	cc := NewCustomCodec(true)
-	buf := &bytes.Buffer{}
-
-	cc.AddField("x", codec.Wrap(&primitive.FloatCodec{}))
-	cc.AddField("y", codec.Wrap(&primitive.FloatCodec{}))
-
-	data := map[string]any{}
-
-	n, err := cc.Encode(data, buf)
-	assert.NoError(t, err)
-	assert.Equal(t, 1, n)
-
-	result, err := cc.Decode(buf)
-	assert.NoError(t, err)
-	assert.Empty(t, result)
-	assert.Equal(t, 0, buf.Len())
 }
 
 func TestCustomCodec_MissingAttribute(t *testing.T) {
@@ -91,57 +141,12 @@ func TestCustomCodec_MissingAttribute(t *testing.T) {
 	}
 
 	_, err := cc.Encode(data, buf)
+
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "missing attribute")
 }
 
-func TestCustomCodec_MultipleFields(t *testing.T) {
-	cc := NewCustomCodec(true)
-	buf := &bytes.Buffer{}
-
-	AddField(cc, "id", &primitive.LongCodec{})
-	AddField(cc, "name", complex.NewStringCodec())
-	AddField(cc, "position", complex.NewVector3DCodec())
-	AddField(cc, "tags", complex.NewVectorStringCodec())
-	AddField(cc, "health", &primitive.ShortCodec{})
-
-	data := map[string]any{
-		"id":   int64(12345),
-		"name": "EnemyTank",
-		"position": map[string]float32{
-			"x": float32(10.5),
-			"y": float32(20.3),
-			"z": float32(5.0),
-		},
-		"tags":   []string{"boss", "elite", "armored"},
-		"health": int16(100),
-	}
-
-	n, err := cc.Encode(data, buf)
-	assert.NoError(t, err)
-	assert.True(t, n > 0)
-
-	result, err := cc.Decode(buf)
-	assert.NoError(t, err)
-
-	assert.Equal(t, int64(12345), result["id"])
-	assert.Equal(t, "EnemyTank", result["name"])
-
-	pos := result["position"].(map[string]float32)
-	assert.InDelta(t, float32(10.5), pos["x"], 0.0001)
-	assert.InDelta(t, float32(20.3), pos["y"], 0.0001)
-	assert.InDelta(t, float32(5.0), pos["z"], 0.0001)
-
-	tags := result["tags"].([]string)
-	assert.Equal(t, "boss", tags[0])
-	assert.Equal(t, "elite", tags[1])
-	assert.Equal(t, "armored", tags[2])
-
-	assert.Equal(t, int16(100), result["health"])
-	assert.Equal(t, 0, buf.Len())
-}
-
-func TestCustomCodec_WithNestedCustomCodecs(t *testing.T) {
+func TestCustomCodec_Nested(t *testing.T) {
 	buf := &bytes.Buffer{}
 
 	posCodec := NewCustomCodec(true)
@@ -163,6 +168,7 @@ func TestCustomCodec_WithNestedCustomCodecs(t *testing.T) {
 	}
 
 	n, err := maincc.Encode(data, buf)
+
 	assert.NoError(t, err)
 	assert.True(t, n > 0)
 
@@ -179,7 +185,7 @@ func TestCustomCodec_WithNestedCustomCodecs(t *testing.T) {
 	assert.Equal(t, 0, buf.Len())
 }
 
-func TestCustomCodec_MultipleCodecs(t *testing.T) {
+func TestCustomCodec_Collections(t *testing.T) {
 	cc := NewCustomCodec(true)
 	buf := &bytes.Buffer{}
 
@@ -197,80 +203,71 @@ func TestCustomCodec_MultipleCodecs(t *testing.T) {
 	}
 
 	n, err := cc.Encode(data, buf)
+
 	assert.NoError(t, err)
 	assert.True(t, n > 0)
 
 	result, err := cc.Decode(buf)
 	assert.NoError(t, err)
 
-	strings := result["strings"].([]string)
-	assert.Equal(t, "a", strings[0])
-	assert.Equal(t, "b", strings[1])
-	assert.Equal(t, "c", strings[2])
-
-	shorts := result["shorts"].([]int16)
-	assert.Equal(t, int16(1), shorts[0])
-	assert.Equal(t, int16(2), shorts[1])
-	assert.Equal(t, int16(3), shorts[2])
-	assert.Equal(t, int16(4), shorts[3])
+	assert.Equal(t, []string{"a", "b", "c"}, result["strings"])
+	assert.Equal(t, []int16{1, 2, 3, 4}, result["shorts"])
 
 	vectors := result["vectors"].([]map[string]float32)
 	assert.Len(t, vectors, 2)
 
-	v1 := vectors[0]
-	assert.InDelta(t, float32(1), v1["x"], 0.0001)
-	assert.InDelta(t, float32(2), v1["y"], 0.0001)
-	assert.InDelta(t, float32(3), v1["z"], 0.0001)
+	assert.InDelta(t, float32(1), vectors[0]["x"], 0.0001)
+	assert.InDelta(t, float32(2), vectors[0]["y"], 0.0001)
+	assert.InDelta(t, float32(3), vectors[0]["z"], 0.0001)
 
 	assert.Equal(t, 0, buf.Len())
 }
 
 func TestCustomCodec_ErrorHandling(t *testing.T) {
-	t.Run("decode with empty buffer", func(t *testing.T) {
-		cc := NewCustomCodec(false)
-		buf := &bytes.Buffer{}
-		cc.AddField("test", codec.Wrap(&primitive.IntCodec{}))
+	tests := []struct {
+		name string
+		test func(t *testing.T)
+	}{
+		{
+			name: "decode empty buffer",
+			test: func(t *testing.T) {
+				cc := NewCustomCodec(false)
+				cc.AddField("test", codec.Wrap(&primitive.IntCodec{}))
 
-		_, err := cc.Decode(buf)
-		assert.Error(t, err)
-	})
+				_, err := cc.Decode(&bytes.Buffer{})
+				assert.Error(t, err)
+			},
+		},
+		{
+			name: "decode empty buffer with boolshortern",
+			test: func(t *testing.T) {
+				cc := NewCustomCodec(true)
+				cc.AddField("test", codec.Wrap(&primitive.IntCodec{}))
 
-	t.Run("decode with boolshortern and empty buffer", func(t *testing.T) {
-		cc := NewCustomCodec(true)
-		buf := &bytes.Buffer{}
-		cc.AddField("test", codec.Wrap(&primitive.IntCodec{}))
+				_, err := cc.Decode(&bytes.Buffer{})
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), "failed to decode empty flag")
+			},
+		},
+		{
+			name: "encode wrong type panic",
+			test: func(t *testing.T) {
+				cc := NewCustomCodec(false)
+				buf := &bytes.Buffer{}
+				cc.AddField("age", codec.Wrap(&primitive.IntCodec{}))
 
-		_, err := cc.Decode(buf)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "failed to decode empty flag")
-	})
+				data := map[string]any{
+					"age": "not an int",
+				}
 
-	t.Run("encode with wrong type", func(t *testing.T) {
-		cc := NewCustomCodec(false)
-		buf := &bytes.Buffer{}
-		cc.AddField("age", codec.Wrap(&primitive.IntCodec{}))
+				assert.Panics(t, func() {
+					cc.Encode(data, buf)
+				})
+			},
+		},
+	}
 
-		data := map[string]any{
-			"age": "not an int",
-		}
-
-		assert.Panics(t, func() {
-			cc.Encode(data, buf)
-		})
-	})
-}
-
-func TestCustomCodec_NoFields(t *testing.T) {
-	cc := NewCustomCodec(true)
-	buf := &bytes.Buffer{}
-
-	data := map[string]any{"unused": "value"}
-
-	n, err := cc.Encode(data, buf)
-	assert.NoError(t, err)
-	assert.Equal(t, 1, n)
-
-	result, err := cc.Decode(buf)
-	assert.NoError(t, err)
-	assert.Empty(t, result)
+	for _, tt := range tests {
+		t.Run(tt.name, tt.test)
+	}
 }

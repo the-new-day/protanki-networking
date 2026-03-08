@@ -242,7 +242,7 @@ func TestChatMessageCodec_RoundTrip(t *testing.T) {
 		"authorStatus":  author,
 		"systemMessage": false,
 		"targetStatus":  target,
-		"message":       "hi",
+		"text":          "hi",
 		"warning":       true,
 	}
 
@@ -255,7 +255,7 @@ func TestChatMessageCodec_RoundTrip(t *testing.T) {
 	assert.Equal(t, author, res["authorStatus"])
 	assert.Equal(t, false, res["systemMessage"])
 	assert.Equal(t, target, res["targetStatus"])
-	assert.Equal(t, "hi", res["message"])
+	assert.Equal(t, "hi", res["text"])
 	assert.Equal(t, true, res["warning"])
 	assert.Equal(t, 0, buf.Len())
 }

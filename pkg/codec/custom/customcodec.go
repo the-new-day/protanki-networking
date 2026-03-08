@@ -70,6 +70,7 @@ func (c *CustomCodec) Decode(buf *bytes.Buffer) (map[string]any, error) {
 }
 
 // Encodes a map to the buffer according to the defined fields.
+// Use empty map as value to pass boolshortened value, if the codec supports it.
 func (c *CustomCodec) Encode(value map[string]any, buf *bytes.Buffer) (int, error) {
 	totalBytes := 0
 

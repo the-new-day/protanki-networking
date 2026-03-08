@@ -23,19 +23,26 @@ type Packet interface {
 	Len() int
 
 	// Unwrap decodes the binary data into individual objects.
-	// May store decoded objects for future use.
+	// Stores decoded objects for future use.
+	// It must be called to fill the packet object with data.
 	Unwrap(packetData *bytes.Buffer) (map[string]any, error)
+
+	// UnwrapValues encodes passed values using corresponding codecs (in order) to a buffer,
+	// and then calls Unwrap with that buffer, returning the result of the call.
+	// To pass a bool-shortened value (of the codec supports it), use packets.Boolshortern constant.
+	UnwrapValues(values ...any) (map[string]any, error)
 
 	// Wrap encodes all the objects into binary data for the packet payload.
 	// Does not affect inner state of the packet, but may affect inner state of Protection.
+	// Panics if the object is not filled.
 	Wrap(protection protection.Protection) (*bytes.Buffer, error)
 
 	// Attr returns value of the given attrubute or panics if it doesn't exists.
-	// It also works for attributes added by Set().
+	// It also works for attributes added by Set(), but only before the next call to Unwrap.
 	Attr(name string) any
 
 	// Set sets value for the attribute
-	// (it's possible to add new attribute, but it won't be wrapped, and will be erased in Wrap).
+	// (it's possible to add new attribute, but it won't be wrapped, and will be erased Unwrap).
 	// It does not perform type assertions, encryption/decryption etc.
 	Set(name string, value any)
 
@@ -107,7 +114,7 @@ func NewBasePacket(id int32, codecs []codec.Codec, attributes []string) *BasePac
 		codecs:     cdcs,
 		attrOrder:  attrOrder,
 		attributes: attrs,
-		objects:    make([]any, len(codecs)),
+		objects:    make([]any, 0),
 		object:     make(map[string]any),
 	}
 }
@@ -115,17 +122,40 @@ func NewBasePacket(id int32, codecs []codec.Codec, attributes []string) *BasePac
 func (bp *BasePacket) Unwrap(packetData *bytes.Buffer) (map[string]any, error) {
 	buf := make([]byte, packetData.Len())
 	copy(buf, packetData.Bytes())
+	clear(bp.objects)
 
-	for i, c := range bp.codecs {
+	for _, c := range bp.codecs {
 		decoded, err := c.Decode(packetData)
 		if err != nil {
 			return nil, fmt.Errorf("BasePacket.Unwrap: packet ID: %d | failed to unwrap: %w", bp.id, err)
 		}
-		bp.objects[i] = decoded
+		bp.objects = append(bp.objects, decoded)
 	}
 
 	bp.rawData = buf
 	return bp.populate(), nil
+}
+
+func (bp *BasePacket) UnwrapValues(values ...any) (map[string]any, error) {
+	if len(values) != len(bp.codecs) {
+		panic(fmt.Sprintf(
+			"BasePacket.UnwrapValues: packet ID: %d | values length (%d) doesn't match codecs length (%d)",
+			bp.id,
+			len(values),
+			len(bp.codecs),
+		))
+	}
+
+	packetData := &bytes.Buffer{}
+
+	for i, value := range values {
+		_, err := bp.codecs[i].Encode(value, packetData)
+		if err != nil {
+			return nil, fmt.Errorf("BasePacket.UnwrapValues: packet ID: %d | failed to unwrap: %w", bp.id, err)
+		}
+	}
+
+	return bp.Unwrap(packetData)
 }
 
 func (bp *BasePacket) Wrap(protection protection.Protection) (*bytes.Buffer, error) {
@@ -201,10 +231,6 @@ func (bp *BasePacket) populate() map[string]any {
 		bp.object[bp.attributes[i]] = obj
 	}
 	return bp.object
-}
-
-func (bp *BasePacket) depopulate() {
-
 }
 
 func (bp *BasePacket) ID() int32 {

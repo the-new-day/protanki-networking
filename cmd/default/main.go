@@ -9,6 +9,7 @@ import (
 
 	"github.com/the-new-day/protanki-networking/pkg/modules/proxy"
 	"github.com/the-new-day/protanki-networking/pkg/packets"
+	"github.com/the-new-day/protanki-networking/pkg/packets/chat"
 )
 
 func main() {
@@ -46,6 +47,8 @@ func main() {
 }
 
 func setupProxyHandlers(proxy *proxy.Proxy) {
+	wasFakeSent := false
+
 	proxy.OnServerToClient(func(packet packets.Packet) packets.Packet {
 		if packet.ID() == packets.ReceiveLobbyChatID {
 			messages := packets.Attr[[]map[string]any]("messages", packet)
@@ -65,6 +68,23 @@ func setupProxyHandlers(proxy *proxy.Proxy) {
 			}
 
 			packet.Set("messages", messages)
+
+			if !wasFakeSent {
+				fake := chat.NewReceiveLobbyChatPacket()
+				attributes := map[string]any{
+					"authorStatus":  packets.Boolshortern(),
+					"systemMessage": true,
+					"targetStatus":  packets.Boolshortern(),
+					"text":          "Hello World",
+					"warning":       false,
+				}
+				fake.UnwrapValues([]map[string]any{attributes})
+
+				err := proxy.SendToClient(fake)
+				if err == nil {
+					wasFakeSent = true
+				}
+			}
 		}
 		return packet
 	})

@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"io"
+	"strings"
 )
 
 // ReadBytes reads exactly n bytes from r. It returns a slice of length n
@@ -22,8 +23,26 @@ func ReadBytes(n int, r io.Reader) ([]byte, error) {
 //	data := []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05}
 //	view := ShortView(data, 2) // 00 01 ... 04 05
 func ShortView(data []byte, n int) string {
-	if len(data) < 2*n {
-		return fmt.Sprintf("% x", data)
+	if len(data) <= 2*n {
+		// Show all bytes
+		var parts []string
+		for _, b := range data {
+			parts = append(parts, fmt.Sprintf("%02x", b))
+		}
+		return strings.Join(parts, " ")
 	}
-	return fmt.Sprintf("% x ... % x", data[:n], data[len(data)-n:])
+
+	// Show first n and last n bytes
+	first := data[:n]
+	last := data[len(data)-n:]
+
+	var firstParts, lastParts []string
+	for _, b := range first {
+		firstParts = append(firstParts, fmt.Sprintf("%02x", b))
+	}
+	for _, b := range last {
+		lastParts = append(lastParts, fmt.Sprintf("%02x", b))
+	}
+
+	return strings.Join(firstParts, " ") + " ... " + strings.Join(lastParts, " ")
 }

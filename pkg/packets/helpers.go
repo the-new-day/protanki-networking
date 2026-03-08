@@ -7,8 +7,13 @@ import (
 	"io"
 	"maps"
 	"slices"
-	"strings"
 )
+
+// Boolshortern always returns an empty map.
+// It is used to pass to Packet.UnwrapValues to say that the object is bool-shortened.
+func Boolshortern() map[string]any {
+	return make(map[string]any)
+}
 
 // Attr returns value of the attribute with the given name,
 // converted to the type T. Calls Packet.Attr for retrieving the value.
@@ -41,6 +46,7 @@ func Clone(packet *BasePacket) Packet {
 	}
 }
 
+// Compress comresses the data using raw DEFLATE algorithm.
 func Compress(data []byte) ([]byte, error) {
 	var buf bytes.Buffer
 	w, err := flate.NewWriter(&buf, flate.DefaultCompression)
@@ -72,32 +78,4 @@ func Decompress(data []byte) ([]byte, error) {
 		return nil, fmt.Errorf("decompression failed: %w", err)
 	}
 	return data, nil
-}
-
-// ShortView returns a hex representation of a byte slice, showing only
-// the first and last n bytes if the slice is longer than 2n bytes.
-// The result format is like: [54 6d 09 ... 1d f1 2e]
-func ShortView(data []byte, n int) string {
-	if len(data) <= 2*n {
-		// Show all bytes
-		var parts []string
-		for _, b := range data {
-			parts = append(parts, fmt.Sprintf("%02x", b))
-		}
-		return strings.Join(parts, " ")
-	}
-
-	// Show first n and last n bytes
-	first := data[:n]
-	last := data[len(data)-n:]
-
-	var firstParts, lastParts []string
-	for _, b := range first {
-		firstParts = append(firstParts, fmt.Sprintf("%02x", b))
-	}
-	for _, b := range last {
-		lastParts = append(lastParts, fmt.Sprintf("%02x", b))
-	}
-
-	return strings.Join(firstParts, " ") + " ... " + strings.Join(lastParts, " ")
 }
