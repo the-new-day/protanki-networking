@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 
 	"github.com/the-new-day/protanki-networking/pkg/modules/proxy"
 	"github.com/the-new-day/protanki-networking/pkg/packets"
@@ -47,42 +48,38 @@ func main() {
 }
 
 func setupProxyHandlers(proxy *proxy.Proxy) {
-	wasFakeSent := false
-
 	proxy.OnServerToClient(func(packet packets.Packet) packets.Packet {
 		if packet.ID() == packets.ReceiveLobbyChatID {
 			messages := packets.Attr[[]map[string]any]("messages", packet)
 
-			for _, message := range messages {
-				authorStatus := message["authorStatus"].(map[string]any)
-				targetStatus := message["targetStatus"].(map[string]any)
-
-				authorUsername := authorStatus["username"]
-				targetUsername := targetStatus["username"]
-
-				if authorUsername == "slowed" {
-					authorStatus["modLevel"] = int32(4)
-				} else if targetUsername == "slowed" {
-					targetStatus["modLevel"] = int32(4)
-				}
+			if len(messages) != 1 {
+				return packet
 			}
 
-			packet.Set("messages", messages)
+			for _, message := range messages {
+				if strings.Contains(strings.ToLower(message["text"].(string)), "волки вотана") {
+					fake := chat.NewReceiveLobbyChatPacket()
+					attributes := map[string]any{
+						"authorStatus":  packets.Boolshortern(),
+						"systemMessage": true,
+						"targetStatus":  packets.Boolshortern(),
+						"text":          "Волки Вотана MENTIONED",
+						"warning":       false,
+					}
 
-			if !wasFakeSent {
-				fake := chat.NewReceiveLobbyChatPacket()
-				attributes := map[string]any{
-					"authorStatus":  packets.Boolshortern(),
-					"systemMessage": true,
-					"targetStatus":  packets.Boolshortern(),
-					"text":          "Hello World",
-					"warning":       false,
-				}
-				fake.UnwrapValues([]map[string]any{attributes})
+					fake.UnwrapValues([]map[string]any{attributes})
 
-				err := proxy.SendToClient(fake)
-				if err == nil {
-					wasFakeSent = true
+					err := proxy.SendToClient(packet)
+					if err != nil {
+						log.Printf("[ERROR]: %s", err)
+					}
+
+					err = proxy.SendToClient(fake)
+					if err != nil {
+						log.Printf("[ERROR]: %s", err)
+					}
+
+					return nil
 				}
 			}
 		}
