@@ -21,7 +21,13 @@ func main() {
 
 	registry := packets.GlobalPacketRegistry()
 
-	launcher := NewProxyLauncher(*httpAddr, *tcpAddr, *serverAddr, registry)
+	launcher := proxy.NewProxyLauncher(
+		*httpAddr,
+		*tcpAddr,
+		*serverAddr,
+		registry,
+		proxy.WithLogger(log.Default()),
+	)
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()

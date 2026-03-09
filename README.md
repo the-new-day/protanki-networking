@@ -27,7 +27,8 @@ proxy.OnServerToClient(func(packet packets.Packet) packets.Packet {
             if strings.Contains(strings.ToLower(message["text"].(string)), "волки вотана") {
                 fake := chat.NewReceiveLobbyChatPacket()
                 attributes := map[string]any{
-                    "authorStatus":  packets.Boolshortern(), // Boolshortern => attribute is replaced by emptiness flag = 1
+                    // Boolshortern => attribute is replaced by emptiness flag = 1
+                    "authorStatus":  packets.Boolshortern(),
                     "systemMessage": true,
                     "targetStatus":  packets.Boolshortern(),
                     "text":          "Волки Вотана MENTIONED",
