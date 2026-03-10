@@ -50,6 +50,14 @@ func WithClientProtectionFactory(factory func() protection.Protection) ProxyLaun
 	}
 }
 
+// WithHttpPrelauncherPath sets a relative HTTP path to the
+// directory with Prelauncher.swf and config.xml
+func WithHttpPrelauncherPath(path string) ProxyLauncherOption {
+	return func(pl *ProxyLauncher) {
+		pl.httpPrelauncherRelativePath = path
+	}
+}
+
 // ProxyLauncher manages both HTTP and TCP proxy servers.
 type ProxyLauncher struct {
 	httpAddr   string
@@ -78,6 +86,8 @@ type ProxyLauncher struct {
 	//	}()
 	ProxyCh chan *Proxy
 
+	httpPrelauncherRelativePath string
+
 	logger                  Logger
 	dialer                  dial.Dialer
 	serverProtectionFactory func() protection.Protection
@@ -87,11 +97,18 @@ type ProxyLauncher struct {
 // NewProxyLauncher creates a new ProxyLauncher with the given addresses and registry.
 // Additional options can be provided to customize logging, dialer, and protection factories.
 // By default:
+//   - https relative path to the prelauncher and config is "./prelauncher"
 //   - logging is disabled
 //   - dialer is dial.NewDirectDialer(10*time.Second)
 //   - server protection is protection.NewXorProtection(false)
 //   - client protection is protection.NewXorProtection(true)
-func NewProxyLauncher(httpAddr, tcpAddr, serverAddr string, registry *packets.PacketRegistry, opts ...ProxyLauncherOption) *ProxyLauncher {
+func NewProxyLauncher(
+	httpAddr,
+	tcpAddr,
+	serverAddr string,
+	registry *packets.PacketRegistry,
+	opts ...ProxyLauncherOption,
+) *ProxyLauncher {
 	pl := &ProxyLauncher{
 		httpAddr:   httpAddr,
 		tcpAddr:    tcpAddr,
@@ -100,8 +117,9 @@ func NewProxyLauncher(httpAddr, tcpAddr, serverAddr string, registry *packets.Pa
 		ProxyCh:    make(chan *Proxy),
 
 		// defaults
-		logger: nil,
-		dialer: dial.NewDirectDialer(10 * time.Second),
+		httpPrelauncherRelativePath: "./prelauncher",
+		logger:                      nil,
+		dialer:                      dial.NewDirectDialer(10 * time.Second),
 		serverProtectionFactory: func() protection.Protection {
 			return protection.NewXorProtection(false)
 		},
@@ -162,6 +180,8 @@ func (p *ProxyLauncher) runTCP(ctx context.Context) error {
 		return err
 	}
 	defer listener.Close()
+
+	p.logf("TCP listening on %s", p.tcpAddr)
 
 	var id int
 	for {
