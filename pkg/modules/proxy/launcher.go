@@ -84,7 +84,7 @@ type ProxyLauncher struct {
 	//	        // Store proxy reference, monitor it, etc.
 	//	    }
 	//	}()
-	ProxyCh chan *Proxy
+	proxyCh chan *Proxy
 
 	httpPrelauncherRelativePath string
 
@@ -114,7 +114,7 @@ func NewProxyLauncher(
 		tcpAddr:    tcpAddr,
 		serverAddr: serverAddr,
 		registry:   registry,
-		ProxyCh:    make(chan *Proxy),
+		proxyCh:    make(chan *Proxy),
 
 		// defaults
 		httpPrelauncherRelativePath: "./prelauncher",
@@ -133,6 +133,10 @@ func NewProxyLauncher(
 	}
 
 	return pl
+}
+
+func (p *ProxyLauncher) ProxyCh() <-chan *Proxy {
+	return p.proxyCh
 }
 
 // logf prints a formatted message if a logger is set.
@@ -170,7 +174,7 @@ func (p *ProxyLauncher) Run(ctx context.Context) error {
 
 	<-ctx.Done()
 	wg.Wait()
-	close(p.ProxyCh)
+	close(p.proxyCh)
 	return nil
 }
 
@@ -224,7 +228,7 @@ func (p *ProxyLauncher) handleClient(ctx context.Context, client *connection.Cli
 	p.logf("Client %d connected", id)
 
 	select {
-	case p.ProxyCh <- gameProxy:
+	case p.proxyCh <- gameProxy:
 	default:
 	}
 

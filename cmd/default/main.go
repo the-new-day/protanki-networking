@@ -43,7 +43,7 @@ func main() {
 		case <-ctx.Done():
 			log.Println("Shutting down...")
 			return
-		case proxy, ok := <-launcher.ProxyCh:
+		case proxy, ok := <-launcher.ProxyCh():
 			if !ok {
 				return
 			}
