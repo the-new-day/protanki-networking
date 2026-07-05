@@ -59,11 +59,11 @@ func NewProxy(
 	})
 
 	p.clientHandler.OnError(func(pr networking.PacketResult) {
-		handleError(p.clientHandler, pr)
+		handleError(p.serverHandler, pr)
 	})
 
 	p.serverHandler.OnError(func(pr networking.PacketResult) {
-		handleError(p.serverHandler, pr)
+		handleError(p.clientHandler, pr)
 	})
 	return p
 }
