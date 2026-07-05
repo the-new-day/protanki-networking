@@ -6,11 +6,11 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"strings"
 
+	"github.com/the-new-day/protanki-networking/pkg/modules/networking"
 	"github.com/the-new-day/protanki-networking/pkg/modules/proxy"
 	"github.com/the-new-day/protanki-networking/pkg/packets"
-	"github.com/the-new-day/protanki-networking/pkg/packets/chat"
+	"github.com/the-new-day/protanki-networking/pkg/utils"
 )
 
 func main() {
@@ -55,40 +55,17 @@ func main() {
 
 func setupProxyHandlers(proxy *proxy.Proxy) {
 	proxy.OnServerToClient(func(packet packets.Packet) packets.Packet {
-		if packet.ID() == packets.ReceiveLobbyChatID {
-			messages := packets.Attr[[]map[string]any]("messages", packet)
-
-			if len(messages) != 1 {
-				return packet
-			}
-
-			for _, message := range messages {
-				if strings.Contains(strings.ToLower(message["text"].(string)), "волки вотана") {
-					fake := chat.NewReceiveLobbyChatPacket()
-					attributes := map[string]any{
-						"authorStatus":  packets.Boolshortern(),
-						"systemMessage": true,
-						"targetStatus":  packets.Boolshortern(),
-						"text":          "Волки Вотана MENTIONED",
-						"warning":       false,
-					}
-
-					fake.UnwrapValues([]map[string]any{attributes})
-
-					err := proxy.SendToClient(packet)
-					if err != nil {
-						log.Printf("[ERROR]: %s", err)
-					}
-
-					err = proxy.SendToClient(fake)
-					if err != nil {
-						log.Printf("[ERROR]: %s", err)
-					}
-
-					return nil
-				}
-			}
-		}
+		log.Printf("[SERVER]: %s\nPayload:\n%s", packets.GetName(packet.ID()), utils.ShortView(packet.Data(), 20))
 		return packet
+	})
+	proxy.OnClientToServer(func(packet packets.Packet) packets.Packet {
+		log.Printf("[CLIENT]: %s\nPayload:\n%s", packets.GetName(packet.ID()), utils.ShortView(packet.Data(), 20))
+		return packet
+	})
+	proxy.OnServerError(func(pr networking.PacketResult) {
+		log.Printf("[ERROR(S->C)]: Packet=%s | Err: %s\n", packets.GetName(pr.ID), pr.Err)
+	})
+	proxy.OnClientError(func(pr networking.PacketResult) {
+		log.Printf("[ERROR(C->S)]: Packet=%s | Err: %s\n", packets.GetName(pr.ID), pr.Err)
 	})
 }

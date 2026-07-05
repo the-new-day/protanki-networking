@@ -5,7 +5,7 @@ import (
 	"github.com/the-new-day/protanki-networking/pkg/packets"
 )
 
-// Load battle info
+// Load battle info (C2S)
 type LoadLobbyPacket struct {
 	packets.BasePacket
 }

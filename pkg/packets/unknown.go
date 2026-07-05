@@ -33,7 +33,7 @@ func (p *UnknownPacket) Unwrap(_ *bytes.Buffer) (map[string]any, error) {
 // [4 bytes length (8 + len(data))] [4 bytes ID] [len(data) bytes data].
 func (p *UnknownPacket) Wrap(protection protection.Protection) (*bytes.Buffer, error) {
 	data := p.data
-	packetLen := 8 + len(data)
+	packetLen := HeaderLength + len(data)
 
 	if p.BasePacket.shouldCompress {
 		var err error
@@ -42,7 +42,7 @@ func (p *UnknownPacket) Wrap(protection protection.Protection) (*bytes.Buffer, e
 			return nil, err
 		}
 
-		packetLen = 8 + len(data)
+		packetLen = HeaderLength + len(data)
 		packetLen |= 0x40000000 // setting the compression bit
 	}
 
